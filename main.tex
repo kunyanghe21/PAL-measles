@@ -365,19 +365,21 @@ WWR, together with various other authors \citep{stocks18,he10}, found that overd
 \end{center}
 
 \setcounter{section}{0}
-\setcounter{page}{1}
-\renewcommand{\thepage}{S\arabic{page}}
 \renewcommand{\thesection}{S\arabic{section}}
 
+\begin{center}
+  {\Large \bf SUPPLEMENTARY MATERIAL}
+\end{center}
+\bigskip
 
-\section{$\fproc$: process model for filter}
+\section{\texorpdfstring{$\fproc$}{fproc}: Process model for filter}
 
-Latent process transition model for the filter.
-$\fproc=\fprocDiscrete$ corresponds to the choice of WWR where a single gamma-distributed dynamic noise variable is chosen for each observation interval. $\fproc=\fprocEuler$ corresponds to independent gamma noise variables on each Euler time step, so that the limit of the process model (as the Euler time step decreases) corresponds to a continuous-time over-dispersed Markov chain. 
-Both $\fproc=\fprocDiscrete$ and $\fproc=\fprocEuler$ are implemented with a step of $1/2$ week for the multinomial transitions conditional on the gamma noise. 
+In this section, we outline the latent process transition model employed by the filter. 
+When $\fproc = \fprocDiscrete$, following \citet{whitehouse23} (WWR), each observation interval is associated with a single gamma-distributed multiplicative noise term. 
+In contrast, under $\fproc = \fprocEuler$, every Euler step includes an independent gamma noise variable. Consequently, as the Euler step length becomes smaller, the model converges to a continuous-time, over-dispersed Markov process. 
+In both cases, we implement multinomial transitions at half-week intervals ($1/2$ week), conditioned on the relevant gamma noise draw.
 
-
-\subsection{Multiple-Units Measles Model: Euler Step}
+\subsection*{Multiple-Units Measles Model: Euler Step}
 
 \begin{figure}[htbp]
     \centering
@@ -397,17 +399,23 @@ Both $\fproc=\fprocDiscrete$ and $\fproc=\fprocEuler$ are implemented with a ste
         \draw[->] (S) -- node[midway] {$\mu_{SE}$} (E);
         \draw[->] (E) -- node[midway] {$\mu_{EI}$} (I);
         \draw[->] (I) -- node[midway] {$\mu_{IR}$} (R);
-        
+
         \draw[->] (S) -- node[left] {$\mu_{SD}$} (D);
         \draw[->] (E) -- node[left] {$\mu_{ED}$} (D);
         \draw[->] (I) -- node[left] {$\mu_{ID}$} (D);
         \draw[->] (R) -- node[left] {$\mu_{RD}$} (D);
     \end{tikzpicture}
     \caption{Flow chart of the WWR model.}
-    \label{fig:enter-label}
 \end{figure}
 
-Measles surveillance often involves data tracked across $J=40$ cities with extensive travel or social connections. Each city $k$ is modeled via four compartments: $S_{k,t}$ (susceptible), $E_{k,t}$ (exposed), $I_{k,t}$ (infectious), and $R_{k,t}$ (recovered). The initial states of these compartments can be drawn from a multinomial distribution:
+Measles data frequently arise from surveillance across $J=40$ geographically distinct yet interconnected cities. In each city $k$, we track four compartments at time $t$: 
+\[
+S_{k}(t)\; (\text{susceptible}),\quad 
+E_{k}(t)\; (\text{exposed}),\quad 
+I_{k}(t)\; (\text{infectious}),\quad
+R_{k}(t)\; (\text{recovered}).
+\]
+Their initial values $S_{k,0},E_{k,0},I_{k,0},R_{k,0}$ can be drawn from a multinomial distribution:
 \[
 \begin{bmatrix}
 S_{k,0} & E_{k,0} & I_{k,0} & R_{k,0}
@@ -416,7 +424,7 @@ S_{k,0} & E_{k,0} & I_{k,0} & R_{k,0}
 \mathrm{Mult}\bigl(n_{k,0}, \boldsymbol{\pi}_{k,0}\bigr).
 \]
 
-The model evolves over discrete time steps according to:
+Over time, the model evolves via:
 \[
 \begin{alignedat}{2}
     S_{k,t+1} &= S_{k,t} - B_{k,t} - F^{(S)}_{k,t} + A_{k,t},\\ 
@@ -425,15 +433,13 @@ The model evolves over discrete time steps according to:
     R_{k,t+1} &= R_{k,t} + D_{k,t} - F^{(R)}_{k,t}.
 \end{alignedat}
 \]
-Here, the number of new infections $B_{k,t}$ in city $k$ is modeled as
+Here, $B_{k,t}$ is the number of new infections in city $k$ at time $t$, modeled as
 \[
 B_{k,t}
 \sim 
-\mathrm{Bin}\Bigl(S_{k,t} - F^{(S)}_{k,t},\;1 - \exp[-h\,b_{k,r}]\Bigr),
+\mathrm{Bin}\Bigl(S_{k,t} - F^{(S)}_{k,t},\;1 - \exp[-h\,b_{k,t}]\Bigr),
 \]
-where the infection rate $b_{k,r}$ will be detailed next.
-
-To capture inter-city interactions, we define:
+where $h$ is a discrete time step and $b_{k,t}$ is the within- plus between-city transmission rate. Specifically,
 \[
 b_{k,t}
 =
@@ -449,9 +455,7 @@ b_{k,t}
   \Bigr)
 \Bigr].
 \]
-In this expression, $\beta_{k,t}$ governs seasonal transmission for city $k$, $\xi_{k,r}\sim \mathrm{Gamma}(\sigma_{\xi},\sigma_{\xi})$ is a mean-one multiplicative noise term, and $v_{k,l}$ encodes the travel or contact intensity from city $l$ to city $k$.
-
-A common approach is to let $\beta_{k,r}$ vary across school terms and holidays:
+Here, $\beta_{k,t}$ captures the seasonal transmission for city $k$, $\xi_{k,t}\sim \mathrm{Gamma}(\sigma_{\xi},\sigma_{\xi})$ is a mean-one overdispersion factor, and $v_{k,l}$ reflects the coupling between cities $k$ and $l$. Often, $\beta_{k,t}$ alternates between school-term and holiday values:
 \[
 \beta_{k,t}
 =
@@ -460,9 +464,9 @@ A common approach is to let $\beta_{k,r}$ vary across school terms and holidays:
 (1 - 2\,p\,a)\,\overline{\beta}_{k}, & \text{if in holiday},
 \end{cases}
 \]
-where $p$ is the fraction of the year spent in school, $\overline{\beta}_{k}$ is the average transmission rate for city $k$, and $a$ represents the holiday effect.
+where $\overline{\beta}_{k}$ is the average transmission rate, $p$ is the fraction of the year spent in school, and $a$ is the amplitude of the holiday effect.
 
-To incorporate processes such as births, deaths, or emigration, one can define
+Demographic processes such as births and deaths can be incorporated by defining
 \[
 \boldsymbol{\delta}_{k,t} 
 = 
@@ -472,19 +476,16 @@ To incorporate processes such as births, deaths, or emigration, one can define
 = 
 [\alpha_{k,t}^{(1)},\,0,\,0,\,0]^\top,
 \]
-then set
+so that
 \[
 F_{k,t}^{(\cdot)} 
 \sim 
-\mathrm{Bin}\bigl((\cdot)_{k,t},\,1 - \delta_{k,t}^{(\cdot)}\bigr),
-\quad
+\mathrm{Bin}\bigl((\cdot)_{k,t},\,1 - \delta_{k,t}^{(\cdot)}\bigr),\quad
 A_{k,t} 
 \sim
 \mathrm{Pois}(\alpha_{k,t}^{(1)}).
 \]
-Additional variations may include multi-year cohort effects or adding school-aged newcomers directly into the susceptible class.
-
-For computational algorithms such as particle filtering, one often encodes each city’s transition in a $4\times 4$ matrix:
+Each city’s transitions can be encoded in a $4\times4$ matrix for particle filtering:
 \[
 \mathbf{K}_{r,\boldsymbol{\eta},\xi,k}
 =
@@ -497,32 +498,11 @@ e^{-h\,g_k(\beta_{k,r},\boldsymbol{\eta},\xi)}
 0 & 0 & 0 & 1
 \end{bmatrix},
 \]
-where
-\[
-g_k(\beta,\boldsymbol{\eta},\xi)
-=
-\beta\,\xi
-\Bigl(
-\eta^{(k)} + \sum_{l\neq k}\frac{v_{k,l}}{n_k}\bigl(\eta^{(l)} - \eta^{(k)}\bigr)
-\Bigr).
-\]
+and realized transitions are arranged into a matrix $\mathbf{Z}_{k,t}$. By stacking these blocks across all $J$ cities, one obtains a $(4J)\times(4J)$ transition matrix, which is helpful for block particle filtering or other inference methods.
 
-Observed (realized) transitions can be arranged into a $4\times 4$ matrix:
-\[
-\mathbf{Z}_{k,t}
-=
-\begin{bmatrix}
-S_{k,t}-F^{(S)}_{k,t}-B_{k,t} & B_{k,t} & 0 & 0\\
-0 & E_{k,t}-F^{(E)}_{k,t}-C_{k,t} & C_{k,t} & 0\\
-0 & 0 & I_{k,t}-F^{(I)}_{k,t}-D_{k,t} & D_{k,t}\\
-0 & 0 & 0 & R_{k,t}-F^{(R)}_{k,t}
-\end{bmatrix}.
-\]
-By stacking these matrices blockwise for all $J$ cities, we obtain a $(4J)\times(4J)$ transition matrix, enabling block particle filtering or related inference methods.
+\subsection*{Multiple-Units Measles Model: Discrete Time Step}
 
-\subsection{Multiple-Units Measles Model: Discrete Time Step}
-
-To capture inter-city interactions, we define:
+For a discrete-time version, we similarly define the inter-city interaction:
 \[
 b_{k,\textcolor{red}{r}}
 =
@@ -538,150 +518,120 @@ b_{k,\textcolor{red}{r}}
   \Bigr)
 \Bigr].
 \]
-In this expression, $\beta_{k,r}$ governs seasonal transmission for city $k$, $\xi_{k,r}\sim \mathrm{Gamma}(\sigma_{\xi},\sigma_{\xi})$ is a mean-one multiplicative noise term, and $v_{k,l}$ encodes the travel or contact intensity from city $l$ to city $k$.
+The other transitions (e.g., births and deaths) can be similarly embedded in each discrete interval. This setup handles aggregated incidence over blocks $\tau_{r-1}+1$ to $\tau_r$ just as in the Euler step framework, but now with a single gamma draw per longer interval. Such discrete-time constructions also allow additional extension for background importations or other city-specific processes.
 
+\section{\texorpdfstring{$\fmeas$}{fmeas}: Measurement model for filter}
 
-\section{$\fmeas$: measurement model for filter}
+We now describe the measurement models associated with the filter. Under $\fmeas=\fmeasBinomial$, observations are treated as binomial draws with potentially overdispersed multiplicative noise on the underlying reporting probability. In contrast, $\fmeas=\fmeasGaussian$ uses a discretized Gaussian likelihood for measurement. Both forms permit tractable likelihood computation without requiring expensive Monte Carlo integration. In practice, the basic PAL method necessitates a binomial-style measurement process, but its SMC-PAL extension also accommodates stochastic variation in the measurement probability.
 
-Measurement model for the filter. $\fmeas=\fmeasBinomial$ corresponds to binomial measurements with truncated multiplicative Gaussian noise on the reporting rate, i.e., the expected fraction of infections that are reported. 
-The basic PAL algorithm requires a binomial measurement model, but the SMC-PAL extension permits noise on the measurement probability.
-$\fmeas=\fmeasGaussian$ corresponds to a discretized Gaussian measurement model. 
-Using a measurement model that can directly be evaluated, without costly Monte Carlo calculation, assists with efficient Monte Carlo inference.
-Beta-binomial or negative binomial distributions would also meet this criterion.
+\subsection*{Gaussian Model}
 
-\subsection{Gaussian Model}
-
-We'll model both under-reporting and measurement error. We want 
+Here, we account for both under-reporting and measurement error. Specifically, we set
 \[
 \mathbb{E}[Y_{k,t}^{(3,4)} \mid D_{k,t}] = \rho_{meas}\,D_{k,t},
 \]
-where \(D_{k,t}\) is the true incidence and 
-\(0 < \rho_{meas} < 1\) is the reporting efficiency. We'll also assume that 
+where $0 < \rho_{meas} < 1$ is the reporting efficiency and $D_{k,t}$ is the true number of infective-to-recovered transitions. We assume
 \[
 \mathrm{Var}[Y_{k,t}^{(3,4)} \mid D_{k,t}] 
 = \rho_{meas}\,\bigl(1 - \rho_{meas}\bigr)\,D_{k,t} 
 \;+\; 
 \bigl(\psi\,\rho_{meas}\,D_{k,t}\bigr)^{2},
 \]
-where \(\psi\) quantifies overdispersion. Note that when \(\psi = 0,\) the 
-variance--mean relation is that of the binomial distribution. To be specific, 
-we will choose 
-\[
-Y_{k,t}^{(3,4)} \mid D_{k,t} 
-\;\sim\; 
-f\bigl(\,\cdot\,\mid \rho_{meas},\psi,D_{k,t}\bigr),
-\]
-where
+where $\psi$ governs overdispersion. When $\psi=0$, this reduces to the usual binomial variance-mean relationship. We then posit a discretized normal likelihood:
 \[
 \begin{aligned}
 f\bigl(y_{k,t}^{(3,4)} \mid \rho_{meas},\psi,D_{k,t}\bigr)
-=\;& \Phi\!\Bigl(
-y_{k,t}^{(3,4)} + \tfrac{1}{2},\,
-\rho_{meas}\,D_{k,t},\,
-\rho_{meas}\bigl(1-\rho_{meas}\bigr)\,D_{k,t} 
-\;+\; 
-\bigl(\psi\,\rho_{meas}\,D_{k,t}\bigr)^{2}
-\Bigr)
-\\
-&-\;\Phi\!\Bigl(
-y_{k,t}^{(3,4)} - \tfrac{1}{2},\,
-\rho_{meas}\,D_{k,t},\,
-\rho_{meas}\bigl(1-\rho_{meas}\bigr)\,D_{k,t} 
-\;+\; 
-\bigl(\psi\,\rho_{meas}\,D_{k,t}\bigr)^{2}
+&=
+\Phi\Bigl(
+  y_{k,t}^{(3,4)} + \tfrac{1}{2},\rho_{meas}\,D_{k,t},\\
+&\quad
+  \rho_{meas}(1-\rho_{meas})\,D_{k,t}
+    + (\psi\,\rho_{meas}\,D_{k,t})^{2}
+\Bigr)\\
+&\quad-\;
+\Phi\Bigl(
+  y_{k,t}^{(3,4)} - \tfrac{1}{2},
+  \rho_{meas}\,D_{k,t},\\
+&\quad
+  \rho_{meas}(1-\rho_{meas})\,D_{k,t}
+    + (\psi\,\rho_{meas}\,D_{k,t})^{2}
 \Bigr).
 \end{aligned}
 \]
-Here, \(\Phi(x,\mu,\sigma^{2})\) is the c.d.f.\ of the normal distribution with 
-mean \(\mu\) and variance \(\sigma^{2}\).
 
+where $\Phi(\cdot,\mu,\sigma^2)$ is the c.d.f.\ of a normal distribution with mean $\mu$ and variance $\sigma^2$.
 
-\subsection{Binomial Model}
+\subsection*{Binomial Model}
 
-The observations are aggregated incidence data in the form of cumulative 
-fortnightly transitions from infective to recovered for each of the 40 cities 
-subject to binomial under-reporting, at times $\tau_r = 4r$ for $r = 1,\dots,R$. 
-Observations are modelled as transitions from infective to recovered compartments 
-because, on discovery, cases are treated with bed rest and hence removed from 
-the population \citep{55}. Denoting observations as 
+In the binomial measurement model, we observe the aggregated number of infections removed (i.e., transitions from infective to recovered) over each two-week interval. Writing
 \[
 \overline{Y}_{k,r} \;=\; \sum_{t=\tau_{r-1}+1}^{\tau_r} Y_{k,t},
 \]
-where each $Y_{k,t} \in \mathbb{N}^{4\times4}$ has every element equal to zero 
-except for the $(3,4)$th element which, conditional on $D_{k,t}$, is distributed as
+we assume 
 \[
 Y_{k,t}^{(3,4)} \;\sim\; \mathrm{Bin}\bigl(D_{k,t},\,Q_{k,r}^{(3,4)}\bigr),
-\quad
-t = \tau_{r-1},\dots,\tau_r,\; r \ge 1,\; k=1,\dots,J,
 \]
-where $Q_{k,r}\in[0,1]^{4\times4}$ consists of all zeros apart from the $(3,4)$th 
-entry, which is the reporting rate of transitions from infective to recovered. 
-We assume that this rate follows 
-\[
-Q_{k,r}^{(3,4)} \;\sim\; \mathcal{N}\bigl(\mu_{q,k},\,\sigma_q^2\bigr)_{\ge0,\le1}
-\quad\text{for } k=1,\dots,K,
-\]
-denote this density with $f(\cdot\,|\,\cdot)$ for the purposes of algorithm~10. 
-The mean under-reporting rate parameters, $\mu_{q,k} \in [0,1]$, $k=1,\dots,J$, 
-are assumed known for each city and are set to the same values as in \citep{55}, 
-which are available in the data on the GitHub page. The quantity $\sigma_q^2>0$ 
-is to be estimated.
+with $D_{k,t}$ the true infective-to-recovered counts at time $t$ and $Q_{k,r}^{(3,4)}$ the reporting probability during interval $r$. This rate $Q_{k,r}^{(3,4)}$ follows a normal distribution truncated to $[0,1]$. In practice, we set the means $\mu_{q,k}$ to known prior estimates for each city, leaving $\sigma_q^2$ to be inferred from the data.  
 
-\section{F: filter algorithm}
+\section{F: Filter algorithm}
 
-\begin{algorithm}
-\caption{bpfilter(P,Np=J,block\_list=$\mathcal{B}$) using notation from Table 1 where P is a ‘spatPomp’ object equipped with \texttt{rprocess}, \texttt{dunit\_measure}, \texttt{rinit}, \texttt{obs}, \texttt{coef}.}
+Below, we provide pseudo-code for three filtering methods central to our analyses. 
+
+\begin{algorithm}[H]
+\caption{bpfilter(\texttt{P}, \texttt{Np}=J, \texttt{block\_list}=$\mathcal{B}$). This block particle filter uses the notation of Table~1. The object \texttt{P} is a ‘spatPomp’ object providing \texttt{rprocess}, \texttt{dunit\_measure}, \texttt{rinit}, \texttt{obs}, \texttt{coef}.}
 \begin{algorithmic}[1]
-\REQUIRE simulator for $f_{X_n|X_{n-1}}(x_n | x_{n-1}; \theta)$ and $f_{X_0}(x_0; \theta)$; number of particles, $J$; evaluator for $f_{Y_{u,n}|X_{u,n}}(y_{u,n} | x_{u,n}; \theta)$; data, $\mathbf{y}_{1:N}^*$; parameter, $\theta$; blocks, $\mathcal{B}_{1:K}$;
+\REQUIRE simulator for $f_{X_n|X_{n-1}}(x_n | x_{n-1}; \theta)$ and $f_{X_0}(x_0; \theta)$; number of particles, $J$; evaluator for $f_{Y_{u,n}|X_{u,n}}(y_{u,n} | x_{u,n}; \theta)$; data, $\mathbf{y}_{1:N}^*$; parameter, $\theta$; blocks, $\mathcal{B}_{1:K}$
+
 \STATE initialization, $X_0^{F,j} \sim f_{X_0}(\cdot; \theta)$ for $j$ in $1:J$
 \FOR{$n$ in $1:N$}
     \STATE prediction, $X_n^{P,j} \sim f_{X_n|X_{n-1}}(\cdot | X_{n-1}^{F,j}; \theta)$ for $j$ in $1:J$
     \FOR{$k$ in $1:K$}
-        \STATE block weights, $w_k^j,n = \prod_{u \in \mathcal{B}_k} f_{Y_{u,n}|X_{u,n}}(y_{u,n}^* | X_{u,n}^{P,j}; \theta)$ for $j$ in $1:J$
-        \STATE resampling indices, $r_k^j,n$ with $\mathbb{P}\left[r_k^j,n = i\right] = w_k^{i,n}/\sum_{q=1}^J w_k^{q,n}$ for $j$ in $1:J$
-        \STATE resample, $X_{B_k,n}^{F,j} = X_{B_k,n}^{P,r_k^j,n}$ for $j$ in $1:J$
+        \STATE block weights, $w_k^{j,n} = \prod_{u \in \mathcal{B}_k} f_{Y_{u,n}|X_{u,n}}(y_{u,n}^* | X_{u,n}^{P,j}; \theta)$ for $j$ in $1:J$
+        \STATE resampling indices, $r_k^{j,n}$ with $\mathbb{P}\bigl[r_k^{j,n} = i\bigr] = \dfrac{w_k^{i,n}}{\sum_{q=1}^J w_k^{q,n}}$ for $j$ in $1:J$
+        \STATE resample, $X_{\mathcal{B}_k,n}^{F,j} = X_{\mathcal{B}_k,n}^{P,\,r_k^{j,n}}$ for $j$ in $1:J$
     \ENDFOR
 \ENDFOR
-\ENSURE output: log-likelihood, $\lambda^{BPF}(\theta) = \sum_{n=1}^N \sum_{k=1}^K \log\left(\frac{1}{J} \sum_{j=1}^J w_k^{j,n}\right)$, filter particles $X_{1:N}^{F,1:J}$
+\ENSURE output: log-likelihood, $\lambda^{BPF}(\theta) = \sum_{n=1}^N \sum_{k=1}^K \log\left(\tfrac{1}{J} \sum_{j=1}^J w_k^{j,n}\right)$, filter particles $X_{1:N}^{F,1:J}$
 \end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}
-\caption{The IBPF algorithm}
+
+\begin{algorithm}[H]
+\caption{The IBPF algorithm (iterated block particle filter).}
 \begin{algorithmic}[1]
-\REQUIRE Initial value function $f_{X_0}(\theta)$ \\
-Simulator for $f_{X_n|X_{n-1}}(x_n | x_{n-1}; \theta)$, $n \in 1:N$ \\
-Evaluator for $f_{Y_n|X_n}(y_n | x_n; \theta)$, $n \in 1:N$ \\
-Data, $\mathbf{y}_{1:N}$ \\
-Number of iterations, $M$ \\
-Number of particles, $J$ \\
-Partition, $K$ \\
-Initial parameter swarm, $\{\Theta_0^0, j \in 1:J\}$ \\
-Perturbation density, $f_{\theta_n|\theta_{n-1}}(\theta_n | \vartheta; \sigma)$, $n \in 1:N$ \\
-Perturbation sequence, $\sigma_{1:M}$
+\REQUIRE Initial value function $f_{X_0}(\theta)$; 
+simulator for $f_{X_n|X_{n-1}}(x_n | x_{n-1}; \theta)$, $n \in 1:N$; 
+evaluator for $f_{Y_n|X_n}(y_n | x_n; \theta)$, $n \in 1:N$; 
+data, $\mathbf{y}_{1:N}$; 
+number of iterations, $M$; 
+number of particles, $J$; 
+partition, $K$; 
+initial parameter swarm, $\{\Theta_0^0, j \in 1:J\}$; 
+perturbation density, $f_{\theta_n|\theta_{n-1}}(\theta_n | \vartheta; \sigma)$, $n \in 1:N$; 
+perturbation sequence, $\sigma_{1:M}$.
 
-\ENSURE Final parameter swarm, $\{\Theta_j^M, j \in 1:J\}$ and log-likelihood $\hat{\ell}_b$
+\ENSURE Final parameter swarm, $\{\Theta_j^M, j \in 1:J\}$ and log-likelihood $\hat{\ell}_b$.
+
 \FOR{m in 1:M}
-    \STATE Set $\Theta_{0,j}^{F,m} = \Theta_{j}^{m-1}$ for $j \in 1:J$
-    \STATE Set $X_{0,j}^{F,m} = f_{X_0}(\Theta_{0,j}^{F,m})$ for $j \in 1:J$
+    \STATE Set $\Theta_{0,j}^{F,m} = \Theta_{j}^{m-1}$ for $j \in 1:J$.
+    \STATE Set $X_{0,j}^{F,m} = f_{X_0}(\Theta_{0,j}^{F,m})$ for $j \in 1:J$.
     \FOR{n in 1:N}
-        \STATE Draw $\Theta_{n,j}^{P,m} \sim f_{\theta_n|\theta_{n-1}}(\theta_n | \Theta_{n-1,j}^{F,m}; \sigma_m)$ for $j \in 1:J$
-        \STATE Draw $X_{n,j}^{P,m} \sim f_{X_n|X_{n-1}}(x_n | X_{n-1,j}^{F,m}; \Theta_{n,j}^{P,m})$ for $j \in 1:J$
+        \STATE Draw $\Theta_{n,j}^{P,m} \sim f_{\theta_n|\theta_{n-1}}(\theta_n | \Theta_{n-1,j}^{F,m}; \sigma_m)$ for $j \in 1:J$.
+        \STATE Draw $X_{n,j}^{P,m} \sim f_{X_n|X_{n-1}}(x_n | X_{n-1,j}^{F,m}; \Theta_{n,j}^{P,m})$ for $j \in 1:J$.
         \FOR{$K \in \mathcal{K}$}
-            \STATE Compute $w_{n,j}^{K,m} = \prod_{s \in K} f_{Y_s|X_s}(y_s^u | X_s^u, \Theta_{n,j}^{P,m})$ for $j \in 1:J$
-            \STATE Draw $s_{n,j}^{K,m}$ with $\text{Prob}(s_{n,j}^{K,m} = i) = \frac{w_{n,i}^{K,m}}{\sum_{j=1}^J w_{n,j}^{K,m}}$ for $j \in 1:J$
+            \STATE Compute $w_{n,j}^{K,m} = \prod_{s \in K} f_{Y_s|X_s}(y_s^u | X_s^u, \Theta_{n,j}^{P,m})$ for $j \in 1:J$.
+            \STATE Draw $s_{n,j}^{K,m}$ with $\mathrm{Prob}(s_{n,j}^{K,m} = i) = \dfrac{w_{n,i}^{K,m}}{\sum_{j=1}^J w_{n,j}^{K,m}}$ for $j \in 1:J$.
         \ENDFOR
-        \STATE Set $X_{n,j}^{F,m} = (X_{n,j}^{K,F,m})_{K \in \mathcal{K}}$ where $X_{n,j}^{K,F,m} = X_{n,s_{n,j}^{K,m}}^{K,P,m}$ for $j \in 1:J$
-        \STATE Set $\Theta_{n,j}^{F,m} = (\Theta_{n,j}^{K,F,m})_{K \in \mathcal{K}}$ where $\Theta_{n,j}^{K,F,m} = \Theta_{n,s_{n,j}^{K,m}}^{K,P,m}$ for $j \in 1:J$
+        \STATE Set $X_{n,j}^{F,m} = (X_{n,j}^{K,F,m})_{K \in \mathcal{K}}$ where $X_{n,j}^{K,F,m} = X_{n,s_{n,j}^{K,m}}^{K,P,m}$ for $j \in 1:J$.
+        \STATE Set $\Theta_{n,j}^{F,m} = (\Theta_{n,j}^{K,F,m})_{K \in \mathcal{K}}$ where $\Theta_{n,j}^{K,F,m} = \Theta_{n,s_{n,j}^{K,m}}^{K,P,m}$ for $j \in 1:J$.
     \ENDFOR
-    \STATE Set $\Theta_{j}^{m} = (\Theta_{n,j}^{F,m})_{n \in 1:N}$ for $j \in 1:J$
+    \STATE Set $\Theta_{j}^{m} = (\Theta_{n,j}^{F,m})_{n \in 1:N}$ for $j \in 1:J$.
 \ENDFOR
-\STATE Set $\hat{\ell}_b = \sum_{n=1}^N \sum_{K \in \mathcal{K}} \log \left( \frac{1}{J} \sum_{j=1}^J w_{n,j}^{K,m} \right)$
+\STATE Set $\hat{\ell}_b = \sum_{n=1}^N \sum_{K \in \mathcal{K}} \log \left( \frac{1}{J} \sum_{j=1}^J w_{n,j}^{K,m} \right)$.
 \end{algorithmic}
 \end{algorithm}
 
-
-\begin{algorithm}
+\begin{algorithm}[H]
 \caption{PAL within a lookahead block particle filter}\label{alg:measles_block_lookahead}
 \begin{algorithmic}[1]
 
@@ -695,64 +645,53 @@ Perturbation sequence, $\sigma_{1:M}$
     \FOR{$i = 1, \dots, n_{part}$}
       \STATE $\xi_{k,r}^{(i)} \sim \mathrm{Gamma}(\sigma_{\xi}, \sigma_{\xi})$
       \FOR{$t = \tau_{r-1} + 1, \dots, \tau_r - 1$}
-        \STATE \label{measlespred1}%
-          $\bs \Lambda_{t,k}^{(i)} \leftarrow  
+        \STATE $\bs \Lambda_{t,k}^{(i)} \leftarrow  
            \Bigl((\bar{\bs \lambda}^{(i)}_{t-1,k} \circ \bs \delta_{t,k}) 
            \otimes \+1_m\Bigr)
            \;\circ\;
            \+K_{r,\bs \eta\bigl(\bar{ \bs \lambda}_{\tau_{r-1},1:J}^{(i)}\bigr),\,
                 \xi_{k,r}^{(i)},\,k}$
-        \STATE
-          $\bar{\bs \lambda}^{(i)}_{t,k} \leftarrow  
+        \STATE $\bar{\bs \lambda}^{(i)}_{t,k} \leftarrow  
             (\+1_m^\top \bs \Lambda_{t,k}^{(i)})^\top + \bs \alpha_{t,k}$
       \ENDFOR
 
-      \STATE
-        $\bs \Lambda^{(i)}_{\tau_r,k} \leftarrow  
+      \STATE $\bs \Lambda^{(i)}_{\tau_r,k} \leftarrow  
           \Bigl((\bs \lambda^{(i)}_{\tau_r -1,k} \circ \bs \delta_{\tau_r,k}) 
           \otimes \+1_m\Bigr)
           \;\circ\;
           \+K_{r,\bs \eta\bigl(\bar{ \bs \lambda}_{\tau_{r-1},1:J}^{(i)}\bigr),\,
                 \xi_{r,k}^{(i)},\,k}$
-      \STATE \label{prop1}%
-        $\+Q_{k,r}^{(i)} \sim \pi\Bigl(\cdot \,\middle|\,
+      \STATE $\+Q_{k,r}^{(i)} \sim \pi\Bigl(\cdot \,\middle|\,
            \{\bs \Lambda^{(i)}_{t,k}\}_{t = \tau_{r-1}+1}^{\tau_{r}},\,
            \bar{\+ Y}_{r,k},\,
            \bs \varphi
         \Bigr)$
-      \STATE
-        $\+M_{r,k}^{(i)} \leftarrow  
+      \STATE $\+M_{r,k}^{(i)} \leftarrow  
           \sum_{t = \tau_{r-1}+1}^{\tau_{r}} 
             \bs \Lambda^{(i)}_{t,k} \,\circ\, \+Q_{k,r}^{(i)}$
-      \STATE
-        $\mathcal{L}(\bar{\+ Y}_{r,k} \mid \bar{\+ Y}_{1:r-1,k} ) 
+      \STATE $\mathcal{L}(\bar{\+ Y}_{r,k} \mid \bar{\+ Y}_{1:r-1,k} ) 
          \leftarrow  
            -\,\+1_m^\top \+M_{r,k}^{(i)} \+1_m 
            \;+\; \+1_m^\top\bigl(\bar{\+ Y}_{r,k}\,\circ\,\log \+M_{r,k}^{(i)}\bigr)\+1_m 
            \;-\; \+1_m^\top\bigl(\log \bar{\+Y}_{r,k}!\bigr)\+1_m$
-      \STATE
-        $\log w^{(i)}_{r,k} \leftarrow 
+      \STATE $\log w^{(i)}_{r,k} \leftarrow 
           \mathcal{L}(\bar{\+ Y}_{r,k} \mid \bar{\+ Y}_{1:r-1,k} ) 
           + \log\Bigl(f(\+Q_{k,r}^{(i)} \mid \+Q_{k,1:r-1}^{(i)})\Bigr) 
           - \log\Bigl(\pi\bigl(\+Q_{k,r}^{(i)} \,\mid\, 
             \{\bs \Lambda^{(i)}_{t,k}\}_{t = \tau_{r-1}+1}^{\tau_{r}}, 
             \bar{\+ Y}_{r,k}, 
             \bs \varphi \bigr)\Bigr)$
-      \STATE
-        $\bar W_{r-1,k}^{(i)} \leftarrow 
+      \STATE $\bar W_{r-1,k}^{(i)} \leftarrow 
           \dfrac{W_{r-1,k}^{(i)}}{\sum_j W_{r-1,k}^{(j)}} 
-          \quad \bigl(i = 1 \dots n_{part}\bigr)$
-      \STATE
-        $\log W_{r,k}^{(i)} \leftarrow 
+          \quad (i = 1 \dots n_{part})$
+      \STATE $\log W_{r,k}^{(i)} \leftarrow 
           \log \bar W_{r-1,k}^{(i)} + \log w_{r,k}^{(i)}$
-      \STATE
-        $\bar{\bs \Lambda}^{(i)}_{\tau_r,k} \leftarrow
+      \STATE $\bar{\bs \Lambda}^{(i)}_{\tau_r,k} \leftarrow
           (\+1_m \otimes \+1_m - \+Q_{k,r}^{(i)}) \,\circ\, \bs \Lambda_{\tau_r,k}
           \;+\;
           \bar{\+Y}_{r,k} \,\circ\, \bs \Lambda_{\tau_r,k}^{(i)} 
           \,\circ\, \+Q_{k,r}^{(i)} \,\oslash\, \+M_{r,k}^{(i)}$
-      \STATE
-        $\bar{\bs \lambda}^{(i)}_{\tau_r,k} \leftarrow 
+      \STATE $\bar{\bs \lambda}^{(i)}_{\tau_r,k} \leftarrow 
           \bigl(\+1_m^\top \bar{\+ \Lambda}^{(i)}_{\tau_r,k}\bigr)^\top 
           + \bs \alpha_{\tau_r,k}$
     \ENDFOR
@@ -760,45 +699,37 @@ Perturbation sequence, $\sigma_{1:M}$
 
   \FOR{$k = 1, \dots, J$}
     \FOR{$i = 1, \dots, n_{part}$}
-      \STATE
-        $\tilde{\xi}_{k,r+1}^{(i)} \sim \mathrm{Gamma}(\sigma_{\xi}, \sigma_{\xi})$
+      \STATE $\tilde{\xi}_{k,r+1}^{(i)} \sim \mathrm{Gamma}(\sigma_{\xi}, \sigma_{\xi})$
       \FOR{$t = \tau_r + 1, \dots, \tau_{r+1} - 1$}
-        \STATE \label{measlespred2}%
-          $\bs \Lambda_{t,k}^{(i)} \leftarrow  
+        \STATE $\bs \Lambda_{t,k}^{(i)} \leftarrow  
             \Bigl((\bar{\bs \lambda}^{(i)}_{t-1,k} \circ \bs \delta_{t,k}) 
             \otimes \+1_m\Bigr)
             \;\circ\;
             \+K_{r+1,\bs \eta\bigl(\bar{\bs \lambda}_{\tau_r,1:J}^{(i)}\bigr),\,
                   \tilde{\xi}_{r+1,k}^{(i)},\,k}$
-        \STATE
-          $\bar{\bs \lambda}^{(i)}_{t,k} \leftarrow  
+        \STATE $\bar{\bs \lambda}^{(i)}_{t,k} \leftarrow  
             (\+1_m^\top \bs \Lambda_{t,k}^{(i)})^\top + \bs \alpha_{t,k}$
       \ENDFOR
-      \STATE
-        $\bs \Lambda^{(i)}_{\tau_{r+1},k} \leftarrow  
+      \STATE $\bs \Lambda^{(i)}_{\tau_{r+1},k} \leftarrow  
           \Bigl((\bs \lambda^{(i)}_{\tau_{r+1}-1,k} \circ \bs \delta_{\tau_{r+1},k}) 
           \otimes \+1_m\Bigr)
           \;\circ\;
           \+K_{r+1,\bs \eta\bigl(\bar{\bs \lambda}_{\tau_r,1:J}^{(i)}\bigr),\,
                 \tilde{\xi}_{r+1,k}^{(i)},\,k}$
-      \STATE \label{prop2}%
-        $\tilde{\+Q}_{k,r+1}^{(i)} \sim \pi\Bigl(\cdot \,\middle|\,
+      \STATE $\tilde{\+Q}_{k,r+1}^{(i)} \sim \pi\Bigl(\cdot \,\middle|\,
           \{\bs \Lambda^{(i)}_{t,k}\}_{t = \tau_r+1}^{\tau_{r+1}},\,
           \bar{\+ Y}_{r+1,k},\,
           \bs \varphi 
-        \Bigr)$ (as per \ref{eq:measlesproposal})
-      \STATE
-        $\+M_{r+1,k}^{(i)} \leftarrow  
+        \Bigr)$
+      \STATE $\+M_{r+1,k}^{(i)} \leftarrow  
           \sum_{t = \tau_r + 1}^{\tau_{r+1}} 
             \bs \Lambda^{(i)}_{t,k} \,\circ\, \tilde{\+Q}_{r+1,k}^{(i)}$
-      \STATE
-        $\mathcal{L}(\bar{\+ Y}_{r+1,k} \mid \bar{\+ Y}_{1:r,k} ) 
+      \STATE $\mathcal{L}(\bar{\+ Y}_{r+1,k} \mid \bar{\+ Y}_{1:r,k} ) 
          \leftarrow  
            -\,\+1_m^\top \+M_{r+1,k}^{(i)} \+1_m 
-           \;+\; \+1_m^\top \bigl(\bar{\+ Y}_{r+1,k}\,\circ\,\log\+M_{r+1,k}^{(i)}\bigr)\+1_m 
+           \;+\; \+1_m^\top \bigl(\bar{\+ Y}_{r+1,k}\,\circ\,\log \+M_{r+1,k}^{(i)}\bigr)\+1_m 
            \;-\; \+1_m^\top \bigl(\log \bar{\+Y}_{r+1,k}!\bigr)\+1_m$
-      \STATE
-        $\log w^{(i)}_{r+1,k} \leftarrow 
+      \STATE $\log w^{(i)}_{r+1,k} \leftarrow 
           \mathcal{L}(\bar{\+ Y}_{r+1,k} \mid \bar{\+ Y}_{1:r,k} )
           + \log\Bigl(f(\+Q_{k,r+1}^{(i)} \mid \+Q_{k,1:r}^{(i)})\Bigr)
           - \log\Bigl(\pi\bigl(\+Q_{k,r+1}^{(i)} 
@@ -807,30 +738,25 @@ Perturbation sequence, $\sigma_{1:M}$
             \bar{\+ Y}_{r+1,k}, 
             \bs \varphi 
           \bigr)\Bigr)$
-      \STATE
-        $\log \zeta_{r,k}^{(i)} \leftarrow 
+      \STATE $\log \zeta_{r,k}^{(i)} \leftarrow 
           \log W_{r,k}^{(i)} + \log w_{r+1,k}^{(i)}$
     \ENDFOR
 
-    \STATE
-      $\hat{\mathcal{L}}(\bar{\+ Y}_{r,k} \mid \bar{\+ Y}_{1:r-1,k} ) 
+    \STATE $\hat{\mathcal{L}}(\bar{\+ Y}_{r,k} \mid \bar{\+ Y}_{1:r-1,k} ) 
        \leftarrow 
          \log\Bigl(\sum_j W_{r,k}^{(j)}\Bigr)$
-    \STATE
-      $\bar \zeta_{r,k}^{(i)} \leftarrow 
+    \STATE $\bar \zeta_{r,k}^{(i)} \leftarrow 
         \dfrac{\zeta_{r,k}^{(i)}}{\sum_j \zeta_{r,k}^{(j)}} 
         \quad (i = 1 \dots n_{part})$
     \STATE {\bf Resample} 
       $\bigl\{\bar{\bs \lambda}^{(i)}_{\tau_r, k},\, W_{r,k}^{(i)},\, \zeta_{r,k}^{(i)}\bigr\}_{i=1}^{n_{part}}$
-      with weights $\bigl\{\bar{\zeta}_{r,k}^{(i)}\bigr\}_{i=1}^{n_{part}}$
-    \STATE
-      $\log W_{r,k}^{(i)} \leftarrow 
+      with weights $\{\bar{\zeta}_{r,k}^{(i)}\}_{i=1}^{n_{part}}$
+    \STATE $\log W_{r,k}^{(i)} \leftarrow 
         \log W_{r,k}^{(i)} \;-\; \log \zeta_{r,k}^{(i)}$
   \ENDFOR
 \ENDFOR
 
 \end{algorithmic}
 \end{algorithm}
-
 \end{document}
 
