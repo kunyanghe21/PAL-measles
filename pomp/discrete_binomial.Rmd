@@ -1,0 +1,649 @@
+---
+title: "discrete/binomial pomp analysis"
+output:
+  pdf_document:
+    latex_engine: xelatex
+date: "2025-05-22"
+---
+
+# $f_{proc}$ = discrete, $f_{meas}$ = binomial
+
+We will first present the one-unit (London case) discrete + binomial scenario, and then show how to match it to the WWR model.
+
+## Preparation for the pomp
+
+```{r packages, echo=TRUE, results='hide', message=FALSE, warning=FALSE, cache=FALSE}
+## ----packages,incluxde=F,echo=F,cache=F----------------------------------------
+library("pomp")
+library("spatPomp")
+library("ggplot2")
+library("tidyverse")
+library("knitr")
+library("doRNG")
+library("doParallel")
+
+set.seed(12345)
+
+measles_cases <- read.csv("case1.csv")
+measles_covar <- read.csv("covar2.csv")
+
+measles_cases<- measles_cases[measles_cases$city == "LONDON", ]
+measles_covar <- measles_covar[measles_covar$city == "LONDON", ]
+
+
+measles_cases <-  measles_cases[,-1]
+measles_covar <-  measles_covar[,-1]
+
+
+
+colnames(measles_cases) <- c("time","cases1")
+colnames(measles_covar) <- c("time",
+                             "lag_birthrate1","pop1")
+
+
+basic_params <- c(
+  alpha     = 1,
+  iota      = 0,
+  betabar   = 10,
+  c         = 0.1,
+  a         = 0.3,
+  rho       = 0.1,
+  gamma     = 0.1,
+  delta     = 0.02/(26*4),  # Here is a time scale transform.
+  sigma_xi  =  2,
+  qmean     = 0.7,
+  qvar      = 0.2,
+  g         = 0,
+  S_0       = 0.015,
+  E_0       = 0.0002,
+  I_0       = 0.0002
+)
+
+
+```
+
+# $f_{proc}$ = discrete
+
+```{r}
+rproc <- Csnippet("
+  double t_mod = fmod(t, 364.0);
+  double br1;
+  double beta1, seas1;
+  double foi1;
+  double xi1;
+  double betafinal1;
+  static double betafinal1_prev = 0.0;
+
+  int trans_S1[2], trans_E1[2], trans_I1[2];
+  double prob_S1[2], prob_E1[2], prob_I1[2];
+
+  if ((t_mod >= 6 && t_mod < 99) ||
+      (t_mod >= 115 && t_mod < 198) ||
+      (t_mod >= 252 && t_mod < 299) ||
+      (t_mod >= 308 && t_mod < 355)) {
+    seas1 = 1.0 + a * 2 * (1 - 0.759);
+  } else {
+    seas1 = 1.0 - 2 * a * 0.759;
+  }
+
+  beta1 = betabar * seas1;
+  
+  if (fabs(t_mod - 248.5) < 0.5) {
+    br1 = c * lag_birthrate1;
+  } else {
+    br1 = (1.0 - c) * lag_birthrate1 / 103.0;
+  }
+
+  double I_ratio1 = I1 / pop1;  
+  
+  foi1 = pow((I1 + iota) / pop1, alpha);
+
+  stepCount += 1.0; 
+
+  if (fabs(fmod(stepCount, 4.0)) < 1e-8) {
+    xi_current = rgamma(sigma_xi, 1 / sigma_xi);  
+    betafinal1 = beta1 * I_ratio1 * xi_current; 
+  } else {
+    betafinal1 = betafinal1_prev;
+  }
+
+  betafinal1_prev = betafinal1;
+
+  int SD1 = rbinom(S1, delta);
+  int ED1 = rbinom(E1, delta);
+  int ID1 = rbinom(I1, delta);
+  int RD1 = rbinom(R1, delta);
+
+  S1 -= SD1;
+  E1 -= ED1;
+  I1 -= ID1;
+  R1 -= RD1;
+
+  prob_S1[0] = exp(-dt * betafinal1);
+  prob_S1[1] = 1 - exp(-dt * betafinal1);
+
+  prob_E1[0] = exp(-dt * rho);
+  prob_E1[1] = 1 - exp(-dt * rho);
+
+  prob_I1[0] = exp(-dt * gamma);
+  prob_I1[1] = 1 - exp(-dt * gamma);
+
+  rmultinom(S1, prob_S1, 2, trans_S1);
+  rmultinom(E1, prob_E1, 2, trans_E1);
+  rmultinom(I1, prob_I1, 2, trans_I1);
+
+  S1 = trans_S1[0] + rpois(br1);
+  E1 = trans_E1[0] + trans_S1[1];
+  I1 = trans_I1[0] + trans_E1[1];
+  R1 += trans_I1[1];
+  C1 += trans_I1[1];
+
+  q1 = -1;
+  while (q1 < 0 || q1 > 1) {
+    q1 = rnorm(qmean, qvar);
+  }
+");
+
+
+```
+
+# $f_{meas}$ = binomial
+
+```{r}
+# --- 5.1 dmeasure --- 
+dmeas <- Csnippet("
+ lik =  dbinom(cases1, C1, q1, 1);
+");
+
+# --- 5.2 rmeasure ---
+rmeas <- Csnippet("
+ cases1 = rbinom(C1,q1);
+")
+
+```
+
+# Build the rinit
+
+```{r}
+rinit <- Csnippet("
+  double probs1[4];
+  probs1[0] = S_0;
+  probs1[1] = E_0;
+  probs1[2] = I_0;
+  probs1[3] = 1.0 - probs1[0] - probs1[1] - probs1[2];
+
+  int counts1[4];
+  rmultinom(pop1, probs1, 4, counts1);
+
+  S1 = counts1[0];
+  E1 = counts1[1];
+  I1 = counts1[2];
+  R1 = counts1[3];
+  C1 = 0;
+  xi_current = 1;
+  stepCount = 0;
+")
+```
+
+# Construct the POMP
+
+```{r}
+basic_log_names   <- c("rho", "gamma", "sigma_xi", "betabar", "g", "iota", "delta")
+basic_logit_names <- c("a", "alpha", "c", "qmean", "S_0", "E_0", "I_0", "qvar")
+log_names   <- basic_log_names
+logit_names <- basic_logit_names
+measles_partrans <- parameter_trans(
+  log   = log_names,
+  logit = logit_names
+)
+
+one_city_pomp <- pomp(
+  data       = measles_cases,
+  times      = "time",
+  t0         = 0,
+  rprocess   = discrete_time(rproc, delta.t = 3.5), 
+  rinit      = rinit,
+  dmeasure   = dmeas,
+  rmeasure   = rmeas,
+  statenames = c("S1","E1","I1","R1","C1","q1","xi_current","stepCount"),
+  paramnames = c("alpha","iota","betabar","c","a","rho","gamma",
+                 "delta","sigma_xi","g","qmean","qvar",
+                 "S_0","E_0","I_0"),
+  covar      = covariate_table(measles_covar,times = "time"),
+  covarnames = c("lag_birthrate1","pop1"),
+  accumvars  = c("C1")
+)
+
+coef(one_city_pomp) <- basic_params
+
+sim <- simulate(one_city_pomp, params =  basic_params)
+plot(sim)
+```
+
+# Make the simulation
+
+```{r}
+# Number of simulations
+n_simulations <- 1000
+
+# Placeholder to store the results
+results <- data.frame(
+  mean = numeric(n_simulations),
+  median = numeric(n_simulations),
+  variance = numeric(n_simulations)
+)
+
+# Loop through the simulations
+for (i in 1:n_simulations) {
+  
+  # Simulate the system
+  sim <- simulate(one_city_pomp, params = basic_params)
+  sim_data <- as.data.frame(sim)
+  simlondon <- sim_data$cases1
+  
+  
+  # Calculate the mean, median, and variance of the simulation data
+  results$mean[i] <- mean(simlondon, na.rm = TRUE)
+  results$median[i] <- median(simlondon, na.rm = TRUE)
+  results$variance[i] <- var(simlondon, na.rm = TRUE)
+}
+
+```
+
+# Python code for simulation
+
+```{python, eval=FALSE,echo=TRUE}
+import os
+os.environ["PYTHONHASHSEED"] = "12345"
+
+import random
+import numpy as np
+import pandas as pd
+import tensorflow as tf
+import tensorflow_probability as tfp
+import matplotlib.pyplot as plt
+from scipy.optimize import minimize
+
+import sys
+sys.path.append('Scripts/')
+from measles_simulator_KH import *
+
+SEED = 12345
+random.seed(SEED)
+np.random.seed(SEED)
+tf.random.set_seed(SEED)
+
+UKbirths_array = np.load("Data/UKbirths_array.npy")
+UKpop_array = np.load("Data/UKpop_array.npy")
+measles_distance_matrix_array = np.load("Data/measles_distance_matrix_array.npy")
+UKmeasles_array = np.load("Data/UKmeasles_array.npy")
+modelA_array = np.load("Data/Parameter/final_parameters_lookahead_A.npy")
+
+UKbirths = tf.convert_to_tensor(UKbirths_array, dtype = tf.float32)
+UKpop = tf.convert_to_tensor(UKpop_array, dtype = tf.float32)
+measles_distance_matrix = tf.convert_to_tensor(measles_distance_matrix_array,
+dtype = tf.float32)
+UKmeasles = tf.convert_to_tensor(UKmeasles_array, dtype = tf.float32)
+
+df = pd.read_csv("Data/londonbirth.csv")
+data_array = df.values
+UKbirths = tf.convert_to_tensor(data_array, dtype=tf.float32)
+
+df1 = pd.read_csv("Data/londonpop.csv")
+data_array1 = df1.values
+UKpop = tf.convert_to_tensor(data_array1, dtype=tf.float32)
+
+term   = tf.convert_to_tensor([6, 99, 115, 198, 252, 299, 308, 355, 366],
+dtype = tf.float32)
+school = tf.convert_to_tensor([0, 1, 0, 1, 0, 1, 0, 1, 0], dtype =
+tf.float32)
+
+n_cities = tf.constant(40, dtype = tf.int64)
+
+initial_pop = UKpop[:,0]
+
+T = UKmeasles.shape[1]
+intermediate_steps = 4
+h = tf.constant(14/tf.cast(intermediate_steps, dtype = tf.float32), dtype =
+tf.float32)
+is_school_term_array, is_start_school_year_array, times_total, times_obs =
+school_term_and_school_year(T, intermediate_steps, term, school)
+
+is_school_term_array = tf.convert_to_tensor(is_school_term_array, dtype =
+tf.float32)
+is_start_school_year_array = tf.convert_to_tensor(is_start_school_year_array,
+dtype = tf.float32)
+
+pi_0_1 = 0.02545
+pi_0_2 = 0.00422
+pi_0_3 = 0.000061
+pi_0 = tf.convert_to_tensor([[pi_0_1, pi_0_2, pi_0_3, 1 - pi_0_1 - pi_0_2 -
+pi_0_3]], dtype = tf.float32)*tf.ones((n_cities, 4), dtype = tf.float32)
+
+initial_pop = UKpop[:,0]
+
+beta_bar  = tf.convert_to_tensor( [[6.32]], dtype =
+tf.float32)*tf.ones((n_cities, 1), dtype = tf.float32)
+rho   = tf.convert_to_tensor([[0.142]], dtype =
+tf.float32)*tf.ones((n_cities, 1), dtype = tf.float32)
+gamma = tf.convert_to_tensor([[0.0473]], dtype =
+tf.float32)*tf.ones((n_cities, 1), dtype = tf.float32)
+
+g = tf.convert_to_tensor([[0]], dtype = tf.float32)*tf.ones((n_cities, 1),
+dtype = tf.float32)
+p = tf.constant(0.759, dtype = tf.float32)
+a = tf.constant(0.1476,   dtype = tf.float32)
+c = tf.constant(0.219,   dtype = tf.float32)
+
+Xi = tfp.distributions.Gamma(concentration = 0.318, rate = 0.318)
+Q  = tfp.distributions.TruncatedNormal( 0.7, 0.306, 0, 1)
+
+delta_year = tf.convert_to_tensor([[1/50]], dtype =
+tf.float32)*tf.ones((n_cities, 4), dtype = tf.float32)
+
+T_small = tf.constant(415, dtype = tf.float32)
+
+# Initialize result lists
+means = np.zeros((40, 25))
+variances = np.zeros((40, 25))
+medians = np.zeros((40, 25))
+
+# Perform 1000 simulations
+for i in range(25):
+    X_t, Y_t, Xi_t, Q_t = run(T_small, intermediate_steps, UKbirths, UKpop,
+    g, measles_distance_matrix,
+                              initial_pop, pi_0, beta_bar, p, a, is_school_term_array,
+                              is_start_school_year_array, h, rho, gamma, Xi, Q, c, n_cities, delta_year)
+                              
+                              
+
+    max_time = 415
+
+    # Calculate the log values for each city Y_t_log
+    for city in range(40):
+        Y_t_log = Y_t[1:(max_time + 1), city, 0]
+        # Calculate mean, variance, median
+        means[city, i] = np.mean(Y_t_log)
+        variances[city, i] = np.var(Y_t_log)
+        medians[city, i] = np.median(Y_t_log)
+
+# Initialize an empty list to store the results for each city
+all_results = []
+
+for city_index in range(40):
+    # Create a DataFrame for the current city
+    results_df_city = pd.DataFrame({
+        'Simulation': np.arange(25),
+        'Mean': means[city_index, :],
+        'Variance': variances[city_index, :],
+        'Median': medians[city_index, :]
+    })
+
+    # Add city column
+    results_df_city['City'] = city_index
+
+    # Add the current city’s results to the total list
+    all_results.append(results_df_city)
+
+# Combine results from all cities
+combined_results_df = pd.concat(all_results, ignore_index=True)
+
+# Save to a new CSV file
+combined_results_df.to_csv("/Users/mac/Desktop/PAL_measles/combined_simulation_results_for_1000_times.csv", index=False)
+```
+
+```{r wide_plot, fig.width=16, fig.height=4, out.width='100%'}
+combined_simulation_results_for_1000_times <-
+  read.csv("combined_simulation_results_for_1000_times.csv")
+
+t.test(results$mean,combined_simulation_results_for_1000_times$Mean)
+
+t.test(results$median,combined_simulation_results_for_1000_times$Median)
+
+t.test(results$variance,combined_simulation_results_for_1000_times$Variance)
+
+data <- data.frame(
+  value = c(results$median, combined_simulation_results_for_1000_times$Median),
+  group = rep(c("POMP", "WWR"), 
+              c(length(results$median), length(combined_simulation_results_for_1000_times$Median)))
+)
+
+p_median <- ggplot(
+  data.frame(
+    value = c(results$median, combined_simulation_results_for_1000_times$Median),
+    group = rep(c("POMP", "WWR"),
+                c(length(results$median),
+                  length(combined_simulation_results_for_1000_times$Median)))
+  ),
+  aes(x = value, fill = group)
+) +
+  geom_density(alpha = 0.5) +
+  labs(title = "Median Density", x = "Value", y = "Density") +
+  theme_minimal() +
+  scale_fill_manual(values = c("blue", "red"))
+
+p_mean <- ggplot(
+  data.frame(
+    value = c(results$mean, combined_simulation_results_for_1000_times$Mean),
+    group = rep(c("POMP", "WWR"),
+                c(length(results$mean),
+                  length(combined_simulation_results_for_1000_times$Mean)))
+  ),
+  aes(x = value, fill = group)
+) +
+  geom_density(alpha = 0.5) +
+  labs(title = "Mean Density", x = "Value", y = "Density") +
+  theme_minimal() +
+  scale_fill_manual(values = c("blue", "red"))
+
+p_variance <- ggplot(
+  data.frame(
+    value = c(results$variance, combined_simulation_results_for_1000_times$Variance),
+    group = rep(c("POMP", "WWR"),
+                c(length(results$variance),
+                  length(combined_simulation_results_for_1000_times$Variance)))
+  ),
+  aes(x = value, fill = group)
+) +
+  geom_density(alpha = 0.5) +
+  labs(title = "Variance Density", x = "Value", y = "Density") +
+  theme_minimal() +
+  scale_fill_manual(values = c("blue", "red"))
+
+
+library(cowplot)
+
+plot_grid(
+  p_median, p_mean, p_variance,
+  labels = c("A", "B", "C"),  
+  ncol   = 3,                
+  align  = "h"               
+)
+```
+
+
+# $f_{proc}$ = discrete, $f_{meas}$ = gaussian
+
+```{r}
+basic_params <- c(
+  alpha       = 1,
+  iota        = 0,
+  betabar     = 7.32,
+  c           = 0.219,
+  a           = 0.1476,
+  rho         = 0.142,
+  gamma       = 0.0473,
+  delta       = 0.02/(26*4),  # timescale transform
+  sigma_xi    = 0.318,
+  gaussianrho = 0.7,
+  psi         = 0.306,
+  g           = 0,
+  S_0         = 0.02545,
+  E_0         = 0.00422,
+  I_0         = 0.000061
+)
+
+rproc <- Csnippet("
+  double t_mod = fmod(t, 364.0);
+  double br1;
+  double beta1, seas1;
+  double foi1;
+  double xi1;
+  double betafinal1;
+  static double betafinal1_prev = 0.0;
+
+  int trans_S1[2], trans_E1[2], trans_I1[2];
+  double prob_S1[2], prob_E1[2], prob_I1[2];
+
+  if ((t_mod >= 6 && t_mod < 99) ||
+      (t_mod >= 115 && t_mod < 198) ||
+      (t_mod >= 252 && t_mod < 299) ||
+      (t_mod >= 308 && t_mod < 355)) {
+    seas1 = 1.0 + a * 2 * (1 - 0.759);
+  } else {
+    seas1 = 1.0 - 2 * a * 0.759;
+  }
+
+  beta1 = betabar * seas1;
+  
+  if (fabs(t_mod - 248.5) < 0.5) {
+    br1 = c * lag_birthrate1;
+  } else {
+    br1 = (1.0 - c) * lag_birthrate1 / 103.0;
+  }
+
+  double I_ratio1 = I1 / pop1;  
+  
+  foi1 = pow((I1 + iota) / pop1, alpha);
+
+  stepCount += 1.0; 
+
+  if (fabs(fmod(stepCount, 4.0)) < 1e-8) {
+    xi_current = rgamma(sigma_xi, 1 / sigma_xi);  
+    betafinal1 = beta1 * I_ratio1 * xi_current; 
+  } else {
+    betafinal1 = betafinal1_prev;
+  }
+
+  betafinal1_prev = betafinal1;
+
+  int SD1 = rbinom(S1, delta);
+  int ED1 = rbinom(E1, delta);
+  int ID1 = rbinom(I1, delta);
+  int RD1 = rbinom(R1, delta);
+
+  S1 -= SD1;
+  E1 -= ED1;
+  I1 -= ID1;
+  R1 -= RD1;
+
+  prob_S1[0] = exp(-dt * betafinal1);
+  prob_S1[1] = 1 - exp(-dt * betafinal1);
+
+  prob_E1[0] = exp(-dt * rho);
+  prob_E1[1] = 1 - exp(-dt * rho);
+
+  prob_I1[0] = exp(-dt * gamma);
+  prob_I1[1] = 1 - exp(-dt * gamma);
+
+  rmultinom(S1, prob_S1, 2, trans_S1);
+  rmultinom(E1, prob_E1, 2, trans_E1);
+  rmultinom(I1, prob_I1, 2, trans_I1);
+
+  S1 = trans_S1[0] + rpois(br1);
+  E1 = trans_E1[0] + trans_S1[1];
+  I1 = trans_I1[0] + trans_E1[1];
+  R1 += trans_I1[1];
+  C1 += trans_I1[1];
+");
+
+
+
+
+## ----dmeasure-------------------------------------------------
+dmeas <- Csnippet("
+  double m = gaussianrho*C1;
+  double v = m*(1.0-gaussianrho+psi*psi*m);
+  double tol = 0.0;
+  if (cases1 > 0.0) {
+    lik = pnorm(cases1+0.5,m,sqrt(v)+tol,1,0)
+           - pnorm(cases1-0.5,m,sqrt(v)+tol,1,0) + tol;
+  } else {
+    lik = pnorm(cases1+0.5,m,sqrt(v)+tol,1,0) + tol;
+  }
+  if (give_log) lik = log(lik);
+")
+
+## ----rmeasure-------------------------------------------------
+rmeas <- Csnippet("
+  double m = gaussianrho*C1;
+  double v = m*(1.0-gaussianrho+psi*psi*m);
+  double tol = 0.0;
+  cases1 = rnorm(m,sqrt(v)+tol);
+  if (cases1 > 0.0) {
+    cases1 = nearbyint(cases1);
+  } else {
+    cases1 = 0.0;
+  }
+")
+
+rinit <- Csnippet("
+  double probs1[4];
+  probs1[0] = S_0;
+  probs1[1] = E_0;
+  probs1[2] = I_0;
+  probs1[3] = 1.0 - probs1[0] - probs1[1] - probs1[2];
+
+  int counts1[4];
+  rmultinom(pop1, probs1, 4, counts1);
+
+  S1 = counts1[0];
+  E1 = counts1[1];
+  I1 = counts1[2];
+  R1 = counts1[3];
+  C1 = 0;
+  xi_current = 1;
+  stepCount = 0;
+");
+
+basic_log_names   <- c("rho", "gamma", "sigma_xi", "betabar", "g", "iota", "delta")
+basic_logit_names <- c("a", "alpha", "c", "gaussianrho", "S_0", "E_0", "I_0", "psi")
+log_names   <- basic_log_names
+logit_names <- basic_logit_names
+measles_partrans <- parameter_trans(
+  log   = log_names,
+  logit = logit_names
+)
+
+one_city_pomp <- pomp(
+  data       = measles_cases,
+  times      = "time",
+  t0         = 0,
+  rprocess   = discrete_time(rproc, delta.t = 3.5), 
+  rinit      = rinit,
+  dmeasure   = dmeas,
+  rmeasure   = rmeas,
+  statenames = c("S1","E1","I1","R1","C1","xi_current","stepCount"),
+  paramnames = c("alpha","iota","betabar","c","a","rho","gamma",
+                 "delta","sigma_xi","g","gaussianrho","psi",
+                 "S_0","E_0","I_0"),
+  covar      = covariate_table(measles_covar,times = "time"),
+  covarnames = c("lag_birthrate1","pop1"),
+  accumvars  = c("C1")
+)
+
+coef(one_city_pomp) <- basic_params
+
+sim <- simulate(one_city_pomp, params =  basic_params, seed   = 154234)
+
+plot(sim)
+```
+
+# Compute the loglik
+
+```{r}
+tmp <- pfilter(sim,Np = 10000)
+tmp@loglik
+tmp@cond.logLik
+```
+
