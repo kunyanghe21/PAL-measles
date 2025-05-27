@@ -17,13 +17,13 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] network_1.19.0    igraph_2.1.4      Matrix_1.7-3      MASS_7.3-65      
- [5] mice_3.17.0       mvtnorm_1.3-3     doFuture_1.0.2    future_1.40.0    
- [9] doParallel_1.0.17 iterators_1.0.14  doRNG_1.8.6.2     rngtools_1.5.2   
-[13] foreach_1.5.2     knitr_1.50        lubridate_1.9.4   forcats_1.0.0    
-[17] stringr_1.5.1     dplyr_1.1.4       purrr_1.0.4       readr_2.1.5      
-[21] tidyr_1.3.1       tibble_3.2.1      tidyverse_2.0.0   ggplot2_3.5.2    
-[25] spatPomp_1.0.1    pomp_6.2         
+ [1] cowplot_1.1.3     network_1.19.0    igraph_2.1.4      Matrix_1.7-3     
+ [5] MASS_7.3-65       mice_3.17.0       mvtnorm_1.3-3     doFuture_1.0.2   
+ [9] future_1.40.0     doParallel_1.0.17 iterators_1.0.14  doRNG_1.8.6.2    
+[13] rngtools_1.5.2    foreach_1.5.2     knitr_1.50        lubridate_1.9.4  
+[17] forcats_1.0.0     stringr_1.5.1     dplyr_1.1.4       purrr_1.0.4      
+[21] readr_2.1.5       tidyr_1.3.1       tibble_3.2.1      tidyverse_2.0.0  
+[25] ggplot2_3.5.2     spatPomp_1.0.1    pomp_6.2         
 
 loaded via a namespace (and not attached):
  [1] tidyselect_1.2.1      farver_2.1.2          fastmap_1.2.0        

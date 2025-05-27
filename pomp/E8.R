@@ -297,7 +297,7 @@ m9 <- spatPomp(
   t0              = min(measles_cases$days) - 14,
   unit_statenames = unit_statenames,
   covar           = measles_covar,
-  rprocess        = discrete_time(measles_rprocess, delta.t = 3.5),
+  rprocess        = euler(measles_rprocess, delta.t = 3.5),
   unit_accumvars  = c("C"),
   paramnames      = measles_paramnames,
   globals         = measles_globals,
@@ -331,7 +331,7 @@ tmp@loglik
 spatPomp_dir <- paste0("E_",8,"/")
 if(!dir.exists(spatPomp_dir)) dir.create(spatPomp_dir)
 
-stew(file=paste0(spatPomp_dir,"E8.rda"),seed=123,{
+stew(file=paste0(spatPomp_dir,"E8.rda"),seed=124,{
   cat(capture.output(sessionInfo()),
       file=paste0(spatPomp_dir,"sessionInfo.txt"),sep="\n")
   
