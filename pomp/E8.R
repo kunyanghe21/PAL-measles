@@ -336,7 +336,7 @@ stew(file=paste0(spatPomp_dir,"E8.rda"),seed=124,{
       file=paste0(spatPomp_dir,"sessionInfo.txt"),sep="\n")
   
   bpf_logLik_40 <- foreach(i = 1:20, .combine = c) %dopar% {
-    logLik(bpfilter(sim, Np = 5000, block_size = 1))
+    logLik(bpfilter(sim, Np = 100000, block_size = 1))
   }
 })
 
