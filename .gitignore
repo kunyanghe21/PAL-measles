@@ -1,0 +1,42 @@
+# No need to save level 0 results
+*_0
+
+# For python users
+__pycache__
+
+# For jupyter users
+.ipynb_checkpoints/
+.jupyter/
+
+# For quarto users
+# *_files # these are needed for the html if we choose not
+# use format: html: embed-resources: true
+*_quarto_ipynb
+
+# For emacs users
+*~
+
+# For R users
+*.RData
+*.Renviron
+*.Rout
+*.Rhistory
+
+# For Latex users
+*.bbl
+*.log
+*.aux
+*.toc
+*.blg
+
+# For Mac users
+.DS_Store
+
+# To avoid temporary files
+bak
+tmp
+tmp*
+
+
+
+
