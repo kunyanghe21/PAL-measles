@@ -2264,9 +2264,12 @@ $E_9$ & $`r sprintf('%.2f', E9_lambda)`$ &
         $`r sprintf('%.2f', E9_sigma)`$ &&\\
 $E_{10}$ & $`r sprintf('%.2f', E10_lambda)`$ &
         $`r sprintf('%.2f', E10_sigma)`$  && \\
+$E_{11}$ & & &\\
+$E_{12}$ & & &\\
+$E_{13}$ & & &\\
 \bottomrule
 \end{tabular}
-\caption{Log‐likelihood estimates ($\lambda_k$) and their standard errors ($\sigma_k$). ARMA gives the log-likelihood for an autoregressive moving average benchmark, and NegBinom is an autoregressive negative binomial benchmark.}
+\caption{Log‐likelihood estimate, $\lambda$, and its standard error, $\sigma$, for each experiment described in Table\ \ref{tbl:treatments}. ARMA gives the log-likelihood for an autoregressive moving average benchmark, and NegBinom is an autoregressive negative binomial benchmark.}
 \label{tbl:method_comparison}
 \end{table}
 
@@ -2279,9 +2282,9 @@ On this relatively easy task, $\PALV$ produces stable estimates.
 Since $\PALV$ is filtering using a model that differs slightly from the data generating model, we expect to see a small shortfall, with $lambad_2<\lambda_1$ and  $lambad_3<\lambda_1$.
 The difference, $\lambda_2-\lambda_3$, is statistically indistinguishable from zero in this experiment.
 
-$E_4$ and $E_5$ demonstrate the positive bias of \PALL both at a usual number of particles and for an intensive calculation that may not be possible on larger problems.
+$E_4$ and $E_5$ demonstrate the positive bias of $\PALL$ both at a usual number of particles and for an intensive calculation that may not be possible on larger problems.
 The best estimates of this bias are $\lambda_4-\lambda_3$ and $\lambda_5-\lambda_3$, since $\PALL$ and $\PALV$ target the same quantity.
-The smaller number of particles leads for $E_4$ leads to a higher log-likelihood estimate and a lower Monte Carlo error estimate, both of which are suggestive of a long left tail to the Monte Carlo likelihood estimate leading to estimators that behave as though the variance is infinite.
+The smaller number of particles leads for $E_4$ leads to a higher log-likelihood estimate and a lower Monte Carlo error estimate, both of which suggest a long left tail to the Monte Carlo likelihood estimate, leading to estimators that behave as though the variance is infinite.
 
 
 Experiments $E_6$ and $E_7$ introduce the actual data. Comparing the resulting log-likelihoods with the benchmark values, we see \eic{TO DO. I EXPECT TO SEE TYPICAL VALUES FOR HOW THE METHODS COMPARE TO THE BENCHMARKS ON REAL AND SIMULATED DATA, FOR ONE UNIT}
