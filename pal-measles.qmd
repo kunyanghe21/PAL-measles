@@ -24,22 +24,14 @@ format:
           \newcommand\smeas{s_{\mathrm{meas}}}
 
           \newcommand\fprocDiscrete{\mathrm{discrete}}
-          % \newcommand\fprocDiscrete{$f_D$}
           \newcommand\fprocEuler{\mathrm{Euler}}
-          % \newcommand\fprocEuler{$f_E$}
           \newcommand\fmeasBinomial{\mathrm{binomial}}
-          % \newcommand\fmeasBinomial{$f_B$}
           \newcommand\fmeasGaussian{\mathrm{Gaussian}}
-          % \newcommand\fmeasGaussian{$f_G$}
 
           \newcommand\sprocDiscrete{\mathrm{discrete}}
-          % \newcommand\sprocDiscrete{$s_D$}
           \newcommand\sprocEuler{\mathrm{Euler}}
-          % \newcommand\sprocEuler{$s_E$}
           \newcommand\smeasBinomial{\mathrm{binomial}}
-          % \newcommand\smeasBinomial{$s_B$}
           \newcommand\smeasGaussian{\mathrm{Gaussian}}
-          % \newcommand\smeasGaussian{$s_G$}
 
           \newcommand{\PALL}{\ensuremath{\mathrm{PAL}_L}}
           \newcommand{\PALV}{\ensuremath{\mathrm{PAL}_V}}
@@ -2269,7 +2261,7 @@ $E_{12}$ & & &\\
 $E_{13}$ & & &\\
 \bottomrule
 \end{tabular}
-\caption{Log‐likelihood estimate, $\lambda$, and its standard error, $\sigma$, for each experiment described in Table\ \ref{tbl:treatments}. ARMA gives the log-likelihood for an autoregressive moving average benchmark, and NegBinom is an autoregressive negative binomial benchmark.}
+\caption{Log‐likelihood estimate, $\lambda$, and its standard error, $\sigma$, for each experiment described in Table\ 2. ARMA gives the log-likelihood for an autoregressive moving average benchmark, and NegBinom is an autoregressive negative binomial benchmark.}
 \label{tbl:method_comparison}
 \end{table}
 
