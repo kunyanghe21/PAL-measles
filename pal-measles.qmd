@@ -2261,7 +2261,10 @@ $E_{12}$ & & &\\
 $E_{13}$ & & &\\
 \bottomrule
 \end{tabular}
-\caption{Log‐likelihood estimate, $\lambda$, and its standard error, $\sigma$, for each experiment described in Table\ 2. ARMA gives the log-likelihood for an autoregressive moving average benchmark, and NegBinom is an autoregressive negative binomial benchmark.}
+\caption{Log‐likelihood estimate, $\lambda$,  for each experiment described in Table\ 2.
+Estimates derive from averaging \eic{???????} replications on a natural scale so that the basic particle filter estimate is unbiased.
+The standard error, $\sigma$, is a jack-knife estimate implemented via the logmeanexp function in the pomp R package.
+ARMA gives the log-likelihood for an autoregressive moving average benchmark, and NegBinom is an autoregressive negative binomial benchmark.}
 \label{tbl:method_comparison}
 \end{table}
 
@@ -2284,7 +2287,7 @@ Experiments $E_6$ and $E_7$ introduce the actual data. Comparing the resulting l
 Experiments $E_8$, and subsequent, investigate a 40 unit system.
 For $E_8$, $E_9$ and $E_{10}$, we simulated from a model with the coupling parameter between towns set to zero.
 That was done to study a situation where a block particle filter gives an asymptotically exact answer.
-We see the same story as the single-unit case, where the positive bias of {\PALL} is estimated by $(\lambda_{10}-\lambda_{9})/40=$ `r sprintf('%.2f', (E10_lambda-E9_lambda)/40)` per unit.
+We see the same story as the single-unit case, where the positive bias of  $\PALL$ is estimated by $(\lambda_{10}-\lambda_{9})/40=$ `r sprintf('%.2f', (E10_lambda-E9_lambda)/40)` per unit.
 This bias is large enough that we obtain $\lambda_{10}>\lambda_8$, with the difference being  $(\lambda_{10}-\lambda_{8})/40=$ `r sprintf('%.2f', (E10_lambda-E8_lambda)/40)` per unit.
 We see that the $U=40$ results scale approximately linearly compared to $U=1$.
 
