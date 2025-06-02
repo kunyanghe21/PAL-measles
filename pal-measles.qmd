@@ -11,12 +11,11 @@ abstract: |
 format:
   pdf:
     cite-method: natbib
+    biblio-style: apalike
     include-in-header:
       - text: |
           \usepackage{graphicx} % Required for inserting images
           \usepackage{fullpage}
-          \usepackage{natbib}
-          \bibliographystyle{apalike}
 
           \newcommand\loglik{\lambda}
           \newcommand\fproc{f_{\mathrm{proc}}}
@@ -52,7 +51,7 @@ format:
     pdf-engine: pdflatex
     geometry: "margin=1in"
     number-sections: true
-bibliography: references.bib
+bibliography: bib-pal-measles.bib
 ---
 
 ```{r Setup, include=FALSE}
@@ -66,13 +65,28 @@ pomp_dir="pomp/"
 \section{Introduction}
 \label{sec:intro}
 
-Investigations of the metapopulation dynamics of measles (i.e., studying how measles infection moves within and between collections of spatially distinct populations) have motivated various methodological innovations for inference on high-dimensional partially observed stochastic processes [REFS]. The analysis by \citet{whitehouse23} (henceforth, WWR) provides a new approach to model-based inference on population dynamics via the Poisson approximate likelihood (PAL) filtering algorithm.
+Investigations of the metapopulation dynamics of measles (i.e., studying how measles infection moves within and between collections of spatially distinct populations) have motivated various methodological innovations for inference on high-dimensional partially observed stochastic processes \citep{xia04,park20,ionides23-jasa}. The analysis by \citet{whitehouse23} (henceforth, WWR) provides a new approach to model-based inference on population dynamics via the Poisson approximate likelihood (PAL) filtering algorithm.
 WWR claimed impressive results on both a low-dimensional rotavirus transmission model and a high-dimensional measles model.
 On close inspection, the rotavirus results turned out to be overstated \citep{hao24-arxiv} leading to a published correction \citep{whitehouse25-correction}.
-However, the measles results remained unchallenged, and our present goal is to revisit that evidence.
-In Section\ \ref{sec:numerics} we show by direct numerical experimentation that the WWR implementation of PAL has substantial positive bias in the log-likelihood estimate, and so the use of log-likelihood to support the use of the method is flawed. While doing this, we show that a widely applicable block particle filter (BPF) is adequate on this problem. In Section\ \ref{sec:theory} we explain theoretically how the positive bias for PAL arises as a result of the lookahead mechanism included in the implementation of PAL for this model. The lookahead mechanism was not used by WWR for the rotavirus analysis since its purpose was to address numerical issues involved in high-dimensional filtering. Section\ \ref{sec:conclusion} is a concluding discussion.
+However, the spatiotemporal measles results were unaffected by that correction, and our present goal is to revisit this evidence.
 
-For our current purposes, we do not have to delve into the details of the measles data and model, so we simply provide an overview. The data are measles case counts aggregated over 2-week intervals for 40 of the largest towns in England and Wales, from 1949 to 1964. The data and the model are derived from \citet{park20} which builds on a long tradition of models described therein. Recently, weekly data for more towns have become publicly available [REF], but we limit ourselves to the data used by WWR. The latent process model describes an integer count of infected, susceptible and recovered individuals in each town. The rate of disease transmission within cities follows widely used epidemiological equations. Transmission between cities follows a power law with the distance between the towns, known as a gravity model. Overdispersion for the latent dynamics is achieved by placing multiplicative gamma white noise on the transmission rate. The measurement model is a discretized Gaussian approximation to an overdispersed binomial \citep{park20} or Gaussian noise on a binomial rate (WWR). \citet{park20} used a particle filter known as a guided intermediate resampling filter (GIRF). Recently, BPF has been shown to have good performance on this class of models \cite{ionides23-jasa,ionides24-sinica,ning23}. Therefore, we compare PAL with BPF.
+In Section\ \ref{sec:numerics} we show by direct numerical experimentation that the WWR implementation of PAL has substantial positive bias in the log-likelihood estimate, and so the use of log-likelihood to support the use of the method is flawed.
+While doing this, we show that a widely applicable block particle filter (BPF) is adequate on this problem.
+In Section\ \ref{sec:theory} we explain theoretically how the positive bias for PAL arises as a result of the lookahead mechanism included in the implementation of PAL for this model.
+The lookahead mechanism was not used by WWR for the rotavirus analysis since its purpose was to address numerical issues involved in high-dimensional filtering. Section\ \ref{sec:conclusion} is a concluding discussion.
+
+For our current purposes, we do not have to delve into the details of the measles data and model, so we simply provide an overview.
+The data are measles case counts aggregated over 2-week intervals for forty of the largest towns in England and Wales, from 1949 to 1964.
+The data and the model are derived from \citet{park20} which builds on a long tradition of models described therein.
+Recently, weekly data for more towns have become publicly available \citep{korevaar20}, but we limit ourselves to the data used by WWR.
+The latent process model describes an integer count of infected, susceptible and recovered individuals in each town.
+The rate of disease transmission within cities follows widely used epidemiological equations.
+Transmission between pairs of cities follows a power law, diminishing with distance between the cities.
+This is known as a gravity model.
+Overdispersion for the latent dynamics is achieved by placing multiplicative gamma white noise on the transmission rate.
+The measurement model is a discretized Gaussian approximation to an overdispersed binomial \citep{park20} or Gaussian noise on a binomial rate (WWR).
+\citet{park20} used a particle filter known as a guided intermediate resampling filter (GIRF).
+Recently, BPF has been shown to have good performance on this class of models \citep{ionides23-jasa,ionides24-sinica,ning23}. Therefore, we compare PAL with BPF.
 
 \section{Numerical experiments for PAL and BPF}
 \label{sec:numerics}
@@ -86,14 +100,28 @@ Here, we focus on developing experiments aimed at establishing two specific hypo
 \item[Q2] The bias scales with the number of spatial units.
 \end{enumerate}
 We consider probabilistic filtering algorithms that are defined in the context of a model, its model parameters, and additional algorithmic parameters. 
-Additionally, we require data which can either be the real historical measles data or can be simulated from another model that may or may not be the same model with the same parameters as used for the filter. We also have a choice of how many spatial units to include, these being UK towns in the measles example. The experimental variables, and the list of values we consider for them, are summarized in Table~\ref{tab:description} and further described below.
+Additionally, we require data which can either be the real historical measles data or can be simulated from another model that may or may not be the same model with the same parameters as used for the filter. We also have a choice of how many spatial units to include, these being UK towns in the measles example. The experimental variables, and the list of values we consider for them, are summarized in Table\ \ref{tbl:description} and further described below.
 
-A critical part of our reasoning is that a probabilistic forecasting filter (i.e., one that solves the one-step prediction problem without looking ahead to future data) cannot, on average, obtain higher log-likelihood than the exact prediction distribution, when the data are generated by the exact model. This is a restatement of the well-known fact that log-likelihood is a proper scoring rule \citep{gneiting07}. To apply this property, we must work with simulated data so that the true generating model is known. In high dimensions, it is generally not possible to calculate the exact prediction distribution with a small known bound on the error. That is the reason why algorithms such as (\PALL) are being invented. There are two special situations where we can establish the true log-likelihood for the spatiotemporal measles models of interest: (i) when the number of spatial units is very small; (ii) when there is no spatial coupling, so it is enough to solve the filtering problem exactly for a single unit. In both these cases, a basic particle filter provides the desired, essentially exact, log-likelihood estimate. The basic particle filter is consistent and unbiased for the likelihood \citep{delmoral04} and so, when its estimates have low empirical variance, it provides the required ground truth. In practice, order $10^5$ particles give a highly accurate log-likelihood for one unit, but the strong sensitivity of the particle filter to the curse of dimensionality \citep{bengtsson08} means that quantifiably exact estimates rapidly become unfeasible.
-Therefore, we consider two choices of size for the system, $U=1$ and $U=40$, with the latter being the size of the system tested by WWR. To allow for the study of systems without coupling, we consider two model variations, $C_1$ and $C_2$, where $C_1$ is the original model with gravity coupling used by WWR, and $C_2$ is a modification where direct movement of infection between cities is replaced by a constant background rate of importation of infection.
+A critical part of our reasoning is that a probabilistic forecasting filter (i.e., one that solves the one-step prediction problem without looking ahead to future data) cannot, on average, obtain higher log-likelihood than the exact prediction distribution, when the data are generated by the exact model.
+This is a restatement of the well-known fact that log-likelihood is a proper scoring rule \citep{gneiting07}.
+To apply this property, we must work with simulated data so that the true generating model is known.
+In high dimensions, it is generally not possible to calculate the exact prediction distribution with a small known bound on the error.
+That is the reason why algorithms such as $\PALL$ are being invented.
+There are two special situations where we can establish the true log-likelihood for the spatiotemporal measles models of interest: (i) when the number of spatial units is very small; (ii) when there is no spatial coupling, so it is enough to solve the filtering problem exactly for a single unit.
+In both these cases, a basic particle filter provides the desired, essentially exact, log-likelihood estimate.
+The basic particle filter is consistent and unbiased for the likelihood \citep{delmoral04} and so, when its estimates have low empirical variance, it provides the required ground truth.
+In practice, order $10^5$ particles give a highly accurate log-likelihood for one unit, but the strong sensitivity of the particle filter to the curse of dimensionality \citep{bengtsson08} means that quantifiably exact estimates rapidly become unfeasible.
+Therefore, we consider two choices of size for the system, $U=1$ and $U=40$, with the latter being the size of the system tested by WWR.
+To allow for the study of systems without coupling, we consider two model variations, $C_1$ and $C_2$, where $C_1$ is the original model with gravity coupling used by WWR, and $C_2$ is a modification where direct movement of infection between cities is replaced by a constant background rate of importation of infection.
 
-Evidently, the basic particle filter is not a powerful tool for general spatiotemporal systems, and so alternative approaches are needed. The filtering and prediction problems are useful for situations where we no not have to make a forecast, and so the filter's prediction distribution for the $n$th observation, at time $t_n$, can be designed taking advantage of data ccurring at, or subsequent to, time $t_n$. This can allow the construction of numerically efficient algorithms, and that is the goal of the lookahead filter, \PALL. There is no mathematical theorem prohibiting a lookahead filter estimating a higher likelihood than the truth, and in an extreme case the lookahead filter could just assert a one-step prediction distribution with all its mass on the actual data. Lookahead filters therefore need careful theoretical guarantees if we want to use a high likelihood estimate as evidence for both the success of the filter and (when doing data analysis) evidence supporting the model used to construct the filter. We will investigate the theory behind {\PALL} later, in Section~???, but for now we just need to note the potential hazard.
+Evidently, the basic particle filter is not a powerful tool for general spatiotemporal systems, and so alternative approaches are needed.
+The filtering and prediction problems are useful for situations where we no not have to make a forecast, and so the filter's prediction distribution for the $n$th observation, at time $t_n$, can be designed taking advantage of data ccurring at, or subsequent to, time $t_n$.
+This can allow the construction of numerically efficient algorithms, and that is the goal of the lookahead filter, $\PALL$.
+There is no mathematical theorem prohibiting a lookahead filter estimating a higher likelihood than the truth, and in an extreme case the lookahead filter could just assert a one-step prediction distribution with all its mass on the actual data.
+Lookahead filters therefore need careful theoretical guarantees if we want to use a high likelihood estimate as evidence for both the success of the filter and (when doing data analysis) evidence supporting the model used to construct the filter.
+We will investigate the theory behind $\PALL$ later, in Section\ \ref{sec:theory}, but for now we just need to note the potential hazard.
 
-\begin{table}\label{tab:description}
+\begin{table}
 \begin{tabular}{lllll}
 Variable & Description & Value 1 & Value 2 & Value 3
 \\
@@ -123,6 +151,7 @@ $s_{\theta}$ & parameter for simulation & $\hat\theta^*_{BPF}$ & $\hat\theta_{PA
 \hline
 \end{tabular}
 \caption{Variables for the numerical experiments and their set of values.}
+\label{tbl:description}
 \end{table}
 
 \begin{itemize}
@@ -169,9 +198,12 @@ The exact value of $s_\theta$ is not critical to the argument, but we use a valu
 
 \end{itemize}
 
-We consider two software platforms for the experiments: all {\PALL} and {\PALV} calculations are carried out using the code provided by WWR, and all BPF calculations are carried out using the pomp \citep{king16} and spatPomp R packages.
+We consider two software platforms for the experiments: all $\PALL$ and $\PALV$ calculations were carried out using the code provided by WWR, and all BPF calculations were carried out using the spatPomp R package.
+Simulations were carried out using spatPomp, since our reasoning depends critically on the particle filter calculations being carried out with the data drawn from the model assumed by the filter.
+We present results for a single simulation for the experimental treatments with simulated data.
+That simplifies the experimental design and permits the computional effort to focus on a few direct comparisons between the methods on a small number of simulated datasets.
 
-\begin{table}\label{tab:treatments}
+\begin{table}\label{tbl:treatments}
 \centering
 \begin{tabular}{llllllllllll}
 E & F & J & U & 
@@ -245,11 +277,11 @@ $E_{13}$ &  \PALL & $J_1$ & $U_1$ &
 %\\
 \hline
  \end{tabular}
- \caption{Combinations of variable values used for each experiment, $E_k$, $k=1\dots 13$. The simulation settings, $s_C$, $\sproc$, $\smeas$ and $s_\theta$, are applicable only when we filter simulated data rather than real data. \textit{NOTE: THIS TABLE IS PRELIMINARY. IT NEEDS CAREFUL PROOF READING. POSSIBLE COPY-PASTE MISTAKES!}}
+ \caption{Combinations of variable values used for each experiment, $E_k$, $k=1\dots 13$. The simulation settings, $s_C$, $\sproc$, $\smeas$ and $s_\theta$, are applicable only when we filter simulated data rather than real data.}
 \end{table}
 
 Experiment $E_k$ has two primary outcomes, a log-likelihood estimate, $\loglik_k$, and its standard error, $\sigma_k$. 
-These results are tabulated in Table~\eic{TODO}, together with log-ARMA and autoregressive negative binomial benchmarks.
+These results are tabulated in Table\ \ref{tbl:method_comparison}, together with log-ARMA and autoregressive negative binomial benchmarks \eic{BENCHMARKS STILL NEEDED - PROBABLY IN TABLE \ref{tbl:method_comparison}.}
 
 
 ```{r E1,include=FALSE}
@@ -2210,46 +2242,56 @@ E10_lambda<- E10_result[1];     E10_sigma<- E10_result[2]
 
 \begin{table}[ht]
 \centering
-\begin{tabular}{lcccccccc}
+\begin{tabular}{lrrrr}
 \toprule
-\textbf{$E$} & $E_1$ & $E_2$ & $E_3$ & $E_4$ & $E_5$ & $E_8$ & $E_9$ & $E_{10}$ \\
+\textbf{$E$} & $\lambda$ & $\sigma$ & ARMA & NegBinom \\
 \midrule
-$\lambda_k$ &
-$`r sprintf('%.2f', E1_lambda)`$ &
-$`r sprintf('%.2f', E2_lambda)`$ &
-$`r sprintf('%.2f', E3_lambda)`$ &
-$`r sprintf('%.2f', E4_lambda)`$ &
-$`r sprintf('%.2f', E5_lambda)`$ &
-$`r sprintf('%.2f', E8_lambda)`$ &
-$`r sprintf('%.2f', E9_lambda)`$ &
-$`r sprintf('%.2f', E10_lambda)`$ \\
-$\sigma_k$  &
-$`r sprintf('%.2f', E1_sigma)`$ &
-$`r sprintf('%.2f', E2_sigma)`$ &
-$`r sprintf('%.2f', E3_sigma)`$ &
-$`r sprintf('%.2f', E4_sigma)`$ &
-$`r sprintf('%.2f', E5_sigma)`$ &
-$`r sprintf('%.2f', E8_sigma)`$ &
-$`r sprintf('%.2f', E9_sigma)`$ &
-$`r sprintf('%.2f', E10_sigma)`$ \\
+$E_1$ & $`r sprintf('%.2f', E1_lambda)`$ &  
+        $`r sprintf('%.2f', E1_sigma)`$ & &\\
+$E_2$ & $`r sprintf('%.2f', E2_lambda)`$ &  
+        $`r sprintf('%.2f', E2_sigma)`$ &  &\\
+$E_3$ & $`r sprintf('%.2f', E3_lambda)`$ &  
+        $`r sprintf('%.2f', E3_sigma)`$ &  &\\
+$E_4$ & $`r sprintf('%.2f', E4_lambda)`$ &
+        $`r sprintf('%.2f', E4_sigma)`$ &  &\\
+$E_5$ & $`r sprintf('%.2f', E5_lambda)`$ &
+        $`r sprintf('%.2f', E5_sigma)`$ &  &\\
+$E_6$ & & &\\
+$E_7$ & & &\\
+$E_8$ & $`r sprintf('%.2f', E8_lambda)`$ &
+        $`r sprintf('%.2f', E8_sigma)`$ &&\\
+$E_9$ & $`r sprintf('%.2f', E9_lambda)`$ &
+        $`r sprintf('%.2f', E9_sigma)`$ &&\\
+$E_{10}$ & $`r sprintf('%.2f', E10_lambda)`$ &
+        $`r sprintf('%.2f', E10_sigma)`$  && \\
 \bottomrule
 \end{tabular}
-\caption{Log‐likelihood estimates ($\lambda_k$) and their standard errors ($\sigma_k$)}
-\label{tab:method_comparison}
+\caption{Log‐likelihood estimates ($\lambda_k$) and their standard errors ($\sigma_k$). ARMA gives the log-likelihood for an autoregressive moving average benchmark, and NegBinom is an autoregressive negative binomial benchmark.}
+\label{tbl:method_comparison}
 \end{table}
 
 
 
 Here, experiments $E_1$--$E_5$ address Q1 directly, using simulated data on a single unit. 
-$E_1$ provides a ground truth for a particular model.
-$E_4$ and $E_5$ demonstrate positive bias from {\PALL} both at a usual number of particles and for an intensive calculation (which may not be possible on larger problems).
-This calculation imposes a negative bias on both PAL algorithms because the true model differs from the model underlying PAL. 
-$E_2$ and $E_3$ are non-forward-looking algorithms which provide an estimate of the PAL likelihood; $E_4$ and $E_5$ are theoretically consistently estimating the same quantity as $E_2$ and $E_3$ but hopefully with reduced variance. 
-Thus, the comparison between $E_2$ and $E_4$ is our best estimate of the positive bias of {\PALV}, when conducted with a moderate number of particles, in this case.
+$E_1$ provides a ground truth for this particular particular model, a single-city SIR model.
+Comparing $\lambda_2$ and $\lambda_3$ with $\lambda_1$, we see that vanilla PAL, without the lookahead, performs as expected.
+On this relatively easy task, $\PALV$ produces stable estimates.
+Since $\PALV$ is filtering using a model that differs slightly from the data generating model, we expect to see a small shortfall, with $lambad_2<\lambda_1$ and  $lambad_3<\lambda_1$.
+The difference, $\lambda_2-\lambda_3$, is statistically indistinguishable from zero in this experiment.
+
+$E_4$ and $E_5$ demonstrate the positive bias of \PALL both at a usual number of particles and for an intensive calculation that may not be possible on larger problems.
+The best estimates of this bias are $\lambda_4-\lambda_3$ and $\lambda_5-\lambda_3$, since $\PALL$ and $\PALV$ target the same quantity.
+The smaller number of particles leads for $E_4$ leads to a higher log-likelihood estimate and a lower Monte Carlo error estimate, both of which are suggestive of a long left tail to the Monte Carlo likelihood estimate leading to estimators that behave as though the variance is infinite.
+
 
 Experiments $E_6$ and $E_7$ introduce the actual data. Comparing the resulting log-likelihoods with the benchmark values, we see \eic{TO DO. I EXPECT TO SEE TYPICAL VALUES FOR HOW THE METHODS COMPARE TO THE BENCHMARKS ON REAL AND SIMULATED DATA, FOR ONE UNIT}
 
-Experiments $E_8$ provides a 40 unit system for which a ground truth is known.  $E_{10}$ shows that {\PALL} may over-estimate the truth, whereas $E_9$ shows that {\PALV} does not.
+Experiments $E_8$, and subsequent, investigate a 40 unit system.
+For $E_8$, $E_9$ and $E_{10}$, we simulated from a model with the coupling parameter between towns set to zero.
+That was done to study a situation where a block particle filter gives an asymptotically exact answer.
+We see the same story as the single-unit case, where the positive bias of {\PALL} is estimated by $(\lambda_{10}-\lambda_{9})/40=$ `r sprintf('%.2f', (E10_lambda-E9_lambda)/40)` per unit.
+This bias is large enough that we obtain $\lambda_{10}>\lambda_8$, with the difference being  $(\lambda_{10}-\lambda_{8})/40=$ `r sprintf('%.2f', (E10_lambda-E8_lambda)/40)` per unit.
+We see that the $U=40$ results scale approximately linearly compared to $U=1$.
 
 Experiments $E_{11}$--$E_{13}$ consider coupled models for the full, real dataset. 
 We cannot accurately know the ground truth here. 
@@ -2287,9 +2329,9 @@ For positively biased estimates, that is inappropriate.
 \section{Conclusion}
 \label{sec:conclusion}
 
-The results in this article reinforce the results by \citet{hao24-arxiv} and lead to the conclusion that there is not currently a strong case for using PAL. 
-PAL applies to a specific class of discrete-state Markov process models, whereas simpler particle filter methods apply much more generally.
+The results in this article reinforce the investigation by \citet{hao24-arxiv} and lead to the conclusion that there is not currently a strong case for using PAL.
+Simpler particle filter methods apply to arbitrary Markov process models, whereas PAL is limited to a specific class of discrete-state Markov process models.
 Basic particle filters, and their block particle filter extensions, have the plug-and-play property \citep{breto09,he10} and likelihood optimization methods for particle filters such as iterated filtering \citep{ionides15} and certain automatic differentiation algorithms \citep{tan24} inherit this convenient property. 
 PAL may potentially lead to dramatic computational improvements over particle filters some situations.
-However, WWR's overdispersed generalization of PAL also requires a particle filter component, at which point it shares the limitations of particle filters.
-WWR, together with various other authors \citep{stocks18,he10}, found that overdispersion is necessary for the model to provide an adequate statistical description of epidemiological data.
+However, WWR's overdispersed generalization of PAL also requires a particle filter component, at which point it shares many of the limitations of particle filters.
+The results of WWR, together with various other authors \citep{stocks18,he10}, show that overdispersion is frequently necessary for a dynamic model to provide an adequate statistical description of epidemiological data.
