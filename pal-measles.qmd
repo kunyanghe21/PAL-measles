@@ -481,6 +481,28 @@ stew(file=paste0(Pomp_dir,"E1_non_optimize.rda"),seed=456,{
 E1_result <- logmeanexp(pf_logLik,se = T)
 
 E1_result[1]
+
+tmp_benchmark <- arma_benchmark(sim)
+
+tmp_benchmark$total
+
+E1_sim <- sim@data
+
+E1_sim <- t(E1_sim)
+
+negloglik <- function(x) optim(par=c(0.5,0.5,1),function(theta)-sum(dnbinom(x,mu=theta[1]+theta[2]*c(0,head(x,-1)),size=theta[3],log=T)))$value
+
+tmp_negbinom <- -sum(apply(E1_sim,2,negloglik))
+
+sim.data <- as.data.frame(sim)
+
+londonsim <- sim.data$cases1
+
+df <- as.data.frame(t(londonsim)) 
+
+colnames(df) <- 0:(length(londonsim) - 1)
+
+write.csv(df, "londonsim.csv", row.names = FALSE)
 ```
 
 
@@ -824,6 +846,32 @@ stew(file=paste0(spatPomp_dir,"E8.rda"),seed=124,{
 
 E8_result <- logmeanexp(bpf_logLik_40,se = T,ess = T)
 
+tmp_benchmark_spat <- arma_benchmark(sim)
+
+tmp_benchmark_spat$total
+
+E8_sim <- sim@data
+
+E8_sim <- t(E8_sim)
+
+negloglik <- function(x) optim(par=c(0.5,0.5,1),function(theta)-sum(dnbinom(x,mu=theta[1]+theta[2]*c(0,head(x,-1)),size=theta[3],log=T)))$value
+
+tmp_negbinom_spat <- -sum(apply(E8_sim,2,negloglik))
+
+## Prepare the simulated data for python.
+simdata <- as.data.frame(sim)
+
+simdata <- simdata[order(simdata$city),]
+
+yt <- simdata$cases
+
+M6 <- matrix(yt, nrow = 40, byrow = TRUE)
+
+M6 <- as.data.frame(M6)
+
+colnames(M6) <- as.character(0:415)
+
+write.csv(M6,file = "M6.csv",row.names = F)
 ```
 
 
@@ -2210,7 +2258,6 @@ E10_se  = float(se)
 ```{r bridge,include = FALSE}
 library(reticulate)
 
-# ---- 把 Python 全局变量拉进 R ---------------------------------
 E2_result <- c(py$E2_est,  py$E2_se)    # c(λ, σ)
 E3_result <- c(py$E3_est,  py$E3_se)
 E4_result <- c(py$E4_est,  py$E4_se)
@@ -2219,8 +2266,8 @@ E9_result <- c(py$E9_est,  py$E9_se)
 E10_result <- c(py$E10_est, py$E10_se)
 
 
-E1_result_vec <- c(as.numeric(E1_result[1]),  as.numeric(E1_result[2]))
-E8_result_vec <- c(as.numeric(E8_result[1]),  as.numeric(E8_result[2]))
+E1_result_vec <- c(as.numeric(E1_result[1]),  as.numeric(E1_result[2]),as.numeric(tmp_benchmark$total),as.numeric(tmp_negbinom))
+E8_result_vec <- c(as.numeric(E8_result[1]),  as.numeric(E8_result[2]),as.numeric(tmp_benchmark_spat$total),as.numeric(tmp_negbinom_spat))
 
 E1_lambda <- E1_result_vec[1];  E1_sigma <- E1_result_vec[2]
 E2_lambda <- E2_result[1];      E2_sigma <- E2_result[2]
@@ -2230,6 +2277,15 @@ E5_lambda <- E5_result[1];      E5_sigma <- E5_result[2]
 E8_lambda <- E8_result_vec[1];  E8_sigma <- E8_result_vec[2]
 E9_lambda <- E9_result[1];      E9_sigma <- E9_result[2]
 E10_lambda<- E10_result[1];     E10_sigma<- E10_result[2]
+
+E1_AMRA <- E1_result_vec[3];  E1_NegB <- E1_result_vec[4]
+E2_AMRA <- E1_result_vec[3];      E2_NegB <- E1_result_vec[4]
+E3_AMRA <- E1_result_vec[3];      E3_NegB <- E1_result_vec[4]
+E4_AMRA <- E1_result_vec[3];      E4_NegB <- E1_result_vec[4]
+E5_AMRA <- E1_result_vec[3];      E5_NegB <- E1_result_vec[4]
+E8_AMRA <- E8_result_vec[3];  E8_NegB <- E8_result_vec[4]
+E9_AMRA <- E8_result_vec[3];      E9_NegB <- E8_result_vec[4]
+E10_AMRA<- E8_result_vec[3];     E10_NegB<- E8_result_vec[4]
 ```
 
 \begin{table}[ht]
@@ -2238,31 +2294,38 @@ E10_lambda<- E10_result[1];     E10_sigma<- E10_result[2]
 \toprule
 \textbf{$E$} & $\lambda$ & $\sigma$ & ARMA & NegBinom \\
 \midrule
-$E_1$ & $`r sprintf('%.2f', E1_lambda)`$ &  
-        $`r sprintf('%.2f', E1_sigma)`$ & &\\
-$E_2$ & $`r sprintf('%.2f', E2_lambda)`$ &  
-        $`r sprintf('%.2f', E2_sigma)`$ &  &\\
-$E_3$ & $`r sprintf('%.2f', E3_lambda)`$ &  
-        $`r sprintf('%.2f', E3_sigma)`$ &  &\\
-$E_4$ & $`r sprintf('%.2f', E4_lambda)`$ &
-        $`r sprintf('%.2f', E4_sigma)`$ &  &\\
-$E_5$ & $`r sprintf('%.2f', E5_lambda)`$ &
-        $`r sprintf('%.2f', E5_sigma)`$ &  &\\
-$E_6$ & & &\\
-$E_7$ & & &\\
-$E_8$ & $`r sprintf('%.2f', E8_lambda)`$ &
-        $`r sprintf('%.2f', E8_sigma)`$ &&\\
-$E_9$ & $`r sprintf('%.2f', E9_lambda)`$ &
-        $`r sprintf('%.2f', E9_sigma)`$ &&\\
-$E_{10}$ & $`r sprintf('%.2f', E10_lambda)`$ &
-        $`r sprintf('%.2f', E10_sigma)`$  && \\
-$E_{11}$ & & &\\
-$E_{12}$ & & &\\
-$E_{13}$ & & &\\
+$E_1$  & $`r sprintf('%.2f', E1_lambda)`$  & 
+$`r sprintf('%.2f', E1_sigma)`$  & 
+$`r sprintf('%.2f', E1_AMRA)`$  & 
+$`r sprintf('%.2f', E1_NegB)`$ \\
+$E_2$  & $`r sprintf('%.2f', E2_lambda)`$  & 
+$`r sprintf('%.2f', E2_sigma)`$  & 
+$`r sprintf('%.2f', E2_AMRA)`$  & 
+$`r sprintf('%.2f', E2_NegB)`$ \\
+$E_3$  & $`r sprintf('%.2f', E3_lambda)`$  & 
+$`r sprintf('%.2f', E3_sigma)`$  & 
+$`r sprintf('%.2f', E3_AMRA)`$  & 
+$`r sprintf('%.2f', E3_NegB)`$ \\
+$E_4$  & $`r sprintf('%.2f', E4_lambda)`$  & 
+$`r sprintf('%.2f', E4_sigma)`$  & 
+$`r sprintf('%.2f', E4_AMRA)`$  & 
+$`r sprintf('%.2f', E4_NegB)`$ \\
+$E_5$  & $`r sprintf('%.2f', E5_lambda)`$  & 
+$`r sprintf('%.2f', E5_sigma)`$  & 
+$`r sprintf('%.2f', E5_AMRA)`$  & 
+$`r sprintf('%.2f', E5_NegB)`$ \\
+$E_6$  &  &  &  &  \\      
+$E_7$  &  &  &  &  \\      
+$E_8$  & $`r sprintf('%.2f', E8_lambda)`$  & $`r sprintf('%.2f', E8_sigma)`$  & $`r sprintf('%.2f', E8_AMRA)`$  & $`r sprintf('%.2f', E8_NegB)`$ \\
+$E_9$  & $`r sprintf('%.2f', E9_lambda)`$  & $`r sprintf('%.2f', E9_sigma)`$  & $`r sprintf('%.2f', E9_AMRA)`$  & $`r sprintf('%.2f', E9_NegB)`$ \\
+$E_{10}$ & $`r sprintf('%.2f', E10_lambda)`$ & $`r sprintf('%.2f', E10_sigma)`$ & $`r sprintf('%.2f', E10_AMRA)`$ & $`r sprintf('%.2f', E10_NegB)`$ \\
+$E_{11}$ &  &  &  &  \\    
+$E_{12}$ &  &  &  &  \\    
+$E_{13}$ &  &  &  &  \\    
 \bottomrule
 \end{tabular}
 \caption{Log‐likelihood estimate, $\lambda$,  for each experiment described in Table\ 2.
-Estimates derive from averaging \eic{???????} replications on a natural scale so that the basic particle filter estimate is unbiased.
+Estimates derive from averaging 20 replications on a natural scale so that the basic particle filter estimate is unbiased.
 The standard error, $\sigma$, is a jack-knife estimate implemented via the logmeanexp function in the pomp R package.
 ARMA gives the log-likelihood for an autoregressive moving average benchmark, and NegBinom is an autoregressive negative binomial benchmark.}
 \label{tbl:method_comparison}
