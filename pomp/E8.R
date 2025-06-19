@@ -12,6 +12,8 @@ ggplot2::theme_set(ggplot2::theme_bw())
 
 stopifnot(packageVersion("pomp")>="5.0")
 
+pomp_dir="pomp/"
+
 set.seed(42)
 
 basic_params <- c(
@@ -31,20 +33,19 @@ basic_params <- c(
   E_0       = 0.00422,
   I_0       = 0.000061
 )
-
 expandedParNames <- NULL
 
 dt <- 3.5
 U  <- 40
 
-measles_cases  <- read.csv("case1.csv")
+measles_cases  <- read.csv(paste0(pomp_dir,"case1.csv"))
 
-measles_covar  <- read.csv("covar2.csv")
+measles_covar  <- read.csv(paste0(pomp_dir,"covar2.csv"))
 
 measles_covarnames <- paste0(rep(c("pop", "lag_birthrate"), each = U), 1:U)
 measles_unit_covarnames <- c("pop", "lag_birthrate")
 
-data_measles_distance <- read.csv('data_measles_distance.csv')
+data_measles_distance <- read.csv(paste0(pomp_dir,'data_measles_distance.csv'))
 
 
 
@@ -320,15 +321,10 @@ coef(m9) <- measles_params
 
 sim <- simulate(m9, params =  measles_params,  nsim   = 1,
                 seed   = 154234)
-
-plot(sim,log  = T)
-
-tmp <- bpfilter(sim,Np = 5000,block_size = 1)
-
-tmp@loglik
 ##
 
-spatPomp_dir <- paste0("E_",8,"/")
+
+spatPomp_dir <- paste0(pomp_dir,"E_",8,"/")
 if(!dir.exists(spatPomp_dir)) dir.create(spatPomp_dir)
 
 stew(file=paste0(spatPomp_dir,"E8.rda"),seed=124,{
@@ -341,12 +337,31 @@ stew(file=paste0(spatPomp_dir,"E8.rda"),seed=124,{
 })
 
 
-tmp <- logmeanexp(bpf_logLik_40,se = T,ess = T)
-tmp
+E8_result <- logmeanexp(bpf_logLik_40,se = T,ess = T)
 
-tmp <- logmeanexp(bpf_logLik_40_sim,se = T)
-tmp
+tmp_benchmark_spat <- arma_benchmark(sim)
 
+tmp_benchmark_spat$total
+
+E8_sim <- sim@data
+
+E8_sim <- t(E8_sim)
+
+negloglik <- function(x) optim(par=c(0.5,0.5,1),function(theta)-sum(dnbinom(x,mu=theta[1]+theta[2]*c(0,head(x,-1)),size=theta[3],log=T)))$value
+
+tmp_negbinom_spat <- -sum(apply(E8_sim,2,negloglik))
+
+realdata_benchmark_spat <- arma_benchmark(m9)
+
+realdata_benchmark_spat$total
+
+E8_real <- m9@data
+
+E8_real <- t(E8_real)
+
+realdata_negbinom_spat <- -sum(apply(E8_real,2,negloglik))
+
+realdata_negbinom_spat
 ## Prepare the simulated data for python.
 simdata <- as.data.frame(sim)
 
@@ -361,6 +376,7 @@ M6 <- as.data.frame(M6)
 colnames(M6) <- as.character(0:415)
 
 write.csv(M6,file = "M6.csv",row.names = F)
+
 
 
 

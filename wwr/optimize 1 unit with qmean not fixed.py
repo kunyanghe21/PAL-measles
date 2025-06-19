@@ -9,26 +9,22 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
 import sys
-sys.path.append('Scripts/')
+sys.path.append('wwr/Scripts/')
 from measles_simulator import *
 from measles_PALSMC import *
 
 plt.ioff()
 
-UKbirths_array = np.load("Data/UKbirths_array.npy")
-UKpop_array = np.load("Data/UKpop_array.npy")
-measles_distance_matrix_array = np.load("Data/measles_distance_matrix_array.npy")
-UKmeasles_array = np.load("Data/UKmeasles_array.npy")
+UKbirths_array = np.load("wwr/Data/UKbirths_array.npy")
+UKpop_array = np.load("wwr/Data/UKpop_array.npy")
+measles_distance_matrix_array = np.load("wwr/Data/measles_distance_matrix_array.npy")
+UKmeasles_array = np.load("wwr/Data/UKmeasles_array.npy")
 
 UKbirths = tf.convert_to_tensor(UKbirths_array[18:19, :], dtype=tf.float32)
 UKpop = tf.convert_to_tensor(UKpop_array[18:19, :], dtype=tf.float32)
 UKmeasles = tf.convert_to_tensor(UKmeasles_array[18:19, :], dtype=tf.float32)
 measles_distance_matrix = tf.convert_to_tensor(measles_distance_matrix_array[18:19, 18:19],
                                                dtype=tf.float32)
-
-df = pd.read_csv("Data/londonsim.csv")
-data_array = df.values
-UKmeasles = tf.convert_to_tensor(data_array, dtype=tf.float32)
 
 n_cities = tf.constant(1, dtype=tf.int64)
 initial_pop = UKpop[:, 0]
@@ -42,49 +38,31 @@ h = tf.constant(14 / tf.cast(intermediate_steps, dtype=tf.float32), dtype=tf.flo
 is_school_term_array = tf.zeros((T, intermediate_steps), dtype=tf.float32)
 is_start_school_year_array = tf.zeros((T, intermediate_steps), dtype=tf.float32)
 
-# -------------------------
-# 初始参数: 扩展到 11 个维度
-# 最后一维 (x_optim[10]) 用来表示 q_mean 的对数
-# 这里给出一个与之前注释更匹配的初始化
-# 其中 exp(-0.356675) ≈ 0.7
-# -------------------------
+
 x_0 = np.array([
-    -3.674239,  # x[0]: pi_0 fraction S
-    -5.472271,  # x[1]: pi_0 fraction E
-    -9.705021,  # x[2]: pi_0 fraction I
-     1.840549,  # x[3]: beta_bar
-    -1.949856,  # x[4]: rho
-    -3.051457,  # x[5]: gamma
-    -1.918923,  # x[6]: a
-    -1.517331,  # x[7]: c
-    -3.446486,  # x[8]: xi_var (要再乘以 10)
-    -1.186399,  # x[9]: q_var
-    -0.356675   # x[10]: q_mean 的对数，使 exp(-0.356675)=0.7
+ -3.827630,   # x[0] = log(S_0)             ,  S_0  = 0.021761124566
+ -5.844465,   # x[1] = log(E_0)             ,  E_0  = 0.002895884298
+ -9.720592,   # x[2] = log(I_0)             ,  I_0  = 6.003442028e-05
+  1.201501,   # x[3] = log(betabar)         ,  betabar = 3.325105802
+ -3.138990,   # x[4] = log(rho)             ,  rho = 0.0433265237
+ -2.806183,   # x[5] = log(gamma)           ,  gamma = 0.0604352097
+ -0.493285,   # x[6] = log(a)               ,  a = 0.6106172198
+ -0.114045,   # x[7] = log(c)               ,  c = 0.8922177383
+ -2.943745,   # x[8] = log(sigma_xi / 10)   ,  sigma_xi = 0.526681063
+ -2.994803    # x[9] = log(q_var = psi)     ,  q_var = 0.112499902
+ -0.69
 ])
 
-# -------------------------
-# 关键改动：固定 g 不参与优化
-# -------------------------
+
 g_fixed = float(0)
 print("We are fixing g to:", g_fixed)
 
 n_particles = 5000
 
 def optimization_func(x_optim):
-    """
-    x_optim: 参数在 log 空间 (或类似约束后的空间)，长度为 11.
-    """
-    # 先将前 11 个都用 np.exp() 方式映射到正数域
-    x = np.exp(x_optim)
 
-    # 做一些边界检查，若不满足就返回一个很大的值（相当于拒绝）
-    # ---------------------------------------------------------
-    # 1) 要求 x_optim[0..2]<0, 这样 x[0..2]<1, 用于 pi_0 的三部分
-    # 2) 要求 x_optim[6] < -np.log(2) - np.log(p) (来自 a 的某个物理含义？)
-    # 3) 要求 x_optim[7]<0 (比如 c 也要小于1？你原先的注释如此)
-    # 4) 要求 x_optim[9] <= 1 (控制 q_var 不要太大)
-    # 5) 新增：要求 x_optim[10]<0, 这样确保 q_mean < 1
-    # ---------------------------------------------------------
+
+    x = np.exp(x_optim)
     if (
         x_optim[0] > 0 or
         x_optim[1] > 0 or
@@ -135,10 +113,9 @@ def optimization_func(x_optim):
         high=1.0
     )
 
-    # 调用 PAL_run_likelihood_lookahead(...) 计算似然
-    # 注意把新的 q_mean, q_var 传入
+
     value = -(
-        PAL_run_likelihood_res(
+        PAL_run_likelihood_lookahead(
             T,
             intermediate_steps,
             UKmeasles,
@@ -168,13 +145,11 @@ def optimization_func(x_optim):
     print("[DEBUG] x_optim =", x_optim, " -> value =", value)
     return value
 
-# 定义 11 维的 bounds, 对应 x_optim[0..10]
-#   - 其中最后一项 (-10, 0) 用来保证 q_mean = exp(x_optim[10]) 在 (0, 1)
 bnds = (
     (-20, -0.5),                 # x[0]
     (-20, -0.5),                 # x[1]
     (-20, -0.5),                 # x[2]
-    (0, 2),                      # x[3]
+    (0, 4),                      # x[3]
     (-4, 0),                     # x[4]
     (-4, 0),                     # x[5]
     (-20, -np.log(2) - np.log(p)),  # x[6]: a
@@ -184,24 +159,23 @@ bnds = (
     (-10, 0)                    # x[10]: q_mean (log space)
 )
 
-# 查看初始 loss
 initial_loss = optimization_func(x_0)
 print("initial_loss =", initial_loss)
 
-# 执行优化
+
 res = minimize(
     optimization_func,
     x_0,
     bounds=bnds,
     method='SLSQP',
-    options={"eps": 0.5, "maxiter": 100}
+    options={"eps": 0.1, "maxiter": 100}
 )
 
 final_parameters_lookahead_A = res.x
 print("Optimization done! final x =", final_parameters_lookahead_A)
 print("Fixed g value was:", g_fixed)
 
-# 如果需要查看最后一次迭代得到的真实物理参数，可做类似：
+
 param_exp = np.exp(final_parameters_lookahead_A)
 pi_0_S = param_exp[0]
 pi_0_E = param_exp[1]

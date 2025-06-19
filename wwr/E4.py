@@ -4,7 +4,7 @@ import os
 import numpy as np
 
 # ------------- cache settings -----------------------------------
-CACHE_DIR  = "E4"
+CACHE_DIR  = "wwr/E4"
 CACHE_FILE = os.path.join(CACHE_DIR, "PAL_lookahead.npz")
 CACHE_KEY  = "log_likelihood_shared"
 
@@ -48,30 +48,30 @@ else:
     plt.ioff()
 
     import sys
-    sys.path.append('Scripts/')
+    sys.path.append('wwr/Scripts/')
     from measles_simulator import *
     from measles_PALSMC import *
 
-    if not os.path.exists("E4"):
-        os.makedirs("E4")
+    if not os.path.exists("wwr/E4"):
+        os.makedirs("wwr/E4")
 
     os.environ['PYTHONHASHSEED'] = '45'
     random.seed(45)
     np.random.seed(45)
     tf.random.set_seed(45)
 
-    UKbirths_array = np.load("Data/UKbirths_array.npy")
-    UKpop_array = np.load("Data/UKpop_array.npy")
-    measles_distance_matrix_array = np.load("Data/measles_distance_matrix_array.npy")
-    UKmeasles_array = np.load("Data/UKmeasles_array.npy")
-    modelA_array = np.load("Data/Parameter/final_parameters_lookahead_A.npy")
+    UKbirths_array = np.load("wwr/Data/UKbirths_array.npy")
+    UKpop_array = np.load("wwr/Data/UKpop_array.npy")
+    measles_distance_matrix_array = np.load("wwr/Data/measles_distance_matrix_array.npy")
+    UKmeasles_array = np.load("wwr/Data/UKmeasles_array.npy")
+    modelA_array = np.load("wwr/Data/Parameter/final_parameters_lookahead_A.npy")
 
     UKbirths = tf.convert_to_tensor(UKbirths_array[18:19, :], dtype=tf.float32)
     UKpop = tf.convert_to_tensor(UKpop_array[18:19, :], dtype=tf.float32)
     UKmeasles = tf.convert_to_tensor(UKmeasles_array[18:19, :], dtype=tf.float32)
     measles_distance_matrix = tf.convert_to_tensor(measles_distance_matrix_array[18:19, 18:19],
                                                    dtype=tf.float32)
-    df = pd.read_csv("Data/londonsim.csv")
+    df = pd.read_csv("wwr/Data/londonsim.csv")
 
     data_array = df.values
     UKmeasles = tf.convert_to_tensor(data_array, dtype=tf.float32)
@@ -99,9 +99,9 @@ else:
 
     # lookahead
     # shared
-    best_parameters = np.load("Data/Parameter/final_parameters_lookahead_A.npy")
+    best_parameters = np.load("wwr/Data/Parameter/final_parameters_lookahead_A.npy")
     best_parameters = np.ndarray.astype(best_parameters, dtype = np.float32)
-    q_mean = tf.constant(np.mean(np.load("Data/q_mean.npy")), dtype = tf.float32)
+    q_mean = tf.constant(np.mean(np.load("wwr/Data/q_mean.npy")), dtype = tf.float32)
 
     n_cities = tf.constant(1, dtype = tf.int64)
 
@@ -192,7 +192,7 @@ else:
     print("Variance of log likelihoods:", variance_log)
     print("mean of log likelihoods:", mean_log)
 
-    out_file_path = os.path.join("E4", "PAL_lookahead.csv")
+    out_file_path = os.path.join("wwr", "E4", "PAL_lookahead.csv")
     np.savetxt(out_file_path, log_likelihood_shared, delimiter=",")
 
     # ----------------------------------------------------------------
@@ -232,3 +232,5 @@ print("  SE           :", se)
 print("  mean         :", log_likelihood_shared.mean())
 print("  variance     :", log_likelihood_shared.var(ddof=1))
 
+E4_est = float(lme)    
+E4_se  = float(se) 

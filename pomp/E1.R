@@ -6,11 +6,13 @@ library("knitr")
 library("doRNG")
 library("doParallel")
 
+pomp_dir="pomp/"
+
 
 library(pomp)
 
-measles_cases <- read.csv("case1.csv")
-measles_covar <- read.csv("covar2.csv")
+measles_cases <- read.csv(paste0(pomp_dir,"case1.csv"))
+measles_covar <- read.csv(paste0(pomp_dir,"covar2.csv"))
 
 measles_cases<- measles_cases[measles_cases$city == "LONDON", ]
 measles_covar <- measles_covar[measles_covar$city == "LONDON", ]
@@ -36,7 +38,7 @@ basic_params <- c(
   gamma       = 0.0473,
   delta       = 0.02/(26*4),  # timescale transform
   sigma_xi    = 0.318,
-  gaussianrho = 0.7,
+  gaussianrho = 0.55,
   psi         = 0.306,
   g           = 0,
   S_0         = 0.02545,
@@ -191,7 +193,8 @@ pf_result <- pfilter(sim, Np=5000)
 
 pf_result@loglik
 
-Pomp_dir <- paste0("Pomp_E",1,"/")
+
+Pomp_dir <- paste0(pomp_dir,"Pomp_E",1,"/")
 if(!dir.exists(Pomp_dir)) dir.create(Pomp_dir)
 
 stew(file=paste0(Pomp_dir,"E1_non_optimize.rda"),seed=456,{
@@ -213,6 +216,16 @@ result <- logmeanexp(pf_logLik,se = T)
 tmp_mean <- mean(pf_logLik)
 
 tmp_var <- var(pf_logLik)
+
+E1_sim <- sim@data
+
+E1_sim <- t(E1_sim)
+
+negloglik <- function(x) optim(par=c(0.5,0.5,1),function(theta)-sum(dnbinom(x,mu=theta[1]+theta[2]*c(0,head(x,-1)),size=theta[3],log=T)))$value
+
+tmp_negbinom <- -sum(apply(E1_sim,2,negloglik))
+
+
 
 library(tidyverse)
 library(pomp)
@@ -250,6 +263,7 @@ bake(file="local_search_E1*.rds",{
         Np=20000, Nmif=50,
         cooling.fraction.50=0.5,
         rw.sd=rw_sd(c        = 0.02,
+                    betabar  = 0.02,
                     a        = 0.02,
                     rho      = 0.02,
                     gamma    = 0.02,
@@ -283,7 +297,7 @@ mifs_local |>
 
 local_search <- foreach(
   mf = mifs_local,.combine = rbind) %dopar% { 
-    evals <- replicate(20, logLik(pfilter(mf,Np=10000)))
+    evals <- replicate(20, logLik(pfilter(mf,Np=5000)))
     ll <- logmeanexp(evals, se=TRUE)
     mf %>% coef() %>% bind_rows() %>%
       bind_cols(loglik=ll[1],loglik.se=ll[2])

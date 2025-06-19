@@ -1,10 +1,8 @@
-from __future__ import annotations
-
 import os
 import numpy as np
 
 # ------------- cache settings -----------------------------------
-CACHE_DIR  = "E2"
+CACHE_DIR  = "wwr/E2"
 CACHE_FILE = os.path.join(CACHE_DIR, "PAL_vanilla.npz")
 CACHE_KEY  = "log_likelihood_shared"
 
@@ -48,7 +46,7 @@ else:
     plt.ioff()
 
     import sys
-    sys.path.append('Scripts/')
+    sys.path.append('wwr/Scripts/')
     from measles_simulator import *
     from measles_PALSMC import *
 
@@ -231,3 +229,6 @@ print("  log-mean-exp :", lme)
 print("  SE           :", se)
 print("  mean         :", log_likelihood_shared.mean())
 print("  variance     :", log_likelihood_shared.var(ddof=1))
+
+E2_est = float(lme)    
+E2_se  = float(se)      
