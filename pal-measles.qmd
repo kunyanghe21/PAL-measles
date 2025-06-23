@@ -98,7 +98,7 @@ A critical part of our reasoning is that a probabilistic forecasting filter (i.e
 This is a restatement of the well-known fact that log-likelihood is a proper scoring rule \citep{gneiting07}.
 To apply this property, we must work with simulated data so that the true generating model is known.
 In high dimensions, it is generally not possible to calculate the exact prediction distribution to within arbitrarily small error.
-Provably consistent Monte~Carlo methods have intolerable Monte~Carlo error.
+Provably consistent Monte\ Carlo methods have intolerable Monte\ Carlo error.
 That is the reason why algorithms such as $\PALL$ are being invented.
 There are two special situations where we can establish accurately the true log-likelihood for the spatiotemporal measles models of interest: (i) when the number of spatial units is very small; (ii) when there is no spatial coupling, so the filtering problem can be solved independently for each single unit.
 In both these cases, a basic particle filter provides the desired, essentially exact, log-likelihood estimate.
@@ -108,7 +108,7 @@ Therefore, we consider two choices of size for the system, $U=1$ and $U=40$, wit
 To allow for the study of systems without coupling, we consider two model variations, $C_1$ and $C_2$, where $C_1$ is the original model with gravity coupling used by WWR, and $C_2$ is a modification where direct movement of infection between cities is replaced by a constant background rate of importation of infection.
 
 Evidently, the basic particle filter is not a powerful tool for general spatiotemporal systems, and so alternative strategies are needed.
-One approach is to take advantage of the possibility to design the filter's prediction distribution for the $n$th observation, at time $t_n$, to take advantage of data ccurring at, or subsequent to, time $t_n$.
+One approach is to take advantage of the possibility to design the filter's prediction distribution for the $n$th observation, at time $t_n$, to take advantage of data occurring at, or subsequent to, time $t_n$.
 Such lookahead filters cannot be implemented for forecasting, but are available for likelihood evaluation.
 This is the approach adopted by WWR's lookahead filter, $\PALL$.
 There is no mathematical theorem prohibiting a lookahead filter estimating a higher likelihood than the truth, and in an extreme case the lookahead filter could just assert a one-step prediction distribution with all its mass on the actual data.
@@ -153,7 +153,7 @@ The experimental variables listed in Table\ \ref{tbl:description} are now descri
 \item[F] {\bf The filtering algorithm}. 
 {\PALL} is the lookahead filter of WWR, and {\PALV} is the plain, so-called vanilla, implementation. 
 BPF is the block particle filter of \citet{rebeschini15} implemented as bpfilter in spatPomp \citep{asfaw24}.
-Likelihood optimization for {\PALL} and {\PALV} is conducted using stochastic gradient descent and automatic differentation, using the implementation by WWR. 
+Likelihood optimization for {\PALL} and {\PALV} is conducted using stochastic gradient descent and automatic differentiation, using the implementation by WWR. 
 Likelihood optimization for BPF is conducted using the iterated block particle filter algorithm \citep{ning23,ionides24-sinica} implemented as ibpf in spatPomp.
 For $U=1$, and for $U=40$ with $g=0$, BPF is identical to a basic particle filter. 
 For simplicity, we use spatPomp::bpfilter even when pomp::pfilter is equivalent.
@@ -197,7 +197,7 @@ We consider two software platforms for the experiments.
 All $\PALL$ and $\PALV$ calculations were carried out using the Python code provided by WWR, and all BPF calculations were carried out using the spatPomp R package.
 Simulations were carried out using spatPomp, since our reasoning depends critically on the particle filter calculations being carried out with the data drawn from the model assumed by the filter.
 We present results for a single simulation for the experimental treatments with simulated data.
-That decision simplifies the experimental design and permits the computional effort to focus on a few direct comparisons between the methods on a small number of simulated datasets.
+That decision simplifies the experimental design and permits the computational effort to focus on a few direct comparisons between the methods on a small number of simulated datasets.
 
 \begin{table}\label{tbl:treatments}
 \centering
@@ -4915,7 +4915,7 @@ ARMA gives the log-likelihood for an autoregressive moving average benchmark, an
 \end{table}
 
 Here, experiments $E_1$--$E_5$ address Q1 directly, using simulated data on a single unit. 
-$E_1$ provides a ground truth for this particular particular model, a single-city SIR model.
+$E_1$ provides a ground truth for this particular model, a single-city SIR model.
 Comparing $\lambda_2$ and $\lambda_3$ with $\lambda_1$, we see that $\PALV$, without the lookahead, performs as expected for an approximate filter.
 On this relatively easy task, it produces stable estimates, with log-likelihood values somewhat below the truth.
 Since $\PALV$ is filtering using a model that differs slightly from the data generating model, we expect to see a small shortfall, with $\lambda_2<\lambda_1$ and  $\lambda_3<\lambda_1$.
@@ -4923,7 +4923,7 @@ The difference, $\lambda_2-\lambda_3$, is statistically indistinguishable from z
 
 $E_4$ and $E_5$ demonstrate the positive bias of $\PALL$ both at a usual number of particles and for an intensive calculation that may not be possible on larger problems.
 The best estimates of this bias are $\lambda_4-\lambda_3$ and $\lambda_5-\lambda_3$, since $\PALL$ and $\PALV$ target the same quantity in the limit as $J\to\infty$.
-The smaller number of particles leads for $E_4$ leads to a higher log-likelihood estimate and a lower Monte Carlo error estimate, both of which suggest a long left tail to the Monte Carlo likelihood estimate, leading to estimators that behave as though the variance is infinite.
+The smaller number of particles for $E_4$ leads to a higher log-likelihood estimate and a lower Monte Carlo error estimate, both of which suggest a long left tail to the Monte Carlo likelihood estimate, leading to estimators that behave as though the variance is infinite.
 In better-behaved settings, a higher number of particles is expected to lead to a higher log-likelihood estimate due to reduced negative bias resulting from Jensen's inequality.
 
 Experiments $E_6$ and $E_7$ introduce the actual data, while still restricting to a single spatial unit.
