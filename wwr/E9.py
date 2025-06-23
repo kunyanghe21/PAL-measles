@@ -8,7 +8,7 @@ import os
 import numpy as np
 
 # ----------------------------- cache -----------------------------
-CACHE_DIR  = "E9"
+CACHE_DIR  = "wwr/E9"
 CACHE_FILE = os.path.join(CACHE_DIR, "PAL_res_40.npz")
 CACHE_KEY  = "log_likelihood_shared"
 
@@ -44,29 +44,29 @@ else:
     plt.ioff()
 
     import sys
-    sys.path.append('Scripts/')
+    sys.path.append('wwr/Scripts/')
     from measles_simulator import *
     from measles_PALSMC import *
 
-    if not os.path.exists("E9"):
-        os.makedirs("E9")
+    if not os.path.exists("wwr/E9"):
+        os.makedirs("wwr/E9")
 
     os.environ['PYTHONHASHSEED'] = '42'
     random.seed(42)
     np.random.seed(42)
     tf.random.set_seed(42)
 
-    UKbirths_array = np.load("Data/UKbirths_array.npy")
-    UKpop_array = np.load("Data/UKpop_array.npy")
-    measles_distance_matrix_array = np.load("Data/measles_distance_matrix_array.npy")
-    UKmeasles_array = np.load("Data/UKmeasles_array.npy")
+    UKbirths_array = np.load("wwr/Data/UKbirths_array.npy")
+    UKpop_array = np.load("wwr/Data/UKpop_array.npy")
+    measles_distance_matrix_array = np.load("wwr/Data/measles_distance_matrix_array.npy")
+    UKmeasles_array = np.load("wwr/Data/UKmeasles_array.npy")
 
     UKbirths = tf.convert_to_tensor(UKbirths_array, dtype=tf.float32)
     UKpop = tf.convert_to_tensor(UKpop_array, dtype=tf.float32)
     measles_distance_matrix = tf.convert_to_tensor(measles_distance_matrix_array, dtype=tf.float32)
     UKmeasles = tf.convert_to_tensor(UKmeasles_array, dtype=tf.float32)
 
-    df = pd.read_csv("Data/M6.csv")
+    df = pd.read_csv("wwr/Data/M40.csv")
     data_array = df.values
     UKmeasles = tf.convert_to_tensor(data_array, dtype=tf.float32)
 
@@ -92,13 +92,15 @@ else:
 
     n_experiments = 20
 
-    best_parameters = np.load("Data/Parameter/final_parameters_lookahead_A.npy")
-    best_parameters = np.ndarray.astype(best_parameters, dtype=np.float32)
+    best_parameters = np.load(os.path.join("wwr/E9", "E9_param_exp.npz"))["E9_param_exp"]
+    best_parameters = np.ndarray.astype(best_parameters, dtype = np.float32)
+    q_mean = tf.constant(np.mean(np.load("wwr/Data/q_mean.npy")), dtype = tf.float32)
 
-    n_cities = tf.constant(40, dtype=tf.int64)
-
-    pi_0_1, pi_0_2, pi_0_3 = 0.0304, 0.0056, 0.000034
-    pi_0 = (
+    # --- parameter block (same format, new values) -----------------------
+    pi_0_1 = float(best_parameters[0])
+    pi_0_2 = float(best_parameters[1])
+    pi_0_3 = float(best_parameters[2])
+    pi_0   = (
         tf.convert_to_tensor(
             [[pi_0_1, pi_0_2, pi_0_3, 1.0 - pi_0_1 - pi_0_2 - pi_0_3]],
             dtype=tf.float32
@@ -108,16 +110,16 @@ else:
 
     initial_pop = UKpop[:, 0]
 
-    beta_bar = tf.convert_to_tensor(6.35 * tf.ones((n_cities, 1)), dtype=tf.float32)
-    rho      = tf.convert_to_tensor([0.159], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-    gamma    = tf.convert_to_tensor([0.045], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
+    beta_bar = tf.convert_to_tensor(best_parameters[3] * tf.ones((n_cities, 1)), dtype=tf.float32)
+    rho      = tf.convert_to_tensor([best_parameters[4]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
+    gamma    = tf.convert_to_tensor([best_parameters[5]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
 
-    g = tf.convert_to_tensor([[595]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
+    g = 100 * tf.convert_to_tensor([[6]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
 
-    a      = tf.constant(0.052, dtype=tf.float32)
-    c      = tf.constant(0.077, dtype=tf.float32)
-    xi_var = tf.convert_to_tensor(0.219, dtype=tf.float32)
-    q_var  = tf.convert_to_tensor(0.185, dtype=tf.float32)
+    a      = tf.constant(best_parameters[7], dtype=tf.float32)
+    c      = tf.constant(best_parameters[8] , dtype=tf.float32)
+    xi_var = 10*tf.convert_to_tensor(best_parameters[9] , dtype=tf.float32)
+    q_var  = tf.convert_to_tensor(best_parameters[10], dtype=tf.float32)
 
     Xi = tfp.distributions.Gamma(concentration=xi_var, rate=xi_var)
     Q  = tfp.distributions.TruncatedNormal(loc=0.7, scale=q_var, low=0.0, high=1.0)
@@ -175,9 +177,6 @@ else:
 
     variance_log = np.var(log_likelihood_shared, ddof=1)
     print("Variance of log likelihoods:", variance_log)
-
-    np.savetxt(os.path.join("E9", "PAL_res_40.csv"), log_likelihood_shared, delimiter=",")
-
     # ----------------------------------------------------------------
     # >>>>>>>>>>>>>>>>>>>>> ORIGINAL CODE END <<<<<<<<<<<<<<<<<<<<<<<<
     # ----------------------------------------------------------------
@@ -208,3 +207,6 @@ print("  log-mean-exp :", lme)
 print("  SE           :", se)
 print("  mean         :", log_likelihood_shared.mean())
 print("  variance     :", log_likelihood_shared.var(ddof=1))
+
+E9_est = float(lme)    
+E9_se  = float(se) 

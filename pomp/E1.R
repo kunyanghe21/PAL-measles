@@ -6,8 +6,6 @@ library("knitr")
 library("doRNG")
 library("doParallel")
 
-pomp_dir="pomp/"
-
 
 library(pomp)
 
@@ -38,7 +36,7 @@ basic_params <- c(
   gamma       = 0.0473,
   delta       = 0.02/(26*4),  # timescale transform
   sigma_xi    = 0.318,
-  gaussianrho = 0.55,
+  gaussianrho = 0.7,
   psi         = 0.306,
   g           = 0,
   S_0         = 0.02545,
@@ -187,13 +185,6 @@ coef(one_city_pomp) <- basic_params
 sim <- simulate(one_city_pomp, params =  basic_params,  nsim   = 1,
                 seed   = 154234)
 
-plot(sim)
-
-pf_result <- pfilter(sim, Np=5000)
-
-pf_result@loglik
-
-
 Pomp_dir <- paste0(pomp_dir,"Pomp_E",1,"/")
 if(!dir.exists(Pomp_dir)) dir.create(Pomp_dir)
 
@@ -208,14 +199,13 @@ stew(file=paste0(Pomp_dir,"E1_non_optimize.rda"),seed=456,{
   
   
 })
+E1_result <- logmeanexp(pf_logLik,se = T)
 
-pf_logLik
+E1_result[1]
 
-result <- logmeanexp(pf_logLik,se = T)
+tmp_benchmark <- arma_benchmark(sim)
 
-tmp_mean <- mean(pf_logLik)
-
-tmp_var <- var(pf_logLik)
+tmp_benchmark$total
 
 E1_sim <- sim@data
 
@@ -224,112 +214,6 @@ E1_sim <- t(E1_sim)
 negloglik <- function(x) optim(par=c(0.5,0.5,1),function(theta)-sum(dnbinom(x,mu=theta[1]+theta[2]*c(0,head(x,-1)),size=theta[3],log=T)))$value
 
 tmp_negbinom <- -sum(apply(E1_sim,2,negloglik))
-
-
-
-library(tidyverse)
-library(pomp)
-library(foreach)
-library(doFuture)
-library(doRNG)
-
-
-set.seed(1350254336)
-
-one_city_pomp |>
-  pfilter(Np=1000) -> pf  
-logLik(pf)  
-
-plan(multisession)  
-registerDoRNG(seed=999) 
-
-tic <- Sys.time()
-foreach(i=1:10, .combine=c, .options.future=list(seed=TRUE)) %dofuture% {
-  one_city_pomp |>
-    pfilter(Np=5000)   
-} -> pf_list
-
-pf_list |> logLik() |> logmeanexp(se=TRUE) -> L_pf
-L_pf
-
-toc <- Sys.time()
-
-bake(file="local_search_E1*.rds",{
-  foreach(i=1:10,.combine=c,
-          .options.future=list(seed=482947940)
-  ) %dofuture% {
-    one_city_pomp |>
-      mif2(
-        Np=20000, Nmif=50,
-        cooling.fraction.50=0.5,
-        rw.sd=rw_sd(c        = 0.02,
-                    betabar  = 0.02,
-                    a        = 0.02,
-                    rho      = 0.02,
-                    gamma    = 0.02,
-                    sigma_xi = 0.02,
-                    psi     = 0.02,
-                    gaussianrho = 0.02,
-                    S_0      = ivp(0.02),
-                    E_0      = ivp(0.02),
-                    I_0      = ivp(0.02)),
-        partrans=parameter_trans(log=c("rho", "gamma", "sigma_xi", "betabar", "g", "iota", "delta"),logit = c("a", "alpha", "c", "gaussianrho", "S_0", "E_0", "I_0", "psi")),
-        paramnames=c("alpha","iota","betabar","c","a","rho","gamma",
-                     "delta","sigma_xi","g","gaussianrho","psi",
-                     "S_0","E_0","I_0")
-      )
-  } -> mifs_local
-  attr(mifs_local,"ncpu") <- nbrOfWorkers()
-  mifs_local
-}) -> mifs_local
-t_loc <- attr(mifs_local,"system.time")
-ncpu_loc <- attr(mifs_local,"ncpu")
-
-
-mifs_local |>
-  traces() |>
-  melt() |>
-  ggplot(aes(x = iteration, y = value, group = .L1, color = factor(.L1))) +
-  geom_line() +
-  guides(color = "none") +
-  facet_wrap(~ name, scales = "free_y")
-
-
-local_search <- foreach(
-  mf = mifs_local,.combine = rbind) %dopar% { 
-    evals <- replicate(20, logLik(pfilter(mf,Np=5000)))
-    ll <- logmeanexp(evals, se=TRUE)
-    mf %>% coef() %>% bind_rows() %>%
-      bind_cols(loglik=ll[1],loglik.se=ll[2])
-  }
-
-
-bind_rows(local_search) %>%
-  filter(is.finite(loglik)) %>%
-  filter(loglik.se < 2) %>%
-  arrange(-loglik) -> best_searches    
-
-head(best_searches)
-
-best_searches <- best_searches %>%
-  select(-loglik, -loglik.se)
-
-best_param <- best_searches[1,]
-
-coef(one_city_pomp) <- best_param
-
-sim <- simulate(
-  one_city_pomp,
-  params = best_param,
-  nsim   = 1,
-  seed   = 154234
-)
-
-plot(sim)
-
-pf_result <- pfilter(sim, Np=5000)
-
-pf_result@loglik
 
 sim.data <- as.data.frame(sim)
 
@@ -340,21 +224,3 @@ df <- as.data.frame(t(londonsim))
 colnames(df) <- 0:(length(londonsim) - 1)
 
 write.csv(df, "londonsim.csv", row.names = FALSE)
-
-
-Pomp_dir <- paste0("Pomp_E",1,"/")
-if(!dir.exists(Pomp_dir)) dir.create(Pomp_dir)
-
-stew(file=paste0(Pomp_dir,"E1.rda"),seed=456,{
-  
-  cat(capture.output(sessionInfo()),
-      file=paste0(Pomp_dir,"sessionInfo.txt"),sep="\n")
-  
-  pf_logLik <- replicate(20,
-                           logLik(pfilter(sim,Np = 5000))
-  )
-  
-  
-})
-
-pf_logLik

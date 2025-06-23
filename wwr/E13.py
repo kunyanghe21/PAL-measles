@@ -246,5 +246,5 @@ print("  SE           :", se)
 print("  mean         :", log_likelihood_shared.mean())
 print("  variance     :", log_likelihood_shared.var(ddof = 1))
 
-E14_est = float(lme)
-E14_se  = float(se)
+E13_est = float(lme)    
+E13_se  = float(se) 

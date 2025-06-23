@@ -369,13 +369,13 @@ simdata <- simdata[order(simdata$city),]
 
 yt <- simdata$cases
 
-M6 <- matrix(yt, nrow = 40, byrow = TRUE)
+M40 <- matrix(yt, nrow = 40, byrow = TRUE)
 
-M6 <- as.data.frame(M6)
+M40 <- as.data.frame(M40)
 
-colnames(M6) <- as.character(0:415)
+colnames(M40) <- as.character(0:415)
 
-write.csv(M6,file = "M6.csv",row.names = F)
+write.csv(M40,file = "M40.csv",row.names = F)
 
 
 

@@ -71,10 +71,11 @@ else:
     UKmeasles = tf.convert_to_tensor(UKmeasles_array[18:19, :], dtype=tf.float32)
     measles_distance_matrix = tf.convert_to_tensor(measles_distance_matrix_array[18:19, 18:19],
                                                    dtype=tf.float32)
+
     df = pd.read_csv("wwr/Data/londonsim.csv")
 
     data_array = df.values
-    UKmeasles = tf.convert_to_tensor(data_array, dtype=tf.float32)
+    UKmeasles = tf.convert_to_tensor(data_array, dtype=tf.float32)                                               
 
     term   = tf.convert_to_tensor([6, 99, 115, 198, 252, 299, 308, 355, 366], dtype = tf.float32)
     school = tf.convert_to_tensor([0, 1, 0, 1, 0, 1, 0, 1, 0], dtype = tf.float32)
@@ -99,16 +100,16 @@ else:
 
     # lookahead
     # shared
-    best_parameters = np.load("wwr/Data/Parameter/final_parameters_lookahead_A.npy")
+    best_parameters = np.load(os.path.join("wwr/E4", "E4_param_exp.npz"))["E4_param_exp"]
     best_parameters = np.ndarray.astype(best_parameters, dtype = np.float32)
     q_mean = tf.constant(np.mean(np.load("wwr/Data/q_mean.npy")), dtype = tf.float32)
 
     n_cities = tf.constant(1, dtype = tf.int64)
 
     # --- parameter block (same format, new values) -----------------------
-    pi_0_1 = 0.02536
-    pi_0_2 = 0.0042
-    pi_0_3 = 0.000061
+    pi_0_1 = float(best_parameters[0])
+    pi_0_2 = float(best_parameters[1])
+    pi_0_3 = float(best_parameters[2])
     pi_0   = (
         tf.convert_to_tensor(
             [[pi_0_1, pi_0_2, pi_0_3, 1.0 - pi_0_1 - pi_0_2 - pi_0_3]],
@@ -119,19 +120,19 @@ else:
 
     initial_pop = UKpop[:, 0]
 
-    beta_bar = tf.convert_to_tensor(6.30 * tf.ones((n_cities, 1)), dtype=tf.float32)
-    rho      = tf.convert_to_tensor([0.142], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-    gamma    = tf.convert_to_tensor([0.0473], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
+    beta_bar = tf.convert_to_tensor(best_parameters[3] * tf.ones((n_cities, 1)), dtype=tf.float32)
+    rho      = tf.convert_to_tensor([best_parameters[4]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
+    gamma    = tf.convert_to_tensor([best_parameters[5]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
 
     g = tf.convert_to_tensor([[0.0]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
 
-    a      = tf.constant(0.1476, dtype=tf.float32)
-    c      = tf.constant(0.219 , dtype=tf.float32)
-    xi_var = tf.convert_to_tensor(0.318 , dtype=tf.float32)
-    q_var  = tf.convert_to_tensor(0.305, dtype=tf.float32)
+    a      = tf.constant(best_parameters[6], dtype=tf.float32)
+    c      = tf.constant(best_parameters[7] , dtype=tf.float32)
+    xi_var = 10*tf.convert_to_tensor(best_parameters[8] , dtype=tf.float32)
+    q_var  = tf.convert_to_tensor(best_parameters[9], dtype=tf.float32)
 
     Xi = tfp.distributions.Gamma(concentration=xi_var, rate=xi_var)
-    Q  = tfp.distributions.TruncatedNormal(loc=0.7, scale=q_var, low=0.0, high=1.0)
+    Q  = tfp.distributions.TruncatedNormal(loc=float(0.7), scale=q_var, low=0.0, high=1.0)
 
     n_particles = 5000
     log_likelihood_shared = np.zeros(n_experiments)
@@ -191,9 +192,6 @@ else:
 
     print("Variance of log likelihoods:", variance_log)
     print("mean of log likelihoods:", mean_log)
-
-    out_file_path = os.path.join("wwr", "E4", "PAL_lookahead.csv")
-    np.savetxt(out_file_path, log_likelihood_shared, delimiter=",")
 
     # ----------------------------------------------------------------
     # >>>>>>>>>>>>>>>>>>>>  ORIGINAL CODE END  <<<<<<<<<<<<<<<<<<<<<<<
