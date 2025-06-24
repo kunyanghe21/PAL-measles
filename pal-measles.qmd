@@ -191,7 +191,6 @@ Always set to $\smeas=\smeasGaussian$ since simulations were carried out using a
 
 \item[$s_{\theta}$]  {\bf Model parameter vector for the simulated data}.
 To have an essentially exact likelihood evaluation using BPF, we have $s_\theta=f_\theta$ for all BPF situations. 
-The exact value of $s_\theta$ is not critical to the argument, but we use a value obtained by maximizing the BPF likelihood.
 
 \end{itemize}
 

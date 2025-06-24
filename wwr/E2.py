@@ -55,10 +55,10 @@ else:
     if not os.path.exists("wwr/E2"):
         os.makedirs("wwr/E2")
 
-    os.environ['PYTHONHASHSEED'] = '45'
-    random.seed(45)
-    np.random.seed(45)
-    tf.random.set_seed(45)
+    os.environ['PYTHONHASHSEED'] = '100'
+    random.seed(100)
+    np.random.seed(100)
+    tf.random.set_seed(100)
 
     UKbirths_array = np.load("wwr/Data/UKbirths_array.npy")
     UKpop_array = np.load("wwr/Data/UKpop_array.npy")
@@ -162,7 +162,7 @@ else:
     start_time = time.perf_counter()
 
     for i in range(n_experiments):
-        seed_i = 123 + i
+        seed_i = 113 + i
         random.seed(seed_i)
         np.random.seed(seed_i)
         tf.random.set_seed(seed_i)
