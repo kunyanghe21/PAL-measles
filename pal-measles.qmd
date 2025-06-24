@@ -1,12 +1,18 @@
 ---
 title: |
-  | Poisson Approximate Likelihood versus block particle filter for a spatiotemporal measles model
+  | Poisson Approximate Likelihood versus the block particle filter for a spatiotemporal measles model
   | __Preliminary version, not for circulation__
 author:
   - "Kunyang He, Yize Hao and Edward L. Ionides"
 date: "May 28, 2025"
 abstract: |
- Filtering algorithms for high-dimensional nonlinear non-Gaussian partially observed stochastic processes provide access to the likelihood function and hence enable likelihood-based or Bayesian inference for complex dynamic systems. A novel Poisson approximate likelihood (PAL) filter was introduced by Whitehouse et al.\ (2023). PAL employs a Poisson approximation to conditional densities, offering a fast approximation to the likelihood function for a certain subset of partially observed Markov process models. PAL was demonstrated on an epidemiological metapopulation model for measles, specifically, a spatiotemporal model for disease transmission within and between cities. At face value, Table\ 3 of Whitehouse et al.\ (2023) suggests that PAL considerably out-performs previous analysis as well as an ARMA benchmark model. We show that PAL does not outperform a block particle filter and that the lookahead component of PAL was implemented in a way that introduces substantial positive bias in the log-likelihood estimates. The results of Table\ 3 of Whitehouse et al.\ (2023) are an incorrect assessment of the capabilities of PAL.
+  Filtering algorithms for high-dimensional nonlinear non-Gaussian partially observed stochastic processes provide access to the likelihood function and hence enable likelihood-based or Bayesian inference for complex dynamic systems.
+  A novel Poisson approximate likelihood (PAL) filter was introduced by Whitehouse et al.\ (2023).
+  PAL employs a Poisson approximation to conditional densities, offering a fast approximation to the likelihood function for a certain subset of partially observed Markov process models.
+  PAL was demonstrated on an epidemiological metapopulation model for measles, specifically, a spatiotemporal model for disease transmission within and between cities. 
+  At face value, Table\ 3 of Whitehouse et al.\ (2023) suggests that PAL considerably out-performs previous analysis as well as an ARMA benchmark model.
+  We show that PAL does not outperform a block particle filter and that the lookahead component of PAL was implemented in a way that introduces substantial positive bias in the log-likelihood estimates.
+  Therefore, the results of Table\ 3 of Whitehouse et al.\ (2023) do not accurately represent the true capabilities of PAL.
 
 format:
   pdf:
