@@ -9,6 +9,8 @@ library("doParallel")
 
 library(pomp)
 
+pomp_dir="pomp/"
+
 measles_cases <- read.csv(paste0(pomp_dir,"case1.csv"))
 measles_covar <- read.csv(paste0(pomp_dir,"covar2.csv"))
 

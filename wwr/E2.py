@@ -5,7 +5,7 @@ import numpy as np
 
 # ------------- cache settings -----------------------------------
 CACHE_DIR  = "wwr/E2"
-CACHE_FILE = os.path.join(CACHE_DIR, "PAL_vanilla.npz")
+CACHE_FILE = os.path.join(CACHE_DIR, "PAL_vanilla_new.npz")
 CACHE_KEY  = "log_likelihood_shared"
 
 os.makedirs(CACHE_DIR, exist_ok=True)
@@ -43,7 +43,6 @@ else:
     from scipy.special import logsumexp
     from sympy.polys.benchmarks.bench_solvers import uk_10
 
-    from Scripts.measles_PALSMC_perstep import PAL_run_likelihood_lookahead
 
     plt.ioff()
 

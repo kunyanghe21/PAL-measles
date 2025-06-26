@@ -43,8 +43,6 @@ else:
     from scipy.special import logsumexp
     from sympy.polys.benchmarks.bench_solvers import uk_10
 
-    from Scripts.measles_PALSMC_perstep import PAL_run_likelihood_lookahead
-
     plt.ioff()
 
     import sys
