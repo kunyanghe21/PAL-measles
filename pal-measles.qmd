@@ -4689,70 +4689,100 @@ E15_AMRA<- real_vec[1];     E15_NegB<- real_vec[2]
 
 \begin{table}[ht]
 \centering
-\begin{tabular}{lrrrr}
+\begin{tabular}{lcccccccc}
 \toprule
-\textbf{$E$} & $\lambda$ & $\sigma$ & ARMA & NegBinom \\
+\textbf{$E$} & \textbf{$F$} & \textbf{$J$} & \textbf{$U$} & \textbf{$f_C$} &
+$\lambda$ & $\sigma$ & ARMA & NegBinom \\
 \midrule
-$E_1$  & $`r sprintf('%.2f', E1_lambda)`$  & 
-$`r sprintf('%.2f', E1_sigma)`$  & 
-$`r sprintf('%.2f', E1_AMRA)`$  & 
-$`r sprintf('%.2f', E1_NegB)`$ \\
-$E_2$  & $`r sprintf('%.2f', E2_lambda)`$  & 
-$`r sprintf('%.2f', E2_sigma)`$  & 
-$`r sprintf('%.2f', E2_AMRA)`$  & 
-$`r sprintf('%.2f', E2_NegB)`$ \\
-$E_3$  & $`r sprintf('%.2f', E3_lambda)`$  & 
-$`r sprintf('%.2f', E3_sigma)`$  & 
-$`r sprintf('%.2f', E3_AMRA)`$  & 
-$`r sprintf('%.2f', E3_NegB)`$ \\
-$E_4$  & $`r sprintf('%.2f', E4_lambda)`$  & 
-$`r sprintf('%.2f', E4_sigma)`$  & 
-$`r sprintf('%.2f', E4_AMRA)`$  & 
-$`r sprintf('%.2f', E4_NegB)`$ \\
-$E_5$  & $`r sprintf('%.2f', E5_lambda)`$  & 
-$`r sprintf('%.2f', E5_sigma)`$  & 
-$`r sprintf('%.2f', E5_AMRA)`$  & 
-$`r sprintf('%.2f', E5_NegB)`$ \\
-$E_6$  & $`r sprintf('%.2f', E6_lambda)`$  & 
-$`r sprintf('%.2f', E6_sigma)`$  & 
-$`r sprintf('%.2f', E6_AMRA)`$  & 
-$`r sprintf('%.2f', E6_NegB)`$ \\     
-$E_7$  & $`r sprintf('%.2f', E7_lambda)`$  & 
-$`r sprintf('%.2f', E7_sigma)`$  & 
-$`r sprintf('%.2f', E7_AMRA)`$  & 
-$`r sprintf('%.2f', E7_NegB)`$ \\  
-$E_8$  & $`r sprintf('%.2f', E8_lambda)`$  & 
-$`r sprintf('%.2f', E8_sigma)`$  & 
-$`r sprintf('%.2f', E8_AMRA)`$  & 
-$`r sprintf('%.2f', E8_NegB)`$ \\
-$E_9$  & $`r sprintf('%.2f', E9_lambda)`$  & 
-$`r sprintf('%.2f', E9_sigma)`$  & 
-$`r sprintf('%.2f', E9_AMRA)`$  & 
-$`r sprintf('%.2f', E9_NegB)`$ \\
-$E_{10}$ & $`r sprintf('%.2f', E10_lambda)`$ & 
-$`r sprintf('%.2f', E10_sigma)`$ & 
-$`r sprintf('%.2f', E10_AMRA)`$ & 
-$`r sprintf('%.2f', E10_NegB)`$ \\
-$E_{11}$ & $`r sprintf('%.2f', E11_lambda)`$ & 
-$`r sprintf('%.2f', E11_sigma)`$ & 
-$`r sprintf('%.2f', E11_AMRA)`$ & 
-$`r sprintf('%.2f', E11_NegB)`$ \\  
-$E_{12}$ & $`r sprintf('%.2f', E12_lambda)`$ & 
-$`r sprintf('%.2f', E12_sigma)`$ & 
-$`r sprintf('%.2f', E12_AMRA)`$ & 
-$`r sprintf('%.2f', E12_NegB)`$ \\   
-$E_{13}$ & $`r sprintf('%.2f', E13_lambda)`$ & 
-$`r sprintf('%.2f', E13_sigma)`$ & 
-$`r sprintf('%.2f', E13_AMRA)`$ & 
-$`r sprintf('%.2f', E13_NegB)`$ \\ 
-$E_{14}$ & $`r sprintf('%.2f', E14_lambda)`$ & 
-$`r sprintf('%.2f', E14_sigma)`$ & 
-$`r sprintf('%.2f', E14_AMRA)`$ & 
-$`r sprintf('%.2f', E14_NegB)`$ \\ 
-$E_{15}$ & $`r sprintf('%.2f', E15_lambda)`$ & 
-$`r sprintf('%.2f', E15_sigma)`$ & 
-$`r sprintf('%.2f', E15_AMRA)`$ & 
-$`r sprintf('%.2f', E15_NegB)`$ \\ 
+$E_1$   & $\mathrm{BPF}$ & $J_2$ & $U_1$ & $C_1$ &
+$`r sprintf('%.2f', E1_lambda)`$  &
+$`r sprintf('%.2f', E1_sigma)`$  &
+$`r sprintf('%.2f', E1_AMRA)`$   &
+$`r sprintf('%.2f', E1_NegB)`$   \\[2pt]
+
+$E_2$   & $\PALV$        & $J_1$ & $U_1$ & $C_1$ &
+$`r sprintf('%.2f', E2_lambda)`$  &
+$`r sprintf('%.2f', E2_sigma)`$  &
+$`r sprintf('%.2f', E2_AMRA)`$   &
+$`r sprintf('%.2f', E2_NegB)`$   \\[2pt]
+
+$E_3$   & $\PALV$        & $J_2$ & $U_1$ & $C_1$ &
+$`r sprintf('%.2f', E3_lambda)`$  &
+$`r sprintf('%.2f', E3_sigma)`$  &
+$`r sprintf('%.2f', E3_AMRA)`$   &
+$`r sprintf('%.2f', E3_NegB)`$   \\[2pt]
+
+$E_4$   & $\PALL$        & $J_1$ & $U_1$ & $C_1$ &
+$`r sprintf('%.2f', E4_lambda)`$  &
+$`r sprintf('%.2f', E4_sigma)`$  &
+$`r sprintf('%.2f', E4_AMRA)`$   &
+$`r sprintf('%.2f', E4_NegB)`$   \\[2pt]
+
+$E_5$   & $\PALL$        & $J_2$ & $U_1$ & $C_1$ &
+$`r sprintf('%.2f', E5_lambda)`$  &
+$`r sprintf('%.2f', E5_sigma)`$  &
+$`r sprintf('%.2f', E5_AMRA)`$   &
+$`r sprintf('%.2f', E5_NegB)`$   \\[2pt]
+
+$E_6$   & $\PALL$        & $J_1$ & $U_1$ & $C_1$ &
+$`r sprintf('%.2f', E6_lambda)`$  &
+$`r sprintf('%.2f', E6_sigma)`$  &
+$`r sprintf('%.2f', E6_AMRA)`$   &
+$`r sprintf('%.2f', E6_NegB)`$   \\[2pt]
+
+$E_7$   & $\mathrm{BPF}$ & $J_1$ & $U_1$ & $C_1$ &
+$`r sprintf('%.2f', E7_lambda)`$  &
+$`r sprintf('%.2f', E7_sigma)`$  &
+$`r sprintf('%.2f', E7_AMRA)`$   &
+$`r sprintf('%.2f', E7_NegB)`$   \\[2pt]
+
+$E_8$   & $\mathrm{BPF}$ & $J_2$ & $U_2$ & $C_2$ &
+$`r sprintf('%.2f', E8_lambda)`$  &
+$`r sprintf('%.2f', E8_sigma)`$  &
+$`r sprintf('%.2f', E8_AMRA)`$   &
+$`r sprintf('%.2f', E8_NegB)`$   \\[2pt]
+
+$E_9$   & $\PALV$        & $J_1$ & $U_2$ & $C_1$ &
+$`r sprintf('%.2f', E9_lambda)`$  &
+$`r sprintf('%.2f', E9_sigma)`$  &
+$`r sprintf('%.2f', E9_AMRA)`$   &
+$`r sprintf('%.2f', E9_NegB)`$   \\[2pt]
+
+$E_{10}$ & $\PALL$       & $J_1$ & $U_2$ & $C_1$ &
+$`r sprintf('%.2f', E10_lambda)`$ &
+$`r sprintf('%.2f', E10_sigma)`$ &
+$`r sprintf('%.2f', E10_AMRA)`$  &
+$`r sprintf('%.2f', E10_NegB)`$  \\[2pt]
+
+$E_{11}$ & $\mathrm{BPF}$ & $J_2$ & $U_2$ & $C_1$ &
+$`r sprintf('%.2f', E11_lambda)`$ &
+$`r sprintf('%.2f', E11_sigma)`$ &
+$`r sprintf('%.2f', E11_AMRA)`$  &
+$`r sprintf('%.2f', E11_NegB)`$  \\[2pt]
+
+$E_{12}$ & $\PALV$       & $J_1$ & $U_2$ & $C_1$ &
+$`r sprintf('%.2f', E12_lambda)`$ &
+$`r sprintf('%.2f', E12_sigma)`$ &
+$`r sprintf('%.2f', E12_AMRA)`$  &
+$`r sprintf('%.2f', E12_NegB)`$  \\[2pt]
+
+$E_{13}$ & $\PALV$       & $J_2$ & $U_2$ & $C_1$ &
+$`r sprintf('%.2f', E13_lambda)`$ &
+$`r sprintf('%.2f', E13_sigma)`$ &
+$`r sprintf('%.2f', E13_AMRA)`$  &
+$`r sprintf('%.2f', E13_NegB)`$  \\[2pt]
+
+$E_{14}$ & $\PALL$       & $J_1$ & $U_2$ & $C_1$ &
+$`r sprintf('%.2f', E14_lambda)`$ &
+$`r sprintf('%.2f', E14_sigma)`$ &
+$`r sprintf('%.2f', E14_AMRA)`$  &
+$`r sprintf('%.2f', E14_NegB)`$  \\[2pt]
+
+$E_{15}$ & $\PALL$       & $J_2$ & $U_2$ & $C_1$ &
+$`r sprintf('%.2f', E15_lambda)`$ &
+$`r sprintf('%.2f', E15_sigma)`$ &
+$`r sprintf('%.2f', E15_AMRA)`$  &
+$`r sprintf('%.2f', E15_NegB)`$  \\
 \bottomrule
 \end{tabular}
 \caption{Log‐likelihood estimate, $\lambda$,  for each experiment described in Table\ 2.
@@ -4761,6 +4791,7 @@ The standard error, $\sigma$, is a jack-knife estimate implemented via the logme
 ARMA gives the log-likelihood for an autoregressive moving average benchmark, and NegBinom is an autoregressive negative binomial benchmark.}
 \label{tbl:method_comparison}
 \end{table}
+
 
 
 
