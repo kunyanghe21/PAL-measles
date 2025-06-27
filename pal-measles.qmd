@@ -492,7 +492,7 @@ sim <- simulate(one_city_pomp, params =  basic_params,  nsim   = 1,
 Pomp_dir <- paste0(pomp_dir,"Pomp_E",1,"/")
 if(!dir.exists(Pomp_dir)) dir.create(Pomp_dir)
 
-stew(file=paste0(Pomp_dir,"E1_non_optimize.rda"),seed=456,{
+stew(file=paste0(Pomp_dir,"E1_new.rda"),seed=456,{
   
   cat(capture.output(sessionInfo()),
       file=paste0(Pomp_dir,"sessionInfo.txt"),sep="\n")
