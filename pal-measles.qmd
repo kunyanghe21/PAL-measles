@@ -4,7 +4,7 @@ title: |
   | __Preliminary version, not for circulation__
 author:
   - "Kunyang He, Yize Hao and Edward L. Ionides"
-date: "May 28, 2025"
+date: "June 27, 2025"
 abstract: |
   Filtering algorithms for high-dimensional nonlinear non-Gaussian partially observed stochastic processes provide access to the likelihood function and hence enable likelihood-based or Bayesian inference for this methodologically challenging class of models.
   A novel Poisson approximate likelihood (PAL) filter was introduced by Whitehouse et al.\ (2023).
@@ -160,7 +160,7 @@ The experimental variables listed in @tbl-description are now described in more 
 \begin{itemize}
 \item[F] {\bf The filtering algorithm}. 
 {\PALL} is the lookahead filter of WWR, and {\PALV} is the plain, so-called vanilla, implementation. 
-BPF is the block particle filter of \citet{rebeschini15} implemented as bpfilter in spatPomp \citep{asfaw24}.
+BPF is the block particle filter of \citet{rebeschini15} implemented as \texttt{bpfilter} in spatPomp \citep{asfaw24}.
 Likelihood optimization for {\PALL} and {\PALV} is conducted using stochastic gradient descent and automatic differentiation, using the implementation by WWR. 
 Likelihood optimization for BPF is conducted using the iterated BPF algorithm \citep{ning23,ionides24-sinica} implemented as \texttt{ibpf} in spatPomp.
 For $U=1$, and for $U=40$ with $g=0$, BPF is identical to a basic particle filter. 
@@ -300,7 +300,7 @@ $E_{15}$ &  \PALL & $J_2$ & $U_2$ &
 \end{table}
 
 Each experiment, $E_k$, has two primary outcomes, a log-likelihood estimate, $\loglik_k$, and its standard error, $\sigma_k$. 
-These results are tabulated in @tbl-method-comparison, together with benchmark log-likelihoods for a log-ARMA model and a negative binomial autoregressive model.
+These results are tabulated in @tbl-method-comparison, together with benchmark log-likelihoods for a log-ARMA(2,1) model and a negative binomial autoregressive model.
 
 
 ```{r E1,include=FALSE}
@@ -4697,7 +4697,7 @@ E15_AMRA<- real_vec[1];     E15_NegB<- real_vec[2]
 
 \begin{table}
 \centering
-\begin{tabular}{lcccccccc}
+\begin{tabular}{llcccrrrr}
 \toprule
 \textbf{$E$} & \textbf{$F$} & \textbf{$J$} & \textbf{$U$} & \textbf{$f_C$} &
 $\lambda$ & $\sigma$ & ARMA & NegBinom \\
@@ -4853,7 +4853,7 @@ The performance of $\PALV$ on the 40-unit real dataset fails to outperform the A
  This is a property of the lookahead part of the algorithm, developed by \citet{rimella23}, rather than the PAL approximation.
  Therefore, for the remainder of this section, we consider the simpler lookahead filter of \citet{rimella23}.
  
- Briefly, the vanilla particle filter is unbiased because the self-normalization constant happens to coincide with the conditional likelihood estimate. 
+ Briefly, the vanilla particle filter is unbiased because the self-normalization denominator in the resampling step happens to coincide with the conditional likelihood estimate on the numerator, leading to a fortuitous cancellation.
  Self-normalization does not always lead to unbiased likelihood estimates, as we can see from the following example.
 
 Let $X$ take values $\{0,1\}$ with equal probability, and let $Y=X$ with probability 1. 
