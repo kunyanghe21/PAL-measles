@@ -8,13 +8,13 @@
 ---
 
 ## Overview
-This repository contains all code and Quarto notebooks (_\*.qmd_) required to reproduce the results in our paper.  
+This repository contains all code and Quarto notebooks (_\*.qmd_) required to reproduce the results in our paper Table 3.  
 
 We provide two independent pipelines:
 
 | Language | Folder | Toolkit | Purpose |
 |----------|--------|---------|---------|
-| **R**    | `pomp/`   | [`pomp`](https://kingaa.github.io/pomp/) & [`spatpomp`](https://github.com/spatPomp-org) | Exact / block particle filtering |
+| **R**    | `pomp/`   | [`pomp`](https://kingaa.github.io/pomp/) & [`spatpomp`](https://github.com/spatPomp-org) | block particle filtering |
 | **Python** | `wwr/` | [`wwr`](https://github.com/LorenzoRimella/PAL) | Poisson Approximate Likelihood (PAL) experiments |
 
 The directory **`wwr/tidy_code_for_exp`** restructures all PAL experiments for clarity.
