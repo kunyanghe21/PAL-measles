@@ -22,13 +22,13 @@ if os.path.exists(CACHE_FILE):
     log_likelihood_shared = np.load(CACHE_FILE)[CACHE_KEY]
 
 # -----------------------------------------------------------------
-# 2) If no cache, run the (heavy) original code unmodified
+# 2) If no cache, run the (heavy) original code 
 # -----------------------------------------------------------------
 else:
     print("[cache] No cache found – running the full simulation …")
 
     # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>>>>>>> ORIGINAL CODE — DO NOT EDIT <<<<<<<<<<<<<<<
+    #  The following code is essentially identical to the version provided by Whitehouse et al.\ (2023).
     # ----------------------------------------------------------------
     import numpy as np
     import time
@@ -110,7 +110,7 @@ else:
     rho      = tf.convert_to_tensor([best_parameters[4]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
     gamma    = tf.convert_to_tensor([best_parameters[5]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
 
-    g = 100 * tf.convert_to_tensor([[6]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
+    g = 100 * tf.convert_to_tensor([best_parameters[6]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
 
     a      = tf.constant(best_parameters[7], dtype=tf.float32)
     c      = tf.constant(best_parameters[8] , dtype=tf.float32)

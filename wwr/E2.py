@@ -18,16 +18,13 @@ if os.path.exists(CACHE_FILE):
     log_likelihood_shared = np.load(CACHE_FILE)[CACHE_KEY]
 
 # ----------------------------------------------------------------
-# 2) No cache → run the original simulation code unmodified
+# 2) No cache → run the original simulation code 
 # ----------------------------------------------------------------
 else:
     print("[cache] No cache found – running the full simulation …")
 
     # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>  ORIGINAL CODE — DO NOT EDIT  <<<<<<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-    #  (Everything between the double lines is your untouched script;
-    #   only indentation has changed so it nests inside this block.)
+    #  The following code is essentially identical to the version provided by Whitehouse et al.\ (2023).
     # ----------------------------------------------------------------
     import numpy as np
     import time

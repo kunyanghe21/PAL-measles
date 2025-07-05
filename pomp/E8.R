@@ -1,4 +1,6 @@
 ## ----packages,incluxde=F,echo=F,cache=F----------------------------------------
+## The spatPomp code is primarily adapted from Ionides et al. (2024) and the Whitehouse et al.\ (2023) code implementation.
+
 library("spatPomp")
 library("ggplot2")
 library("tidyverse")
@@ -362,6 +364,7 @@ E8_real <- t(E8_real)
 realdata_negbinom_spat <- -sum(apply(E8_real,2,negloglik))
 
 realdata_negbinom_spat
+
 ## Prepare the simulated data for python.
 simdata <- as.data.frame(sim)
 

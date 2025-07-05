@@ -1,4 +1,7 @@
 ## ----packages,incluxde=F,echo=F,cache=F----------------------------------------
+
+## A simple SEIR model, with the main code sourced from UMICH STAT 531 Lecture 17 and the Whitehouse et al.\ (2023) code.
+## Running on the real data (London unit).
 library("spatPomp")
 library("ggplot2")
 library("tidyverse")

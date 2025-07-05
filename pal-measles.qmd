@@ -305,6 +305,8 @@ These results are tabulated in @tbl-method-comparison, together with benchmark l
 
 ```{r E1,include=FALSE}
 ## ----packages,incluxde=F,echo=F,cache=F----------------------------------------
+## A simple SEIR model, with the main code sourced from UMICH STAT 531 Lecture 17 and the Whitehouse et al.\ (2023) code.
+## Running on the simulated data.
 library("spatPomp")
 library("ggplot2")
 library("tidyverse")
@@ -535,6 +537,8 @@ write.csv(df, "londonsim.csv", row.names = FALSE)
 
 ```{r E7,include=FALSE}
 ## ----packages,incluxde=F,echo=F,cache=F----------------------------------------
+## A simple SEIR model, with the main code sourced from UMICH STAT 531 Lecture 17 and the Whitehouse et al.\ (2023) code.
+## Running on the real data (London unit).
 library("spatPomp")
 library("ggplot2")
 library("tidyverse")
@@ -807,6 +811,7 @@ real_one_negbinom
 
 ```{r E8,include=FALSE}
 ## ----packages,incluxde=F,echo=F,cache=F----------------------------------------
+## The spatPomp code is primarily adapted from Ionides et al. (2024) and the Whitehouse et al.\ (2023) code implementation.
 library("spatPomp")
 library("ggplot2")
 library("tidyverse")
@@ -1188,6 +1193,7 @@ write.csv(M40,file = "M40.csv",row.names = F)
 
 ```{r E11,include=FALSE}
 ## ----packages,incluxde=F,echo=F,cache=F----------------------------------------
+## The spatPomp code is primarily adapted from Ionides et al. (2024) and the Whitehouse et al.\ (2023) code implementation.
 library("spatPomp")
 library("ggplot2")
 library("tidyverse")
@@ -1223,608 +1229,98 @@ basic_params <- c(
   I_0       = 0.000061
 )
 
-basic_paramsC <- c(
-  alpha1 = 1,
-  alpha2 = 1,
-  alpha3 = 1,
-  alpha4 = 1,
-  alpha5 = 1,
-  alpha6 = 1,
-  alpha7 = 1,
-  alpha8 = 1,
-  alpha9 = 1,
-  alpha10 = 1,
-  alpha11 = 1,
-  alpha12 = 1,
-  alpha13 = 1,
-  alpha14 = 1,
-  alpha15 = 1,
-  alpha16 = 1,
-  alpha17 = 1,
-  alpha18 = 1,
-  alpha19 = 1,
-  alpha20 = 1,
-  alpha21 = 1,
-  alpha22 = 1,
-  alpha23 = 1,
-  alpha24 = 1,
-  alpha25 = 1,
-  alpha26 = 1,
-  alpha27 = 1,
-  alpha28 = 1,
-  alpha29 = 1,
-  alpha30 = 1,
-  alpha31 = 1,
-  alpha32 = 1,
-  alpha33 = 1,
-  alpha34 = 1,
-  alpha35 = 1,
-  alpha36 = 1,
-  alpha37 = 1,
-  alpha38 = 1,
-  alpha39 = 1,
-  alpha40 = 1,
-  iota1 = 0,
-  iota2 = 0,
-  iota3 = 0,
-  iota4 = 0,
-  iota5 = 0,
-  iota6 = 0,
-  iota7 = 0,
-  iota8 = 0,
-  iota9 = 0,
-  iota10 = 0,
-  iota11 = 0,
-  iota12 = 0,
-  iota13 = 0,
-  iota14 = 0,
-  iota15 = 0,
-  iota16 = 0,
-  iota17 = 0,
-  iota18 = 0,
-  iota19 = 0,
-  iota20 = 0,
-  iota21 = 0,
-  iota22 = 0,
-  iota23 = 0,
-  iota24 = 0,
-  iota25 = 0,
-  iota26 = 0,
-  iota27 = 0,
-  iota28 = 0,
-  iota29 = 0,
-  iota30 = 0,
-  iota31 = 0,
-  iota32 = 0,
-  iota33 = 0,
-  iota34 = 0,
-  iota35 = 0,
-  iota36 = 0,
-  iota37 = 0,
-  iota38 = 0,
-  iota39 = 0,
-  iota40 = 0,
-  c1 = 0.032121729,
-  c2 = 0.032121729,
-  c3 = 0.032121729,
-  c4 = 0.032121729,
-  c5 = 0.032121729,
-  c6 = 0.032121729,
-  c7 = 0.032121729,
-  c8 = 0.032121729,
-  c9 = 0.032121729,
-  c10 = 0.032121729,
-  c11 = 0.032121729,
-  c12 = 0.032121729,
-  c13 = 0.032121729,
-  c14 = 0.032121729,
-  c15 = 0.032121729,
-  c16 = 0.032121729,
-  c17 = 0.032121729,
-  c18 = 0.032121729,
-  c19 = 0.032121729,
-  c20 = 0.032121729,
-  c21 = 0.032121729,
-  c22 = 0.032121729,
-  c23 = 0.032121729,
-  c24 = 0.032121729,
-  c25 = 0.032121729,
-  c26 = 0.032121729,
-  c27 = 0.032121729,
-  c28 = 0.032121729,
-  c29 = 0.032121729,
-  c30 = 0.032121729,
-  c31 = 0.032121729,
-  c32 = 0.032121729,
-  c33 = 0.032121729,
-  c34 = 0.032121729,
-  c35 = 0.032121729,
-  c36 = 0.032121729,
-  c37 = 0.032121729,
-  c38 = 0.032121729,
-  c39 = 0.032121729,
-  c40 = 0.032121729,
-  a1 = 0.37107605,
-  a2 = 0.37107605,
-  a3 = 0.37107605,
-  a4 = 0.37107605,
-  a5 = 0.37107605,
-  a6 = 0.37107605,
-  a7 = 0.37107605,
-  a8 = 0.37107605,
-  a9 = 0.37107605,
-  a10 = 0.37107605,
-  a11 = 0.37107605,
-  a12 = 0.37107605,
-  a13 = 0.37107605,
-  a14 = 0.37107605,
-  a15 = 0.37107605,
-  a16 = 0.37107605,
-  a17 = 0.37107605,
-  a18 = 0.37107605,
-  a19 = 0.37107605,
-  a20 = 0.37107605,
-  a21 = 0.37107605,
-  a22 = 0.37107605,
-  a23 = 0.37107605,
-  a24 = 0.37107605,
-  a25 = 0.37107605,
-  a26 = 0.37107605,
-  a27 = 0.37107605,
-  a28 = 0.37107605,
-  a29 = 0.37107605,
-  a30 = 0.37107605,
-  a31 = 0.37107605,
-  a32 = 0.37107605,
-  a33 = 0.37107605,
-  a34 = 0.37107605,
-  a35 = 0.37107605,
-  a36 = 0.37107605,
-  a37 = 0.37107605,
-  a38 = 0.37107605,
-  a39 = 0.37107605,
-  a40 = 0.37107605,
-  rho1 = 0.11784376,
-  rho2 = 0.11784376,
-  rho3 = 0.11784376,
-  rho4 = 0.11784376,
-  rho5 = 0.11784376,
-  rho6 = 0.11784376,
-  rho7 = 0.11784376,
-  rho8 = 0.11784376,
-  rho9 = 0.11784376,
-  rho10 = 0.11784376,
-  rho11 = 0.11784376,
-  rho12 = 0.11784376,
-  rho13 = 0.11784376,
-  rho14 = 0.11784376,
-  rho15 = 0.11784376,
-  rho16 = 0.11784376,
-  rho17 = 0.11784376,
-  rho18 = 0.11784376,
-  rho19 = 0.11784376,
-  rho20 = 0.11784376,
-  rho21 = 0.11784376,
-  rho22 = 0.11784376,
-  rho23 = 0.11784376,
-  rho24 = 0.11784376,
-  rho25 = 0.11784376,
-  rho26 = 0.11784376,
-  rho27 = 0.11784376,
-  rho28 = 0.11784376,
-  rho29 = 0.11784376,
-  rho30 = 0.11784376,
-  rho31 = 0.11784376,
-  rho32 = 0.11784376,
-  rho33 = 0.11784376,
-  rho34 = 0.11784376,
-  rho35 = 0.11784376,
-  rho36 = 0.11784376,
-  rho37 = 0.11784376,
-  rho38 = 0.11784376,
-  rho39 = 0.11784376,
-  rho40 = 0.11784376,
-  gamma1 = 0.10496352,
-  gamma2 = 0.10496352,
-  gamma3 = 0.10496352,
-  gamma4 = 0.10496352,
-  gamma5 = 0.10496352,
-  gamma6 = 0.10496352,
-  gamma7 = 0.10496352,
-  gamma8 = 0.10496352,
-  gamma9 = 0.10496352,
-  gamma10 = 0.10496352,
-  gamma11 = 0.10496352,
-  gamma12 = 0.10496352,
-  gamma13 = 0.10496352,
-  gamma14 = 0.10496352,
-  gamma15 = 0.10496352,
-  gamma16 = 0.10496352,
-  gamma17 = 0.10496352,
-  gamma18 = 0.10496352,
-  gamma19 = 0.10496352,
-  gamma20 = 0.10496352,
-  gamma21 = 0.10496352,
-  gamma22 = 0.10496352,
-  gamma23 = 0.10496352,
-  gamma24 = 0.10496352,
-  gamma25 = 0.10496352,
-  gamma26 = 0.10496352,
-  gamma27 = 0.10496352,
-  gamma28 = 0.10496352,
-  gamma29 = 0.10496352,
-  gamma30 = 0.10496352,
-  gamma31 = 0.10496352,
-  gamma32 = 0.10496352,
-  gamma33 = 0.10496352,
-  gamma34 = 0.10496352,
-  gamma35 = 0.10496352,
-  gamma36 = 0.10496352,
-  gamma37 = 0.10496352,
-  gamma38 = 0.10496352,
-  gamma39 = 0.10496352,
-  gamma40 = 0.10496352,
-  delta1 = 0.0001923076923076923,
-  delta2 = 0.0001923076923076923,
-  delta3 = 0.0001923076923076923,
-  delta4 = 0.0001923076923076923,
-  delta5 = 0.0001923076923076923,
-  delta6 = 0.0001923076923076923,
-  delta7 = 0.0001923076923076923,
-  delta8 = 0.0001923076923076923,
-  delta9 = 0.0001923076923076923,
-  delta10 = 0.0001923076923076923,
-  delta11 = 0.0001923076923076923,
-  delta12 = 0.0001923076923076923,
-  delta13 = 0.0001923076923076923,
-  delta14 = 0.0001923076923076923,
-  delta15 = 0.0001923076923076923,
-  delta16 = 0.0001923076923076923,
-  delta17 = 0.0001923076923076923,
-  delta18 = 0.0001923076923076923,
-  delta19 = 0.0001923076923076923,
-  delta20 = 0.0001923076923076923,
-  delta21 = 0.0001923076923076923,
-  delta22 = 0.0001923076923076923,
-  delta23 = 0.0001923076923076923,
-  delta24 = 0.0001923076923076923,
-  delta25 = 0.0001923076923076923,
-  delta26 = 0.0001923076923076923,
-  delta27 = 0.0001923076923076923,
-  delta28 = 0.0001923076923076923,
-  delta29 = 0.0001923076923076923,
-  delta30 = 0.0001923076923076923,
-  delta31 = 0.0001923076923076923,
-  delta32 = 0.0001923076923076923,
-  delta33 = 0.0001923076923076923,
-  delta34 = 0.0001923076923076923,
-  delta35 = 0.0001923076923076923,
-  delta36 = 0.0001923076923076923,
-  delta37 = 0.0001923076923076923,
-  delta38 = 0.0001923076923076923,
-  delta39 = 0.0001923076923076923,
-  delta40 = 0.0001923076923076923,
-  sigma_xi1 = 0.1776823,
-  sigma_xi2 = 0.1776823,
-  sigma_xi3 = 0.1776823,
-  sigma_xi4 = 0.1776823,
-  sigma_xi5 = 0.1776823,
-  sigma_xi6 = 0.1776823,
-  sigma_xi7 = 0.1776823,
-  sigma_xi8 = 0.1776823,
-  sigma_xi9 = 0.1776823,
-  sigma_xi10 = 0.1776823,
-  sigma_xi11 = 0.1776823,
-  sigma_xi12 = 0.1776823,
-  sigma_xi13 = 0.1776823,
-  sigma_xi14 = 0.1776823,
-  sigma_xi15 = 0.1776823,
-  sigma_xi16 = 0.1776823,
-  sigma_xi17 = 0.1776823,
-  sigma_xi18 = 0.1776823,
-  sigma_xi19 = 0.1776823,
-  sigma_xi20 = 0.1776823,
-  sigma_xi21 = 0.1776823,
-  sigma_xi22 = 0.1776823,
-  sigma_xi23 = 0.1776823,
-  sigma_xi24 = 0.1776823,
-  sigma_xi25 = 0.1776823,
-  sigma_xi26 = 0.1776823,
-  sigma_xi27 = 0.1776823,
-  sigma_xi28 = 0.1776823,
-  sigma_xi29 = 0.1776823,
-  sigma_xi30 = 0.1776823,
-  sigma_xi31 = 0.1776823,
-  sigma_xi32 = 0.1776823,
-  sigma_xi33 = 0.1776823,
-  sigma_xi34 = 0.1776823,
-  sigma_xi35 = 0.1776823,
-  sigma_xi36 = 0.1776823,
-  sigma_xi37 = 0.1776823,
-  sigma_xi38 = 0.1776823,
-  sigma_xi39 = 0.1776823,
-  sigma_xi40 = 0.1776823,
-  psi1 = 0.20831605,
-  psi2 = 0.20831605,
-  psi3 = 0.20831605,
-  psi4 = 0.20831605,
-  psi5 = 0.20831605,
-  psi6 = 0.20831605,
-  psi7 = 0.20831605,
-  psi8 = 0.20831605,
-  psi9 = 0.20831605,
-  psi10 = 0.20831605,
-  psi11 = 0.20831605,
-  psi12 = 0.20831605,
-  psi13 = 0.20831605,
-  psi14 = 0.20831605,
-  psi15 = 0.20831605,
-  psi16 = 0.20831605,
-  psi17 = 0.20831605,
-  psi18 = 0.20831605,
-  psi19 = 0.20831605,
-  psi20 = 0.20831605,
-  psi21 = 0.20831605,
-  psi22 = 0.20831605,
-  psi23 = 0.20831605,
-  psi24 = 0.20831605,
-  psi25 = 0.20831605,
-  psi26 = 0.20831605,
-  psi27 = 0.20831605,
-  psi28 = 0.20831605,
-  psi29 = 0.20831605,
-  psi30 = 0.20831605,
-  psi31 = 0.20831605,
-  psi32 = 0.20831605,
-  psi33 = 0.20831605,
-  psi34 = 0.20831605,
-  psi35 = 0.20831605,
-  psi36 = 0.20831605,
-  psi37 = 0.20831605,
-  psi38 = 0.20831605,
-  psi39 = 0.20831605,
-  psi40 = 0.20831605,
-  g1 = 621.00315,
-  g2 = 621.00315,
-  g3 = 621.00315,
-  g4 = 621.00315,
-  g5 = 621.00315,
-  g6 = 621.00315,
-  g7 = 621.00315,
-  g8 = 621.00315,
-  g9 = 621.00315,
-  g10 = 621.00315,
-  g11 = 621.00315,
-  g12 = 621.00315,
-  g13 = 621.00315,
-  g14 = 621.00315,
-  g15 = 621.00315,
-  g16 = 621.00315,
-  g17 = 621.00315,
-  g18 = 621.00315,
-  g19 = 621.00315,
-  g20 = 621.00315,
-  g21 = 621.00315,
-  g22 = 621.00315,
-  g23 = 621.00315,
-  g24 = 621.00315,
-  g25 = 621.00315,
-  g26 = 621.00315,
-  g27 = 621.00315,
-  g28 = 621.00315,
-  g29 = 621.00315,
-  g30 = 621.00315,
-  g31 = 621.00315,
-  g32 = 621.00315,
-  g33 = 621.00315,
-  g34 = 621.00315,
-  g35 = 621.00315,
-  g36 = 621.00315,
-  g37 = 621.00315,
-  g38 = 621.00315,
-  g39 = 621.00315,
-  g40 = 621.00315,
-  betabar1  = 0.88894647,
-  betabar2  = 0.59131747,
-  betabar3  = 1.3571352,
-  betabar4  = 0.99088466,
-  betabar5  = 1.1142877,
-  betabar6  = 1.073081,
-  betabar7  = 1.5383922,
-  betabar8  = 0.90597922,
-  betabar9  = 0.82007521,
-  betabar10 = 0.85654908,
-  betabar11 = 1.0977113,
-  betabar12 = 0.86888778,
-  betabar13 = 1.1310883,
-  betabar14 = 0.9737336,
-  betabar15 = 0.94829279,
-  betabar16 = 0.62169701,
-  betabar17 = 0.94519132,
-  betabar18 = 0.59131724,
-  betabar19 = 0.5913173,
-  betabar20 = 0.76468575,
-  betabar21 = 1.188135,
-  betabar22 = 0.96471751,
-  betabar23 = 1.3417162,
-  betabar24 = 1.2114047,
-  betabar25 = 1.2141544,
-  betabar26 = 1.4035884,
-  betabar27 = 0.98535007,
-  betabar28 = 0.78903711,
-  betabar29 = 1.3568828,
-  betabar30 = 0.92531413,
-  betabar31 = 0.85022265,
-  betabar32 = 1.1698065,
-  betabar33 = 1.747846,
-  betabar34 = 1.0385478,
-  betabar35 = 0.94807833,
-  betabar36 = 0.90443295,
-  betabar37 = 1.564422,
-  betabar38 = 1.3209716,
-  betabar39 = 1.4434845,
-  betabar40 = 0.89985961,
-  S_01 = 0.075939171,
-  S_02 = 0.045746908,
-  S_03 = 0.072099209,
-  S_04 = 0.093366429,
-  S_05 = 0.12166313,
-  S_06 = 0.082433015,
-  S_07 = 0.076253399,
-  S_08 = 0.073552363,
-  S_09 = 0.091899686,
-  S_010 = 0.11601865,
-  S_011 = 0.11060591,
-  S_012 = 0.086007304,
-  S_013 = 0.090033337,
-  S_014 = 0.068562545,
-  S_015 = 0.08527638,
-  S_016 = 0.099353261,
-  S_017 = 0.071033828,
-  S_018 = 0.057539228,
-  S_019 = 0.0457469,
-  S_020 = 0.056584992,
-  S_021 = 0.066623405,
-  S_022 = 0.071289554,
-  S_023 = 0.10958349,
-  S_024 = 0.057944749,
-  S_025 = 0.098137014,
-  S_026 = 0.083878987,
-  S_027 = 0.073387422,
-  S_028 = 0.065006606,
-  S_029 = 0.076856337,
-  S_030 = 0.089820623,
-  S_031 = 0.078178115,
-  S_032 = 0.11018048,
-  S_033 = 0.1181622,
-  S_034 = 0.098707311,
-  S_035 = 0.09720967,
-  S_036 = 0.076138817,
-  S_037 = 0.066983677,
-  S_038 = 0.081948154,
-  S_039 = 0.083776928,
-  S_040 = 0.063756049,
-  E_01 = 6.5060573e-05,
-  E_02 = 4.5087443e-05,
-  E_03 = 5.2817129e-05,
-  E_04 = 6.8182577e-05,
-  E_05 = 6.4530977e-05,
-  E_06 = 4.4786735e-05,
-  E_07 = 7.5147931e-05,
-  E_08 = 9.4057032e-05,
-  E_09 = 4.7683639e-05,
-  E_010 = 4.2368429e-05,
-  E_011 = 6.2710962e-05,
-  E_012 = 7.0720002e-05,
-  E_013 = 6.5743807e-05,
-  E_014 = 9.3865732e-05,
-  E_015 = 9.4957613e-05,
-  E_016 = 5.9195183e-05,
-  E_017 = 4.9652379e-05,
-  E_018 = 4.4339824e-05,
-  E_019 = 5.5780311e-05,
-  E_020 = 3.4462537e-05,
-  E_021 = 6.6237786e-05,
-  E_022 = 4.6263423e-05,
-  E_023 = 4.987068e-05,
-  E_024 = 4.3129025e-05,
-  E_025 = 7.405701e-05,
-  E_026 = 6.1690727e-05,
-  E_027 = 7.0626847e-05,
-  E_028 = 7.152609e-05,
-  E_029 = 5.3734158e-05,
-  E_030 = 6.6238754e-05,
-  E_031 = 5.7956771e-05,
-  E_032 = 6.3070715e-05,
-  E_033 = 8.4001782e-05,
-  E_034 = 8.3680527e-05,
-  E_035 = 3.8972536e-05,
-  E_036 = 5.995209e-05,
-  E_037 = 5.8326987e-05,
-  E_038 = 5.703792e-05,
-  E_039 = 8.9273613e-05,
-  E_040 = 6.1138249e-05,
-  I_01 = 1.25675637e-04,
-  I_02 = 1.28807835e-04,
-  I_03 = 0.0025939241,
-  I_04 = 0.0011983996,
-  I_05 = 5.3031814e-05,
-  I_06 = 0.00043914493,
-  I_07 = 0.00035218208,
-  I_08 = 0.0020560939,
-  I_09 = 0.00058301724,
-  I_010 = 0.00017986108,
-  I_011 = 7.6727294e-05,
-  I_012 = 6.1292536e-05,
-  I_013 = 0.00021765193,
-  I_014 = 0.00083288341,
-  I_015 = 1.3892895e-08,
-  I_016 = 0.0016802071,
-  I_017 = 0.0013289195,
-  I_018 = 0.00024760532,
-  I_019 = 0.00020639459,
-  I_020 = 0.0014469447,
-  I_021 = 0.00066906348,
-  I_022 = 0.00023718234,
-  I_023 = 1.6463227e-08,
-  I_024 = 0.0006781175,
-  I_025 = 0.00091942732,
-  I_026 = 0.00076855475,
-  I_027 = 0.0029490807,
-  I_028 = 0.0024151804,
-  I_029 = 0.0013736223,
-  I_030 = 0.0010850356,
-  I_031 = 0.0030775415,
-  I_032 = 0.0039083785,
-  I_033 = 0.00043130366,
-  I_034 = 0.0025644207,
-  I_035 = 0.0023132868,
-  I_036 = 0.00070547545,
-  I_037 = 0.00088096713,
-  I_038 = 0.00051698624,
-  I_039 = 0.00079949765,
-  I_040 = 0.00021292546,
-  gaussianrho1  = 0.512295,
-  gaussianrho2  = 0.5846346,
-  gaussianrho3  = 0.73733903,
-  gaussianrho4  = 0.64644552,
-  gaussianrho5  = 0.68464784,
-  gaussianrho6  = 0.62805587,
-  gaussianrho7  = 0.59746622,
-  gaussianrho8  = 0.62227199,
-  gaussianrho9  = 0.57668756,
-  gaussianrho10 = 0.68815189,
-  gaussianrho11 = 0.75385802,
-  gaussianrho12 = 0.63758144,
-  gaussianrho13 = 0.65418166,
-  gaussianrho14 = 0.59742807,
-  gaussianrho15 = 0.58928316,
-  gaussianrho16 = 0.7143576,
-  gaussianrho17 = 0.64989739,
-  gaussianrho18 = 0.52764322,
-  gaussianrho19 = 0.51610781,
-  gaussianrho20 = 0.61995668,
-  gaussianrho21 = 0.63451302,
-  gaussianrho22 = 0.64841047,
-  gaussianrho23 = 0.66641999,
-  gaussianrho24 = 0.58411126,
-  gaussianrho25 = 0.74216196,
-  gaussianrho26 = 0.65110744,
-  gaussianrho27 = 0.57886699,
-  gaussianrho28 = 0.6156806,
-  gaussianrho29 = 0.51067983,
-  gaussianrho30 = 0.47119888,
-  gaussianrho31 = 0.70101722,
-  gaussianrho32 = 0.59482185,
-  gaussianrho33 = 0.76027942,
-  gaussianrho34 = 0.66776662,
-  gaussianrho35 = 0.52625039,
-  gaussianrho36 = 0.60342687,
-  gaussianrho37 = 0.68950329,
-  gaussianrho38 = 0.5869341,
-  gaussianrho39 = 0.70792855,
-  gaussianrho40 = 0.57809921
+U <- 40                                 
+
+shared_unit_values <- list(
+  alpha        = 1,
+  iota         = 0,
+  c            = 0.032121729,
+  a            = 0.37107605,
+  rho          = 0.11784376,
+  gamma        = 0.10496352,
+  delta        = 0.0001923076923076923,
+  sigma_xi     = 0.1776823,
+  psi          = 0.20831605,
+  g            = 621.00315
 )
+
+
+betabar_vals <- c(
+  0.88894647, 0.59131747, 1.3571352,  0.99088466, 1.1142877,
+  1.073081,   1.5383922,  0.90597922, 0.82007521, 0.85654908,
+  1.0977113,  0.86888778, 1.1310883,  0.9737336,  0.94829279,
+  0.62169701, 0.94519132, 0.59131724, 0.59131730, 0.76468575,
+  1.188135,   0.96471751, 1.3417162,  1.2114047,  1.2141544,
+  1.4035884,  0.98535007, 0.78903711, 1.3568828,  0.92531413,
+  0.85022265, 1.1698065,  1.747846,   1.0385478,  0.94807833,
+  0.90443295, 1.564422,   1.3209716,  1.4434845,  0.89985961
+)
+
+gaussianrho_vals <- c(
+  0.512295, 0.5846346, 0.73733903, 0.64644552, 0.68464784,
+  0.62805587, 0.59746622, 0.62227199, 0.57668756, 0.68815189,
+  0.75385802, 0.63758144, 0.65418166, 0.59742807, 0.58928316,
+  0.7143576, 0.64989739, 0.52764322, 0.51610781, 0.61995668,
+  0.63451302, 0.64841047, 0.66641999, 0.58411126, 0.74216196,
+  0.65110744, 0.57886699, 0.6156806, 0.51067983, 0.47119888,
+  0.70101722, 0.59482185, 0.76027942, 0.66776662, 0.52625039,
+  0.60342687, 0.68950329, 0.5869341,  0.70792855, 0.57809921
+)
+
+S0_vals <- c(
+  0.075939171, 0.045746908, 0.072099209, 0.093366429, 0.12166313,
+  0.082433015, 0.076253399, 0.073552363, 0.091899686, 0.11601865,
+  0.11060591,  0.086007304, 0.090033337, 0.068562545, 0.08527638,
+  0.099353261, 0.071033828, 0.057539228, 0.0457469,   0.056584992,
+  0.066623405, 0.071289554, 0.10958349,  0.057944749, 0.098137014,
+  0.083878987, 0.073387422, 0.065006606, 0.076856337, 0.089820623,
+  0.078178115, 0.11018048,  0.1181622,   0.098707311, 0.09720967,
+  0.076138817, 0.066983677, 0.081948154, 0.083776928, 0.063756049
+)
+
+E0_vals <- c(
+  6.5060573e-05, 4.5087443e-05, 5.2817129e-05, 6.8182577e-05, 6.4530977e-05,
+  4.4786735e-05, 7.5147931e-05, 9.4057032e-05, 4.7683639e-05, 4.2368429e-05,
+  6.2710962e-05, 7.0720002e-05, 6.5743807e-05, 9.3865732e-05, 9.4957613e-05,
+  5.9195183e-05, 4.9652379e-05, 4.4339824e-05, 5.5780311e-05, 3.4462537e-05,
+  6.6237786e-05, 4.6263423e-05, 4.9870680e-05, 4.3129025e-05, 7.4057010e-05,
+  6.1690727e-05, 7.0626847e-05, 7.1526090e-05, 5.3734158e-05, 6.6238754e-05,
+  5.7956771e-05, 6.3070715e-05, 8.4001782e-05, 8.3680527e-05, 3.8972536e-05,
+  5.9952090e-05, 5.8326987e-05, 5.7037920e-05, 8.9273613e-05, 6.1138249e-05
+)
+
+I0_vals <- c(
+  1.25675637e-04, 1.28807835e-04, 0.0025939241, 0.0011983996, 5.3031814e-05,
+  0.00043914493, 0.00035218208, 0.0020560939, 0.00058301724, 0.00017986108,
+  7.6727294e-05, 6.1292536e-05, 0.00021765193, 0.00083288341, 1.3892895e-08,
+  0.0016802071, 0.0013289195, 0.00024760532, 0.00020639459, 0.0014469447,
+  0.00066906348, 0.00023718234, 1.6463227e-08, 0.00067811750, 0.00091942732,
+  0.00076855475, 0.0029490807, 0.0024151804, 0.0013736223, 0.0010850356,
+  0.0030775415, 0.0039083785, 0.00043130366, 0.0025644207, 0.0023132868,
+  0.00070547545, 0.00088096713, 0.00051698624, 0.00079949765, 0.00021292546
+)
+
+
+expand_units <- function(value, name) {
+  vals <- if (length(value) == 1) rep(value, U) else value
+  setNames(vals, paste0(name, seq_len(U)))
+}
+
+basic_paramsC <- c(
+  unlist(lapply(names(shared_unit_values), function(nm)
+    expand_units(shared_unit_values[[nm]], nm)
+  )),
+  
+  expand_units(betabar_vals,     "betabar"),
+  expand_units(gaussianrho_vals, "gaussianrho"),
+  
+  expand_units(S0_vals, "S_0"),
+  expand_units(E0_vals, "E_0"),
+  expand_units(I0_vals, "I_0")
+)
+
+length(basic_paramsC)          
+head(basic_paramsC, 20)       
 
 expandedParNames <- names(basic_params)
 
@@ -2186,2454 +1682,337 @@ stew(file=paste0(spatPomp_dir,"E11.rda"),seed=124,{
 E11_result <- logmeanexp(bpf_logLik_40,se = T,ess = T)
 ```
 
-```{python E2,include=FALSE}
+```{python E_python,include=FALSE}
+# ======================================================================
+#  PAL‑measles experiment 
+#  author : hky   2025‑07‑03
+# ======================================================================
 from __future__ import annotations
-
-import os
-import numpy as np
-
-# ------------- cache settings -----------------------------------
-CACHE_DIR  = "wwr/E2"
-CACHE_FILE = os.path.join(CACHE_DIR, "PAL_vanilla.npz")
-CACHE_KEY  = "log_likelihood_shared"
-
-os.makedirs(CACHE_DIR, exist_ok=True)
-
-# ----------------------------------------------------------------
-# 1) Try to load cached results
-# ----------------------------------------------------------------
-if os.path.exists(CACHE_FILE):
-    print(f"[cache] Found existing results → {CACHE_FILE}")
-    log_likelihood_shared = np.load(CACHE_FILE)[CACHE_KEY]
-
-# ----------------------------------------------------------------
-# 2) No cache → run the original simulation code unmodified
-# ----------------------------------------------------------------
-else:
-    print("[cache] No cache found – running the full simulation …")
-
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>  ORIGINAL CODE — DO NOT EDIT  <<<<<<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-    #  (Everything between the double lines is your untouched script;
-    #   only indentation has changed so it nests inside this block.)
-    # ----------------------------------------------------------------
-    import numpy as np
-    import time
-    import random
-    import pandas as pd
-    import tensorflow as tf
-    import tensorflow_probability as tfp
-    import os
-    import matplotlib.pyplot as plt
-    from scipy.optimize import minimize
-
-    import matplotlib.pyplot as plt
-    from scipy.special import logsumexp
-    from sympy.polys.benchmarks.bench_solvers import uk_10
-
-    plt.ioff()
-
-    import sys
-    sys.path.append('wwr/Scripts/')
-    from measles_simulator import *
-    from measles_PALSMC import *
-
-    if not os.path.exists("wwr/E2"):
-        os.makedirs("wwr/E2")
-
-    os.environ['PYTHONHASHSEED'] = '45'
-    random.seed(45)
-    np.random.seed(45)
-    tf.random.set_seed(45)
-
-    UKbirths_array = np.load("wwr/Data/UKbirths_array.npy")
-    UKpop_array = np.load("wwr/Data/UKpop_array.npy")
-    measles_distance_matrix_array = np.load("wwr/Data/measles_distance_matrix_array.npy")
-    UKmeasles_array = np.load("wwr/Data/UKmeasles_array.npy")
-    modelA_array = np.load("wwr/Data/Parameter/final_parameters_lookahead_A.npy")
-
-    UKbirths = tf.convert_to_tensor(UKbirths_array[18:19, :], dtype=tf.float32)
-    UKpop = tf.convert_to_tensor(UKpop_array[18:19, :], dtype=tf.float32)
-    UKmeasles = tf.convert_to_tensor(UKmeasles_array[18:19, :], dtype=tf.float32)
-    measles_distance_matrix = tf.convert_to_tensor(measles_distance_matrix_array[18:19, 18:19],
-                                                   dtype=tf.float32)
-
-    df = pd.read_csv("wwr/Data/londonsim.csv")
-
-    data_array = df.values
-    UKmeasles = tf.convert_to_tensor(data_array, dtype=tf.float32)                                               
-
-    term   = tf.convert_to_tensor([6, 99, 115, 198, 252, 299, 308, 355, 366], dtype = tf.float32)
-    school = tf.convert_to_tensor([0, 1, 0, 1, 0, 1, 0, 1, 0], dtype = tf.float32)
-
-    n_cities = tf.constant(1, dtype = tf.int64)
-    initial_pop = UKpop[:,0]
-
-    T = 416
-    print(T)
-
-    intermediate_steps = 4
-    h = tf.constant(14/tf.cast(intermediate_steps, dtype = tf.float32), dtype = tf.float32)
-    is_school_term_array, is_start_school_year_array, times_total, times_obs = school_term_and_school_year(T, intermediate_steps, term, school)
-
-    is_school_term_array = tf.convert_to_tensor(is_school_term_array, dtype = tf.float32)
-    is_start_school_year_array = tf.convert_to_tensor(is_start_school_year_array, dtype = tf.float32)
-    p      = tf.constant(0.759, dtype = tf.float32)
-    delta_year = tf.convert_to_tensor([[1/50]], dtype = tf.float32)*tf.ones((n_cities, 4), dtype = tf.float32)
-
-    # increase the n_experiments for proper variance estimates, use n_experiments to just test the log-likelihood
-    n_experiments = 20
-
-    # lookahead
-    # shared
-    best_parameters = np.load(os.path.join("wwr/E2", "E2_param_exp.npz"))["E2_param_exp"]
-    best_parameters = np.ndarray.astype(best_parameters, dtype = np.float32)
-    q_mean = tf.constant(np.mean(np.load("wwr/Data/q_mean.npy")), dtype = tf.float32)
-
-    n_cities = tf.constant(1, dtype = tf.int64)
-
-    # --- parameter block (same format, new values) -----------------------
-    pi_0_1 = float(best_parameters[0])
-    pi_0_2 = float(best_parameters[1])
-    pi_0_3 = float(best_parameters[2])
-    pi_0   = (
-        tf.convert_to_tensor(
-            [[pi_0_1, pi_0_2, pi_0_3, 1.0 - pi_0_1 - pi_0_2 - pi_0_3]],
-            dtype=tf.float32
-        )
-        * tf.ones((n_cities, 4), dtype=tf.float32)
-    )
-
-    initial_pop = UKpop[:, 0]
-
-    beta_bar = tf.convert_to_tensor(best_parameters[3] * tf.ones((n_cities, 1)), dtype=tf.float32)
-    rho      = tf.convert_to_tensor([best_parameters[4]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-    gamma    = tf.convert_to_tensor([best_parameters[5]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-
-    g = tf.convert_to_tensor([[0.0]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-
-    a      = tf.constant(best_parameters[6], dtype=tf.float32)
-    c      = tf.constant(best_parameters[7] , dtype=tf.float32)
-    xi_var = 10*tf.convert_to_tensor(best_parameters[8] , dtype=tf.float32)
-    q_var  = tf.convert_to_tensor(best_parameters[9], dtype=tf.float32)
-
-    Xi = tfp.distributions.Gamma(concentration=xi_var, rate=xi_var)
-    Q  = tfp.distributions.TruncatedNormal(loc=float(0.7), scale=q_var, low=0.0, high=1.0)
-
-    n_particles = 5000
-    log_likelihood_shared = np.zeros(n_experiments)
-
-    def logmeanexp(x, se=False, ess=False):
-        x = np.asarray(x, dtype=float)
-        n = x.shape[0]
-        max_x = np.max(x)
-        est = max_x + np.log(np.mean(np.exp(x - max_x)))
-        if not se and not ess:
-            return est
-        results = {"est": est}
-        if se:
-            jk_vals = np.empty(n)
-            for k in range(n):
-                x_minus_k = np.delete(x, k)
-                max_x_mk = np.max(x_minus_k)
-                jk_vals[k] = max_x_mk + np.log(np.mean(np.exp(x_minus_k - max_x_mk)))
-            xse = (n - 1) * np.std(jk_vals, ddof=1) / np.sqrt(n)
-            results["se"] = xse
-        if ess:
-            w = np.exp(x - max_x)
-            xss = np.sum(w) ** 2 / np.sum(w**2)
-            results["ess"] = xss
-        return results
-
-    start_time = time.perf_counter()
-
-    for i in range(n_experiments):
-        seed_i = 123 + i
-        random.seed(seed_i)
-        np.random.seed(seed_i)
-        tf.random.set_seed(seed_i)
-
-        value = (
-            PAL_run_likelihood_res(
-                T, intermediate_steps, UKmeasles, UKbirths, UKpop, g,
-                measles_distance_matrix, initial_pop, pi_0, beta_bar, p, a,
-                is_school_term_array, is_start_school_year_array, h,
-                rho, gamma, Xi, Q, c, n_cities, n_particles, delta_year
-            )
-        )[0].numpy()
-
-        log_likelihood_shared[i] = value
-        print(value)
-
-    elapsed_time = time.perf_counter() - start_time
-    print(f"Comp.time: {elapsed_time:.4f} seconds")
-
-    res = logmeanexp(log_likelihood_shared, se=True, ess=True)
-    print("Est =", res["est"])
-    print("SE  =", res["se"])
-    print("ESS =", res["ess"])
-
-    variance_log = np.var(log_likelihood_shared, ddof=1)
-    mean_log = np.mean(log_likelihood_shared)
-
-    print("Variance of log likelihoods:", variance_log)
-    print("mean of log likelihoods:", mean_log)
-
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>>>>>>>  ORIGINAL CODE END  <<<<<<<<<<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-
-    # ------ save array to cache so future runs can skip heavy work ---
-    np.savez(CACHE_FILE, **{CACHE_KEY: log_likelihood_shared})
-    print(f"[cache] Results cached → {CACHE_FILE}")
-
-# --------------------------------------------------------------------
-# 3) Quick summary (identical whether loaded or freshly computed)
-# --------------------------------------------------------------------
-def logmeanexp_and_se(x: np.ndarray) -> tuple[float, float]:
-    """
-    Return (log-mean-exp, jackknife SE) for a 1-D array of log-likelihoods.
-    """
-    n = x.size
-    max_x = x.max()
-    lme   = max_x + np.log(np.mean(np.exp(x - max_x)))
-
-    # jackknife
-    jk_vals = np.empty(n)
-    for k in range(n):
-        x_k = np.delete(x, k)
-        max_k = x_k.max()
-        jk_vals[k] = max_k + np.log(np.mean(np.exp(x_k - max_k)))
-
-    se = (n - 1) * jk_vals.std(ddof=1) / np.sqrt(n)
-    return lme, se
-
-lme, se = logmeanexp_and_se(log_likelihood_shared)
-
-print("\n[summary]")
-print("  log-mean-exp :", lme)
-print("  SE           :", se)
-print("  mean         :", log_likelihood_shared.mean())
-print("  variance     :", log_likelihood_shared.var(ddof=1))
-
-E2_est = float(lme)    
-E2_se  = float(se) 
-```
-
-
-```{python E3, include=FALSE}
-from __future__ import annotations
-
-import os
-import numpy as np
-
-# ------------- cache settings -----------------------------------
-CACHE_DIR  = "wwr/E3"
-CACHE_FILE = os.path.join(CACHE_DIR, "PAL_vanilla.npz")
-CACHE_KEY  = "log_likelihood_shared"
-
-os.makedirs(CACHE_DIR, exist_ok=True)
-
-# ----------------------------------------------------------------
-# 1) Try to load cached results
-# ----------------------------------------------------------------
-if os.path.exists(CACHE_FILE):
-    print(f"[cache] Found existing results → {CACHE_FILE}")
-    log_likelihood_shared = np.load(CACHE_FILE)[CACHE_KEY]
-
-# ----------------------------------------------------------------
-# 2) No cache → run the original simulation code unmodified
-# ----------------------------------------------------------------
-else:
-    print("[cache] No cache found – running the full simulation …")
-
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>  ORIGINAL CODE — DO NOT EDIT  <<<<<<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-    #  (Everything between the double lines is your untouched script;
-    #   only indentation has changed so it nests inside this block.)
-    # ----------------------------------------------------------------
-    import numpy as np
-    import time
-    import random
-    import pandas as pd
-    import tensorflow as tf
-    import tensorflow_probability as tfp
-    import os
-    import matplotlib.pyplot as plt
-    from scipy.optimize import minimize
-
-    import matplotlib.pyplot as plt
-    from scipy.special import logsumexp
-    from sympy.polys.benchmarks.bench_solvers import uk_10
-
-    plt.ioff()
-
-    import sys
-    sys.path.append('wwr/Scripts/')
-    from measles_simulator import *
-    from measles_PALSMC import *
-
-    if not os.path.exists("wwr/E3"):
-        os.makedirs("wwr/E3")
-
-    os.environ['PYTHONHASHSEED'] = '45'
-    random.seed(45)
-    np.random.seed(45)
-    tf.random.set_seed(45)
-
-    UKbirths_array = np.load("wwr/Data/UKbirths_array.npy")
-    UKpop_array = np.load("wwr/Data/UKpop_array.npy")
-    measles_distance_matrix_array = np.load("wwr/Data/measles_distance_matrix_array.npy")
-    UKmeasles_array = np.load("wwr/Data/UKmeasles_array.npy")
-    modelA_array = np.load("wwr/Data/Parameter/final_parameters_lookahead_A.npy")
-
-    UKbirths = tf.convert_to_tensor(UKbirths_array[18:19, :], dtype=tf.float32)
-    UKpop = tf.convert_to_tensor(UKpop_array[18:19, :], dtype=tf.float32)
-    UKmeasles = tf.convert_to_tensor(UKmeasles_array[18:19, :], dtype=tf.float32)
-    measles_distance_matrix = tf.convert_to_tensor(measles_distance_matrix_array[18:19, 18:19],
-                                                   dtype=tf.float32)
-
-    df = pd.read_csv("wwr/Data/londonsim.csv")
-
-    data_array = df.values
-    UKmeasles = tf.convert_to_tensor(data_array, dtype=tf.float32)                                               
-
-    term   = tf.convert_to_tensor([6, 99, 115, 198, 252, 299, 308, 355, 366], dtype = tf.float32)
-    school = tf.convert_to_tensor([0, 1, 0, 1, 0, 1, 0, 1, 0], dtype = tf.float32)
-
-    n_cities = tf.constant(1, dtype = tf.int64)
-    initial_pop = UKpop[:,0]
-
-    T = 416
-    print(T)
-
-    intermediate_steps = 4
-    h = tf.constant(14/tf.cast(intermediate_steps, dtype = tf.float32), dtype = tf.float32)
-    is_school_term_array, is_start_school_year_array, times_total, times_obs = school_term_and_school_year(T, intermediate_steps, term, school)
-
-    is_school_term_array = tf.convert_to_tensor(is_school_term_array, dtype = tf.float32)
-    is_start_school_year_array = tf.convert_to_tensor(is_start_school_year_array, dtype = tf.float32)
-    p      = tf.constant(0.759, dtype = tf.float32)
-    delta_year = tf.convert_to_tensor([[1/50]], dtype = tf.float32)*tf.ones((n_cities, 4), dtype = tf.float32)
-
-    # increase the n_experiments for proper variance estimates, use n_experiments to just test the log-likelihood
-    n_experiments = 20
-
-    # lookahead
-    # shared
-    best_parameters = np.load(os.path.join("wwr/E2", "E2_param_exp.npz"))["E2_param_exp"]
-    best_parameters = np.ndarray.astype(best_parameters, dtype = np.float32)
-    q_mean = tf.constant(np.mean(np.load("wwr/Data/q_mean.npy")), dtype = tf.float32)
-
-    n_cities = tf.constant(1, dtype = tf.int64)
-
-    # --- parameter block (same format, new values) -----------------------
-    pi_0_1 = float(best_parameters[0])
-    pi_0_2 = float(best_parameters[1])
-    pi_0_3 = float(best_parameters[2])
-    pi_0   = (
-        tf.convert_to_tensor(
-            [[pi_0_1, pi_0_2, pi_0_3, 1.0 - pi_0_1 - pi_0_2 - pi_0_3]],
-            dtype=tf.float32
-        )
-        * tf.ones((n_cities, 4), dtype=tf.float32)
-    )
-
-    initial_pop = UKpop[:, 0]
-
-    beta_bar = tf.convert_to_tensor(best_parameters[3] * tf.ones((n_cities, 1)), dtype=tf.float32)
-    rho      = tf.convert_to_tensor([best_parameters[4]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-    gamma    = tf.convert_to_tensor([best_parameters[5]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-
-    g = tf.convert_to_tensor([[0.0]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-
-    a      = tf.constant(best_parameters[6], dtype=tf.float32)
-    c      = tf.constant(best_parameters[7] , dtype=tf.float32)
-    xi_var = 10*tf.convert_to_tensor(best_parameters[8] , dtype=tf.float32)
-    q_var  = tf.convert_to_tensor(best_parameters[9], dtype=tf.float32)
-
-    Xi = tfp.distributions.Gamma(concentration=xi_var, rate=xi_var)
-    Q  = tfp.distributions.TruncatedNormal(loc=float(0.7), scale=q_var, low=0.0, high=1.0)
-
-    n_particles = 100000
-    log_likelihood_shared = np.zeros(n_experiments)
-
-    def logmeanexp(x, se=False, ess=False):
-        x = np.asarray(x, dtype=float)
-        n = x.shape[0]
-        max_x = np.max(x)
-        est = max_x + np.log(np.mean(np.exp(x - max_x)))
-        if not se and not ess:
-            return est
-        results = {"est": est}
-        if se:
-            jk_vals = np.empty(n)
-            for k in range(n):
-                x_minus_k = np.delete(x, k)
-                max_x_mk = np.max(x_minus_k)
-                jk_vals[k] = max_x_mk + np.log(np.mean(np.exp(x_minus_k - max_x_mk)))
-            xse = (n - 1) * np.std(jk_vals, ddof=1) / np.sqrt(n)
-            results["se"] = xse
-        if ess:
-            w = np.exp(x - max_x)
-            xss = np.sum(w) ** 2 / np.sum(w**2)
-            results["ess"] = xss
-        return results
-
-    start_time = time.perf_counter()
-
-    for i in range(n_experiments):
-        seed_i = 123 + i
-        random.seed(seed_i)
-        np.random.seed(seed_i)
-        tf.random.set_seed(seed_i)
-
-        value = (
-            PAL_run_likelihood_res(
-                T, intermediate_steps, UKmeasles, UKbirths, UKpop, g,
-                measles_distance_matrix, initial_pop, pi_0, beta_bar, p, a,
-                is_school_term_array, is_start_school_year_array, h,
-                rho, gamma, Xi, Q, c, n_cities, n_particles, delta_year
-            )
-        )[0].numpy()
-
-        log_likelihood_shared[i] = value
-        print(value)
-
-    elapsed_time = time.perf_counter() - start_time
-    print(f"Comp.time: {elapsed_time:.4f} seconds")
-
-    res = logmeanexp(log_likelihood_shared, se=True, ess=True)
-    print("Est =", res["est"])
-    print("SE  =", res["se"])
-    print("ESS =", res["ess"])
-
-    variance_log = np.var(log_likelihood_shared, ddof=1)
-    mean_log = np.mean(log_likelihood_shared)
-
-    print("Variance of log likelihoods:", variance_log)
-    print("mean of log likelihoods:", mean_log)
-
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>>>>>>>  ORIGINAL CODE END  <<<<<<<<<<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-
-    # ------ save array to cache so future runs can skip heavy work ---
-    np.savez(CACHE_FILE, **{CACHE_KEY: log_likelihood_shared})
-    print(f"[cache] Results cached → {CACHE_FILE}")
-
-# --------------------------------------------------------------------
-# 3) Quick summary (identical whether loaded or freshly computed)
-# --------------------------------------------------------------------
-def logmeanexp_and_se(x: np.ndarray) -> tuple[float, float]:
-    """
-    Return (log-mean-exp, jackknife SE) for a 1-D array of log-likelihoods.
-    """
-    n = x.size
-    max_x = x.max()
-    lme   = max_x + np.log(np.mean(np.exp(x - max_x)))
-
-    # jackknife
-    jk_vals = np.empty(n)
-    for k in range(n):
-        x_k = np.delete(x, k)
-        max_k = x_k.max()
-        jk_vals[k] = max_k + np.log(np.mean(np.exp(x_k - max_k)))
-
-    se = (n - 1) * jk_vals.std(ddof=1) / np.sqrt(n)
-    return lme, se
-
-lme, se = logmeanexp_and_se(log_likelihood_shared)
-
-print("\n[summary]")
-print("  log-mean-exp :", lme)
-print("  SE           :", se)
-print("  mean         :", log_likelihood_shared.mean())
-print("  variance     :", log_likelihood_shared.var(ddof=1))
-
-E3_est = float(lme)    
-E3_se  = float(se) 
-```
-
-```{python E4, include = FALSE}
-from __future__ import annotations
-
-import os
-import numpy as np
-
-# ------------- cache settings -----------------------------------
-CACHE_DIR  = "wwr/E4"
-CACHE_FILE = os.path.join(CACHE_DIR, "PAL_lookahead.npz")
-CACHE_KEY  = "log_likelihood_shared"
-
-os.makedirs(CACHE_DIR, exist_ok=True)
-
-# ----------------------------------------------------------------
-# 1) Try to load cached results
-# ----------------------------------------------------------------
-if os.path.exists(CACHE_FILE):
-    print(f"[cache] Found existing results → {CACHE_FILE}")
-    log_likelihood_shared = np.load(CACHE_FILE)[CACHE_KEY]
-
-# ----------------------------------------------------------------
-# 2) No cache → run the original simulation code unmodified
-# ----------------------------------------------------------------
-else:
-    print("[cache] No cache found – running the full simulation …")
-
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>  ORIGINAL CODE — DO NOT EDIT  <<<<<<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-    #  (Everything between the double lines is your untouched script;
-    #   only indentation has changed so it nests inside this block.)
-    # ----------------------------------------------------------------
-    import numpy as np
-    import time
-    import random
-    import pandas as pd
-    import tensorflow as tf
-    import tensorflow_probability as tfp
-    import os
-    import matplotlib.pyplot as plt
-    from scipy.optimize import minimize
-
-    import matplotlib.pyplot as plt
-    from scipy.special import logsumexp
-    from sympy.polys.benchmarks.bench_solvers import uk_10
-
-    plt.ioff()
-
-    import sys
-    sys.path.append('wwr/Scripts/')
-    from measles_simulator import *
-    from measles_PALSMC import *
-
-    if not os.path.exists("wwr/E4"):
-        os.makedirs("wwr/E4")
-
-    os.environ['PYTHONHASHSEED'] = '45'
-    random.seed(45)
-    np.random.seed(45)
-    tf.random.set_seed(45)
-
-    UKbirths_array = np.load("wwr/Data/UKbirths_array.npy")
-    UKpop_array = np.load("wwr/Data/UKpop_array.npy")
-    measles_distance_matrix_array = np.load("wwr/Data/measles_distance_matrix_array.npy")
-    UKmeasles_array = np.load("wwr/Data/UKmeasles_array.npy")
-    modelA_array = np.load("wwr/Data/Parameter/final_parameters_lookahead_A.npy")
-
-    UKbirths = tf.convert_to_tensor(UKbirths_array[18:19, :], dtype=tf.float32)
-    UKpop = tf.convert_to_tensor(UKpop_array[18:19, :], dtype=tf.float32)
-    UKmeasles = tf.convert_to_tensor(UKmeasles_array[18:19, :], dtype=tf.float32)
-    measles_distance_matrix = tf.convert_to_tensor(measles_distance_matrix_array[18:19, 18:19],
-                                                   dtype=tf.float32)
-
-    df = pd.read_csv("wwr/Data/londonsim.csv")
-
-    data_array = df.values
-    UKmeasles = tf.convert_to_tensor(data_array, dtype=tf.float32)                                               
-
-    term   = tf.convert_to_tensor([6, 99, 115, 198, 252, 299, 308, 355, 366], dtype = tf.float32)
-    school = tf.convert_to_tensor([0, 1, 0, 1, 0, 1, 0, 1, 0], dtype = tf.float32)
-
-    n_cities = tf.constant(1, dtype = tf.int64)
-    initial_pop = UKpop[:,0]
-
-    T = 416
-    print(T)
-
-    intermediate_steps = 4
-    h = tf.constant(14/tf.cast(intermediate_steps, dtype = tf.float32), dtype = tf.float32)
-    is_school_term_array, is_start_school_year_array, times_total, times_obs = school_term_and_school_year(T, intermediate_steps, term, school)
-
-    is_school_term_array = tf.convert_to_tensor(is_school_term_array, dtype = tf.float32)
-    is_start_school_year_array = tf.convert_to_tensor(is_start_school_year_array, dtype = tf.float32)
-    p      = tf.constant(0.759, dtype = tf.float32)
-    delta_year = tf.convert_to_tensor([[1/50]], dtype = tf.float32)*tf.ones((n_cities, 4), dtype = tf.float32)
-
-    # increase the n_experiments for proper variance estimates, use n_experiments to just test the log-likelihood
-    n_experiments = 20
-
-    # lookahead
-    # shared
-    best_parameters = np.load(os.path.join("wwr/E4", "E4_param_exp.npz"))["E4_param_exp"]
-    best_parameters = np.ndarray.astype(best_parameters, dtype = np.float32)
-    q_mean = tf.constant(np.mean(np.load("wwr/Data/q_mean.npy")), dtype = tf.float32)
-
-    n_cities = tf.constant(1, dtype = tf.int64)
-
-    # --- parameter block (same format, new values) -----------------------
-    pi_0_1 = float(best_parameters[0])
-    pi_0_2 = float(best_parameters[1])
-    pi_0_3 = float(best_parameters[2])
-    pi_0   = (
-        tf.convert_to_tensor(
-            [[pi_0_1, pi_0_2, pi_0_3, 1.0 - pi_0_1 - pi_0_2 - pi_0_3]],
-            dtype=tf.float32
-        )
-        * tf.ones((n_cities, 4), dtype=tf.float32)
-    )
-
-    initial_pop = UKpop[:, 0]
-
-    beta_bar = tf.convert_to_tensor(best_parameters[3] * tf.ones((n_cities, 1)), dtype=tf.float32)
-    rho      = tf.convert_to_tensor([best_parameters[4]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-    gamma    = tf.convert_to_tensor([best_parameters[5]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-
-    g = tf.convert_to_tensor([[0.0]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-
-    a      = tf.constant(best_parameters[6], dtype=tf.float32)
-    c      = tf.constant(best_parameters[7] , dtype=tf.float32)
-    xi_var = 10*tf.convert_to_tensor(best_parameters[8] , dtype=tf.float32)
-    q_var  = tf.convert_to_tensor(best_parameters[9], dtype=tf.float32)
-
-    Xi = tfp.distributions.Gamma(concentration=xi_var, rate=xi_var)
-    Q  = tfp.distributions.TruncatedNormal(loc=float(0.7), scale=q_var, low=0.0, high=1.0)
-
-    n_particles = 5000
-    log_likelihood_shared = np.zeros(n_experiments)
-
-    def logmeanexp(x, se=False, ess=False):
-        x = np.asarray(x, dtype=float)
-        n = x.shape[0]
-        max_x = np.max(x)
-        est = max_x + np.log(np.mean(np.exp(x - max_x)))
-        if not se and not ess:
-            return est
-        results = {"est": est}
-        if se:
-            jk_vals = np.empty(n)
-            for k in range(n):
-                x_minus_k = np.delete(x, k)
-                max_x_mk = np.max(x_minus_k)
-                jk_vals[k] = max_x_mk + np.log(np.mean(np.exp(x_minus_k - max_x_mk)))
-            xse = (n - 1) * np.std(jk_vals, ddof=1) / np.sqrt(n)
-            results["se"] = xse
-        if ess:
-            w = np.exp(x - max_x)
-            xss = np.sum(w) ** 2 / np.sum(w**2)
-            results["ess"] = xss
-        return results
-
-    start_time = time.perf_counter()
-
-    for i in range(n_experiments):
-        seed_i = 123 + i
-        random.seed(seed_i)
-        np.random.seed(seed_i)
-        tf.random.set_seed(seed_i)
-
-        value = (
-            PAL_run_likelihood_lookahead(
-                T, intermediate_steps, UKmeasles, UKbirths, UKpop, g,
-                measles_distance_matrix, initial_pop, pi_0, beta_bar, p, a,
-                is_school_term_array, is_start_school_year_array, h,
-                rho, gamma, Xi, Q, c, n_cities, n_particles, delta_year
-            )
-        )[0].numpy()
-
-        log_likelihood_shared[i] = value
-        print(value)
-
-    elapsed_time = time.perf_counter() - start_time
-    print(f"Comp.time: {elapsed_time:.4f} seconds")
-
-    res = logmeanexp(log_likelihood_shared, se=True, ess=True)
-    print("Est =", res["est"])
-    print("SE  =", res["se"])
-    print("ESS =", res["ess"])
-
-    variance_log = np.var(log_likelihood_shared, ddof=1)
-    mean_log = np.mean(log_likelihood_shared)
-
-    print("Variance of log likelihoods:", variance_log)
-    print("mean of log likelihoods:", mean_log)
-
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>>>>>>>  ORIGINAL CODE END  <<<<<<<<<<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-
-    # ------ save array to cache so future runs can skip heavy work ---
-    np.savez(CACHE_FILE, **{CACHE_KEY: log_likelihood_shared})
-    print(f"[cache] Results cached → {CACHE_FILE}")
-
-# --------------------------------------------------------------------
-# 3) Quick summary (identical whether loaded or freshly computed)
-# --------------------------------------------------------------------
-def logmeanexp_and_se(x: np.ndarray) -> tuple[float, float]:
-    """
-    Return (log-mean-exp, jackknife SE) for a 1-D array of log-likelihoods.
-    """
-    n = x.size
-    max_x = x.max()
-    lme   = max_x + np.log(np.mean(np.exp(x - max_x)))
-
-    # jackknife
-    jk_vals = np.empty(n)
-    for k in range(n):
-        x_k = np.delete(x, k)
-        max_k = x_k.max()
-        jk_vals[k] = max_k + np.log(np.mean(np.exp(x_k - max_k)))
-
-    se = (n - 1) * jk_vals.std(ddof=1) / np.sqrt(n)
-    return lme, se
-
-lme, se = logmeanexp_and_se(log_likelihood_shared)
-
-print("\n[summary]")
-print("  log-mean-exp :", lme)
-print("  SE           :", se)
-print("  mean         :", log_likelihood_shared.mean())
-print("  variance     :", log_likelihood_shared.var(ddof=1))
-
-E4_est = float(lme)    
-E4_se  = float(se) 
-```
-
-```{python E5, include = FALSE}
-from __future__ import annotations
-
-import os
-import numpy as np
-
-# ------------- cache settings -----------------------------------
-CACHE_DIR  = "wwr/E5"
-CACHE_FILE = os.path.join(CACHE_DIR, "PAL_lookahead.npz")
-CACHE_KEY  = "log_likelihood_shared"
-
-os.makedirs(CACHE_DIR, exist_ok=True)
-
-# ----------------------------------------------------------------
-# 1) Try to load cached results
-# ----------------------------------------------------------------
-if os.path.exists(CACHE_FILE):
-    print(f"[cache] Found existing results → {CACHE_FILE}")
-    log_likelihood_shared = np.load(CACHE_FILE)[CACHE_KEY]
-
-# ----------------------------------------------------------------
-# 2) No cache → run the original simulation code unmodified
-# ----------------------------------------------------------------
-else:
-    print("[cache] No cache found – running the full simulation …")
-
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>  ORIGINAL CODE — DO NOT EDIT  <<<<<<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-    #  (Everything between the double lines is your untouched script;
-    #   only indentation has changed so it nests inside this block.)
-    # ----------------------------------------------------------------
-    import numpy as np
-    import time
-    import random
-    import pandas as pd
-    import tensorflow as tf
-    import tensorflow_probability as tfp
-    import os
-    import matplotlib.pyplot as plt
-    from scipy.optimize import minimize
-
-    import matplotlib.pyplot as plt
-    from scipy.special import logsumexp
-    from sympy.polys.benchmarks.bench_solvers import uk_10
-
-    plt.ioff()
-
-    import sys
-    sys.path.append('wwr/Scripts/')
-    from measles_simulator import *
-    from measles_PALSMC import *
-
-    if not os.path.exists("wwr/E5"):
-        os.makedirs("wwr/E5")
-
-    os.environ['PYTHONHASHSEED'] = '45'
-    random.seed(45)
-    np.random.seed(45)
-    tf.random.set_seed(45)
-
-    UKbirths_array = np.load("wwr/Data/UKbirths_array.npy")
-    UKpop_array = np.load("wwr/Data/UKpop_array.npy")
-    measles_distance_matrix_array = np.load("wwr/Data/measles_distance_matrix_array.npy")
-    UKmeasles_array = np.load("wwr/Data/UKmeasles_array.npy")
-    modelA_array = np.load("wwr/Data/Parameter/final_parameters_lookahead_A.npy")
-
-    UKbirths = tf.convert_to_tensor(UKbirths_array[18:19, :], dtype=tf.float32)
-    UKpop = tf.convert_to_tensor(UKpop_array[18:19, :], dtype=tf.float32)
-    UKmeasles = tf.convert_to_tensor(UKmeasles_array[18:19, :], dtype=tf.float32)
-    measles_distance_matrix = tf.convert_to_tensor(measles_distance_matrix_array[18:19, 18:19],
-                                                   dtype=tf.float32)
-
-    df = pd.read_csv("wwr/Data/londonsim.csv")
-
-    data_array = df.values
-    UKmeasles = tf.convert_to_tensor(data_array, dtype=tf.float32)                                               
-
-    term   = tf.convert_to_tensor([6, 99, 115, 198, 252, 299, 308, 355, 366], dtype = tf.float32)
-    school = tf.convert_to_tensor([0, 1, 0, 1, 0, 1, 0, 1, 0], dtype = tf.float32)
-
-    n_cities = tf.constant(1, dtype = tf.int64)
-    initial_pop = UKpop[:,0]
-
-    T = 416
-    print(T)
-
-    intermediate_steps = 4
-    h = tf.constant(14/tf.cast(intermediate_steps, dtype = tf.float32), dtype = tf.float32)
-    is_school_term_array, is_start_school_year_array, times_total, times_obs = school_term_and_school_year(T, intermediate_steps, term, school)
-
-    is_school_term_array = tf.convert_to_tensor(is_school_term_array, dtype = tf.float32)
-    is_start_school_year_array = tf.convert_to_tensor(is_start_school_year_array, dtype = tf.float32)
-    p      = tf.constant(0.759, dtype = tf.float32)
-    delta_year = tf.convert_to_tensor([[1/50]], dtype = tf.float32)*tf.ones((n_cities, 4), dtype = tf.float32)
-
-    # increase the n_experiments for proper variance estimates, use n_experiments to just test the log-likelihood
-    n_experiments = 20
-
-    # lookahead
-    # shared
-    best_parameters = np.load(os.path.join("wwr/E4", "E4_param_exp.npz"))["E4_param_exp"]
-    best_parameters = np.ndarray.astype(best_parameters, dtype = np.float32)
-    q_mean = tf.constant(np.mean(np.load("wwr/Data/q_mean.npy")), dtype = tf.float32)
-
-    n_cities = tf.constant(1, dtype = tf.int64)
-
-    # --- parameter block (same format, new values) -----------------------
-    pi_0_1 = float(best_parameters[0])
-    pi_0_2 = float(best_parameters[1])
-    pi_0_3 = float(best_parameters[2])
-    pi_0   = (
-        tf.convert_to_tensor(
-            [[pi_0_1, pi_0_2, pi_0_3, 1.0 - pi_0_1 - pi_0_2 - pi_0_3]],
-            dtype=tf.float32
-        )
-        * tf.ones((n_cities, 4), dtype=tf.float32)
-    )
-
-    initial_pop = UKpop[:, 0]
-
-    beta_bar = tf.convert_to_tensor(best_parameters[3] * tf.ones((n_cities, 1)), dtype=tf.float32)
-    rho      = tf.convert_to_tensor([best_parameters[4]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-    gamma    = tf.convert_to_tensor([best_parameters[5]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-
-    g = tf.convert_to_tensor([[0.0]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-
-    a      = tf.constant(best_parameters[6], dtype=tf.float32)
-    c      = tf.constant(best_parameters[7] , dtype=tf.float32)
-    xi_var = 10*tf.convert_to_tensor(best_parameters[8] , dtype=tf.float32)
-    q_var  = tf.convert_to_tensor(best_parameters[9], dtype=tf.float32)
-
-    Xi = tfp.distributions.Gamma(concentration=xi_var, rate=xi_var)
-    Q  = tfp.distributions.TruncatedNormal(loc=float(0.7), scale=q_var, low=0.0, high=1.0)
-
-    n_particles = 100000
-    log_likelihood_shared = np.zeros(n_experiments)
-
-    def logmeanexp(x, se=False, ess=False):
-        x = np.asarray(x, dtype=float)
-        n = x.shape[0]
-        max_x = np.max(x)
-        est = max_x + np.log(np.mean(np.exp(x - max_x)))
-        if not se and not ess:
-            return est
-        results = {"est": est}
-        if se:
-            jk_vals = np.empty(n)
-            for k in range(n):
-                x_minus_k = np.delete(x, k)
-                max_x_mk = np.max(x_minus_k)
-                jk_vals[k] = max_x_mk + np.log(np.mean(np.exp(x_minus_k - max_x_mk)))
-            xse = (n - 1) * np.std(jk_vals, ddof=1) / np.sqrt(n)
-            results["se"] = xse
-        if ess:
-            w = np.exp(x - max_x)
-            xss = np.sum(w) ** 2 / np.sum(w**2)
-            results["ess"] = xss
-        return results
-
-    start_time = time.perf_counter()
-
-    for i in range(n_experiments):
-        seed_i = 123 + i
-        random.seed(seed_i)
-        np.random.seed(seed_i)
-        tf.random.set_seed(seed_i)
-
-        value = (
-            PAL_run_likelihood_lookahead(
-                T, intermediate_steps, UKmeasles, UKbirths, UKpop, g,
-                measles_distance_matrix, initial_pop, pi_0, beta_bar, p, a,
-                is_school_term_array, is_start_school_year_array, h,
-                rho, gamma, Xi, Q, c, n_cities, n_particles, delta_year
-            )
-        )[0].numpy()
-
-        log_likelihood_shared[i] = value
-        print(value)
-
-    elapsed_time = time.perf_counter() - start_time
-    print(f"Comp.time: {elapsed_time:.4f} seconds")
-
-    res = logmeanexp(log_likelihood_shared, se=True, ess=True)
-    print("Est =", res["est"])
-    print("SE  =", res["se"])
-    print("ESS =", res["ess"])
-
-    variance_log = np.var(log_likelihood_shared, ddof=1)
-    mean_log = np.mean(log_likelihood_shared)
-
-    print("Variance of log likelihoods:", variance_log)
-    print("mean of log likelihoods:", mean_log)
-
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>>>>>>>  ORIGINAL CODE END  <<<<<<<<<<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-
-    # ------ save array to cache so future runs can skip heavy work ---
-    np.savez(CACHE_FILE, **{CACHE_KEY: log_likelihood_shared})
-    print(f"[cache] Results cached → {CACHE_FILE}")
-
-# --------------------------------------------------------------------
-# 3) Quick summary (identical whether loaded or freshly computed)
-# --------------------------------------------------------------------
-def logmeanexp_and_se(x: np.ndarray) -> tuple[float, float]:
-    """
-    Return (log-mean-exp, jackknife SE) for a 1-D array of log-likelihoods.
-    """
-    n = x.size
-    max_x = x.max()
-    lme   = max_x + np.log(np.mean(np.exp(x - max_x)))
-
-    # jackknife
-    jk_vals = np.empty(n)
-    for k in range(n):
-        x_k = np.delete(x, k)
-        max_k = x_k.max()
-        jk_vals[k] = max_k + np.log(np.mean(np.exp(x_k - max_k)))
-
-    se = (n - 1) * jk_vals.std(ddof=1) / np.sqrt(n)
-    return lme, se
-
-lme, se = logmeanexp_and_se(log_likelihood_shared)
-
-print("\n[summary]")
-print("  log-mean-exp :", lme)
-print("  SE           :", se)
-print("  mean         :", log_likelihood_shared.mean())
-print("  variance     :", log_likelihood_shared.var(ddof=1))
-
-E5_est = float(lme)    
-E5_se  = float(se) 
-```
-
-```{python E6, include = FALSE}
-from __future__ import annotations
-
-import os
-import numpy as np
-
-# ------------- cache settings -----------------------------------
-CACHE_DIR  = "wwr/E6"
-CACHE_FILE = os.path.join(CACHE_DIR, "PAL_lookahead.npz")
-CACHE_KEY  = "log_likelihood_shared"
-
-os.makedirs(CACHE_DIR, exist_ok=True)
-
-# ----------------------------------------------------------------
-# 1) Try to load cached results
-# ----------------------------------------------------------------
-if os.path.exists(CACHE_FILE):
-    print(f"[cache] Found existing results → {CACHE_FILE}")
-    log_likelihood_shared = np.load(CACHE_FILE)[CACHE_KEY]
-
-# ----------------------------------------------------------------
-# 2) No cache → run the original simulation code unmodified
-# ----------------------------------------------------------------
-else:
-    print("[cache] No cache found – running the full simulation …")
-
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>  ORIGINAL CODE — DO NOT EDIT  <<<<<<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-    #  (Everything between the double lines is your untouched script;
-    #   only indentation has changed so it nests inside this block.)
-    # ----------------------------------------------------------------
-    import numpy as np
-    import time
-    import random
-    import pandas as pd
-    import tensorflow as tf
-    import tensorflow_probability as tfp
-    import os
-    import matplotlib.pyplot as plt
-    from scipy.optimize import minimize
-
-    import matplotlib.pyplot as plt
-    from scipy.special import logsumexp
-    from sympy.polys.benchmarks.bench_solvers import uk_10
-
-    plt.ioff()
-
-    import sys
-    sys.path.append('wwr/Scripts/')
-    from measles_simulator import *
-    from measles_PALSMC import *
-
-    if not os.path.exists("wwr/E6"):
-        os.makedirs("wwr/E6")
-
-    os.environ['PYTHONHASHSEED'] = '45'
-    random.seed(45)
-    np.random.seed(45)
-    tf.random.set_seed(45)
-
-    UKbirths_array = np.load("wwr/Data/UKbirths_array.npy")
-    UKpop_array = np.load("wwr/Data/UKpop_array.npy")
-    measles_distance_matrix_array = np.load("wwr/Data/measles_distance_matrix_array.npy")
-    UKmeasles_array = np.load("wwr/Data/UKmeasles_array.npy")
-    modelA_array = np.load("wwr/Data/Parameter/final_parameters_lookahead_A.npy")
-
-    UKbirths = tf.convert_to_tensor(UKbirths_array[18:19, :], dtype=tf.float32)
-    UKpop = tf.convert_to_tensor(UKpop_array[18:19, :], dtype=tf.float32)
-    UKmeasles = tf.convert_to_tensor(UKmeasles_array[18:19, :], dtype=tf.float32)
-    measles_distance_matrix = tf.convert_to_tensor(measles_distance_matrix_array[18:19, 18:19],
-                                                   dtype=tf.float32)
-
-    term   = tf.convert_to_tensor([6, 99, 115, 198, 252, 299, 308, 355, 366], dtype = tf.float32)
-    school = tf.convert_to_tensor([0, 1, 0, 1, 0, 1, 0, 1, 0], dtype = tf.float32)
-
-    n_cities = tf.constant(1, dtype = tf.int64)
-    initial_pop = UKpop[:,0]
-
-    T = 416
-    print(T)
-
-    intermediate_steps = 4
-    h = tf.constant(14/tf.cast(intermediate_steps, dtype = tf.float32), dtype = tf.float32)
-    is_school_term_array, is_start_school_year_array, times_total, times_obs = school_term_and_school_year(T, intermediate_steps, term, school)
-
-    is_school_term_array = tf.convert_to_tensor(is_school_term_array, dtype = tf.float32)
-    is_start_school_year_array = tf.convert_to_tensor(is_start_school_year_array, dtype = tf.float32)
-    p      = tf.constant(0.759, dtype = tf.float32)
-    delta_year = tf.convert_to_tensor([[1/50]], dtype = tf.float32)*tf.ones((n_cities, 4), dtype = tf.float32)
-
-    # increase the n_experiments for proper variance estimates, use n_experiments to just test the log-likelihood
-    n_experiments = 20
-
-    # lookahead
-    # shared
-    best_parameters = np.load(os.path.join("wwr/E6", "E6_param_exp.npz"))["E6_param_exp"]
-    best_parameters = np.ndarray.astype(best_parameters, dtype = np.float32)
-    q_mean = tf.constant(np.mean(np.load("wwr/Data/q_mean.npy")), dtype = tf.float32)
-
-    n_cities = tf.constant(1, dtype = tf.int64)
-
-    # --- parameter block (same format, new values) -----------------------
-    pi_0_1 = float(best_parameters[0])
-    pi_0_2 = float(best_parameters[1])
-    pi_0_3 = float(best_parameters[2])
-    pi_0   = (
-        tf.convert_to_tensor(
-            [[pi_0_1, pi_0_2, pi_0_3, 1.0 - pi_0_1 - pi_0_2 - pi_0_3]],
-            dtype=tf.float32
-        )
-        * tf.ones((n_cities, 4), dtype=tf.float32)
-    )
-
-    initial_pop = UKpop[:, 0]
-
-    beta_bar = tf.convert_to_tensor(best_parameters[3] * tf.ones((n_cities, 1)), dtype=tf.float32)
-    rho      = tf.convert_to_tensor([best_parameters[4]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-    gamma    = tf.convert_to_tensor([best_parameters[5]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-
-    g = tf.convert_to_tensor([[0.0]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-
-    a      = tf.constant(best_parameters[6], dtype=tf.float32)
-    c      = tf.constant(best_parameters[7] , dtype=tf.float32)
-    xi_var = 10*tf.convert_to_tensor(best_parameters[8] , dtype=tf.float32)
-    q_var  = tf.convert_to_tensor(best_parameters[9], dtype=tf.float32)
-
-    Xi = tfp.distributions.Gamma(concentration=xi_var, rate=xi_var)
-    Q  = tfp.distributions.TruncatedNormal(loc=float(best_parameters[10]), scale=q_var, low=0.0, high=1.0)
-
-    n_particles = 5000
-    log_likelihood_shared = np.zeros(n_experiments)
-
-    def logmeanexp(x, se=False, ess=False):
-        x = np.asarray(x, dtype=float)
-        n = x.shape[0]
-        max_x = np.max(x)
-        est = max_x + np.log(np.mean(np.exp(x - max_x)))
-        if not se and not ess:
-            return est
-        results = {"est": est}
-        if se:
-            jk_vals = np.empty(n)
-            for k in range(n):
-                x_minus_k = np.delete(x, k)
-                max_x_mk = np.max(x_minus_k)
-                jk_vals[k] = max_x_mk + np.log(np.mean(np.exp(x_minus_k - max_x_mk)))
-            xse = (n - 1) * np.std(jk_vals, ddof=1) / np.sqrt(n)
-            results["se"] = xse
-        if ess:
-            w = np.exp(x - max_x)
-            xss = np.sum(w) ** 2 / np.sum(w**2)
-            results["ess"] = xss
-        return results
-
-    start_time = time.perf_counter()
-
-    for i in range(n_experiments):
-        seed_i = 123 + i
-        random.seed(seed_i)
-        np.random.seed(seed_i)
-        tf.random.set_seed(seed_i)
-
-        value = (
-            PAL_run_likelihood_lookahead(
-                T, intermediate_steps, UKmeasles, UKbirths, UKpop, g,
-                measles_distance_matrix, initial_pop, pi_0, beta_bar, p, a,
-                is_school_term_array, is_start_school_year_array, h,
-                rho, gamma, Xi, Q, c, n_cities, n_particles, delta_year
-            )
-        )[0].numpy()
-
-        log_likelihood_shared[i] = value
-        print(value)
-
-    elapsed_time = time.perf_counter() - start_time
-    print(f"Comp.time: {elapsed_time:.4f} seconds")
-
-    res = logmeanexp(log_likelihood_shared, se=True, ess=True)
-    print("Est =", res["est"])
-    print("SE  =", res["se"])
-    print("ESS =", res["ess"])
-
-    variance_log = np.var(log_likelihood_shared, ddof=1)
-    mean_log = np.mean(log_likelihood_shared)
-
-    print("Variance of log likelihoods:", variance_log)
-    print("mean of log likelihoods:", mean_log)
-
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>>>>>>>  ORIGINAL CODE END  <<<<<<<<<<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-
-    # ------ save array to cache so future runs can skip heavy work ---
-    np.savez(CACHE_FILE, **{CACHE_KEY: log_likelihood_shared})
-    print(f"[cache] Results cached → {CACHE_FILE}")
-
-# --------------------------------------------------------------------
-# 3) Quick summary (identical whether loaded or freshly computed)
-# --------------------------------------------------------------------
-def logmeanexp_and_se(x: np.ndarray) -> tuple[float, float]:
-    """
-    Return (log-mean-exp, jackknife SE) for a 1-D array of log-likelihoods.
-    """
-    n = x.size
-    max_x = x.max()
-    lme   = max_x + np.log(np.mean(np.exp(x - max_x)))
-
-    # jackknife
-    jk_vals = np.empty(n)
-    for k in range(n):
-        x_k = np.delete(x, k)
-        max_k = x_k.max()
-        jk_vals[k] = max_k + np.log(np.mean(np.exp(x_k - max_k)))
-
-    se = (n - 1) * jk_vals.std(ddof=1) / np.sqrt(n)
-    return lme, se
-
-lme, se = logmeanexp_and_se(log_likelihood_shared)
-
-print("\n[summary]")
-print("  log-mean-exp :", lme)
-print("  SE           :", se)
-print("  mean         :", log_likelihood_shared.mean())
-print("  variance     :", log_likelihood_shared.var(ddof=1))
-
-E6_est = float(lme)    
-E6_se  = float(se) 
-```
-
-```{python E9, include = FALSE}
-#!/usr/bin/env python3
-# ================================================================
-#  Block-particle PAL experiment (40 cities) with on-disk caching
-# ================================================================
-
-from __future__ import annotations
-import os
-import numpy as np
-
-# ----------------------------- cache -----------------------------
-CACHE_DIR  = "wwr/E9"
-CACHE_FILE = os.path.join(CACHE_DIR, "PAL_res_40.npz")
-CACHE_KEY  = "log_likelihood_shared"
-
-os.makedirs(CACHE_DIR, exist_ok=True)
-
-# -----------------------------------------------------------------
-# 1) Load cached results if available
-# -----------------------------------------------------------------
-if os.path.exists(CACHE_FILE):
-    print(f"[cache] Found existing results → {CACHE_FILE}")
-    log_likelihood_shared = np.load(CACHE_FILE)[CACHE_KEY]
-
-# -----------------------------------------------------------------
-# 2) If no cache, run the (heavy) original code unmodified
-# -----------------------------------------------------------------
-else:
-    print("[cache] No cache found – running the full simulation …")
-
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>>>>>>> ORIGINAL CODE — DO NOT EDIT <<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-    import numpy as np
-    import time
-    import random
-    import pandas as pd
-    import tensorflow as tf
-    import tensorflow_probability as tfp
-    import os
-    import matplotlib.pyplot as plt
-    from scipy.optimize import minimize
-    import matplotlib.pyplot as plt
-
-    plt.ioff()
-
-    import sys
-    sys.path.append('wwr/Scripts/')
-    from measles_simulator import *
-    from measles_PALSMC import *
-
-    if not os.path.exists("wwr/E9"):
-        os.makedirs("wwr/E9")
-
-    os.environ['PYTHONHASHSEED'] = '42'
-    random.seed(42)
-    np.random.seed(42)
-    tf.random.set_seed(42)
-
-    UKbirths_array = np.load("wwr/Data/UKbirths_array.npy")
-    UKpop_array = np.load("wwr/Data/UKpop_array.npy")
-    measles_distance_matrix_array = np.load("wwr/Data/measles_distance_matrix_array.npy")
-    UKmeasles_array = np.load("wwr/Data/UKmeasles_array.npy")
-
-    UKbirths = tf.convert_to_tensor(UKbirths_array, dtype=tf.float32)
-    UKpop = tf.convert_to_tensor(UKpop_array, dtype=tf.float32)
-    measles_distance_matrix = tf.convert_to_tensor(measles_distance_matrix_array, dtype=tf.float32)
-    UKmeasles = tf.convert_to_tensor(UKmeasles_array, dtype=tf.float32)
-
-    df = pd.read_csv("wwr/Data/M40.csv")
-    data_array = df.values
-    UKmeasles = tf.convert_to_tensor(data_array, dtype=tf.float32)
-
-    term   = tf.convert_to_tensor([6, 99, 115, 198, 252, 299, 308, 355, 366], dtype=tf.float32)
-    school = tf.convert_to_tensor([0, 1, 0, 1, 0, 1, 0, 1, 0], dtype=tf.float32)
-
-    n_cities = tf.constant(40, dtype=tf.int64)
-    initial_pop = UKpop[:, 0]
-
-    T = 416
-    print(T)
-
-    intermediate_steps = 4
-    h = tf.constant(14 / tf.cast(intermediate_steps, dtype=tf.float32), dtype=tf.float32)
-    is_school_term_array, is_start_school_year_array, times_total, times_obs = school_term_and_school_year(
-        T, intermediate_steps, term, school
-    )
-
-    is_school_term_array = tf.convert_to_tensor(is_school_term_array, dtype=tf.float32)
-    is_start_school_year_array = tf.convert_to_tensor(is_start_school_year_array, dtype=tf.float32)
-    p = tf.constant(0.759, dtype=tf.float32)
-    delta_year = tf.convert_to_tensor([[1 / 50]], dtype=tf.float32) * tf.ones((n_cities, 4), dtype=tf.float32)
-
-    n_experiments = 20
-
-    best_parameters = np.load(os.path.join("wwr/E9", "E9_param_exp.npz"))["E9_param_exp"]
-    best_parameters = np.ndarray.astype(best_parameters, dtype = np.float32)
-    q_mean = tf.constant(np.mean(np.load("wwr/Data/q_mean.npy")), dtype = tf.float32)
-
-    # --- parameter block (same format, new values) -----------------------
-    pi_0_1 = float(best_parameters[0])
-    pi_0_2 = float(best_parameters[1])
-    pi_0_3 = float(best_parameters[2])
-    pi_0   = (
-        tf.convert_to_tensor(
-            [[pi_0_1, pi_0_2, pi_0_3, 1.0 - pi_0_1 - pi_0_2 - pi_0_3]],
-            dtype=tf.float32
-        )
-        * tf.ones((n_cities, 4), dtype=tf.float32)
-    )
-
-    initial_pop = UKpop[:, 0]
-
-    beta_bar = tf.convert_to_tensor(best_parameters[3] * tf.ones((n_cities, 1)), dtype=tf.float32)
-    rho      = tf.convert_to_tensor([best_parameters[4]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-    gamma    = tf.convert_to_tensor([best_parameters[5]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-
-    g = 100 * tf.convert_to_tensor([[6]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-
-    a      = tf.constant(best_parameters[7], dtype=tf.float32)
-    c      = tf.constant(best_parameters[8] , dtype=tf.float32)
-    xi_var = 10*tf.convert_to_tensor(best_parameters[9] , dtype=tf.float32)
-    q_var  = tf.convert_to_tensor(best_parameters[10], dtype=tf.float32)
-
-    Xi = tfp.distributions.Gamma(concentration=xi_var, rate=xi_var)
-    Q  = tfp.distributions.TruncatedNormal(loc=0.7, scale=q_var, low=0.0, high=1.0)
-
-    n_particles = 5000
-    log_likelihood_shared = np.zeros(n_experiments)
-
-    def logmeanexp(x, se=False, ess=False):
-        x = np.asarray(x, dtype=float)
-        n = x.shape[0]
-        max_x = x.max()
-        est = max_x + np.log(np.mean(np.exp(x - max_x)))
-        if not se and not ess:
-            return est
-        results = {"est": est}
-        if se:
-            jk_vals = np.empty(n)
-            for k in range(n):
-                x_k = np.delete(x, k)
-                max_k = x_k.max()
-                jk_vals[k] = max_k + np.log(np.mean(np.exp(x_k - max_k)))
-            results["se"] = (n - 1) * jk_vals.std(ddof=1) / np.sqrt(n)
-        if ess:
-            w = np.exp(x - max_x)
-            results["ess"] = (w.sum() ** 2) / (w ** 2).sum()
-        return results
-
-    start_time = time.perf_counter()
-
-    for i in range(n_experiments):
-        seed_i = 123 + i
-        random.seed(seed_i)
-        np.random.seed(seed_i)
-        tf.random.set_seed(seed_i)
-
-        value = (
-            PAL_run_likelihood_res(
-                T, intermediate_steps, UKmeasles, UKbirths, UKpop, g,
-                measles_distance_matrix, initial_pop, pi_0, beta_bar, p, a,
-                is_school_term_array, is_start_school_year_array, h,
-                rho, gamma, Xi, Q, c, n_cities, n_particles, delta_year
-            )
-        )[0].numpy()
-
-        log_likelihood_shared[i] = value
-        print(value)
-
-    elapsed_time = time.perf_counter() - start_time
-    print(f"Comp.time: {elapsed_time:.4f} seconds")
-
-    res = logmeanexp(log_likelihood_shared, se=True, ess=True)
-    print("Est =", res["est"])
-    print("SE  =", res["se"])
-    print("ESS =", res["ess"])
-
-    variance_log = np.var(log_likelihood_shared, ddof=1)
-    print("Variance of log likelihoods:", variance_log)
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>>>>>>>> ORIGINAL CODE END <<<<<<<<<<<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-
-    # -------------- cache the array for future runs -----------------
-    np.savez(CACHE_FILE, **{CACHE_KEY: log_likelihood_shared})
-    print(f"[cache] Results cached → {CACHE_FILE}")
-
-# -------------------------------------------------------------------
-# 3) Unified summary – always recomputed (includes jackknife SE)
-# -------------------------------------------------------------------
-def logmeanexp_and_se(x: np.ndarray) -> tuple[float, float]:
-    n = x.size
-    max_x = x.max()
-    lme   = max_x + np.log(np.mean(np.exp(x - max_x)))
+from pathlib import Path                   # ← New
+import os, sys, time, random, numpy as np, pandas as pd, tensorflow as tf
+import tensorflow_probability as tfp
+from typing import Dict, Any    
+# ……………………………………………………………………………………………………………………………
+
+ROOT = Path("wwr").resolve()      
+BASE = str(ROOT)
+DATA = os.path.join(BASE, "Data")
+PARAM = os.path.join(DATA, "Parameter")
+
+# Shared data (to avoid repeated disk IO)
+UKbirths_arr        = np.load(os.path.join(DATA, "UKbirths_array.npy"))
+UKpop_arr           = np.load(os.path.join(DATA, "UKpop_array.npy"))
+distance_arr        = np.load(os.path.join(DATA, "measles_distance_matrix_array.npy"))
+
+sys.path.append(os.path.join(BASE, "Scripts"))
+from measles_simulator import *
+from measles_PALSMC import *
+
+# ────────────────────────── Utility functions ──────────────────────────────────
+def set_seeds(seed: int) -> None:
+    random.seed(seed); np.random.seed(seed); tf.random.set_seed(seed)
+
+def logmeanexp(x: np.ndarray, jackknife: bool = True) -> tuple[float, float]:
+    n, x_max = x.size, x.max()
+    lme = x_max + np.log(np.mean(np.exp(x - x_max)))
+    if not jackknife:
+        return lme, np.nan
     jk = np.array([
-        (np.delete(x, k).max() +
-         np.log(np.mean(np.exp(np.delete(x, k) - np.delete(x, k).max()))))
+        np.delete(x, k).max() +
+        np.log(np.mean(np.exp(np.delete(x, k) - np.delete(x, k).max())))
         for k in range(n)
     ])
     se = (n - 1) * jk.std(ddof=1) / np.sqrt(n)
     return lme, se
 
-lme, se = logmeanexp_and_se(log_likelihood_shared)
+# ────────────────────────── Core runner ────────────────────────────────
+def run_experiment(cfg: Dict) -> None:
+    """Single experiment: cache → data preparation → Monte‑Carlo → summary print"""
+    cache_path = os.path.join(cfg["cache_dir"], cfg["cache_file"])
+    os.makedirs(cfg["cache_dir"], exist_ok=True)
 
-print("\n[summary]")
-print("  log-mean-exp :", lme)
-print("  SE           :", se)
-print("  mean         :", log_likelihood_shared.mean())
-print("  variance     :", log_likelihood_shared.var(ddof=1))
+    # ---------- 1. Load / compute ----------
+    if os.path.exists(cache_path):
+        log_like = np.load(cache_path)[cfg["cache_key"]]
+    else:
+        # ---------- 2. Data loading ----------
+        if cfg["n_cities"] == 1:     # Single city (London)
+            births  = tf.convert_to_tensor(UKbirths_arr[18:19], tf.float32)
+            pop     = tf.convert_to_tensor(UKpop_arr[18:19],  tf.float32)
+            dist    = tf.convert_to_tensor(distance_arr[18:19, 18:19], tf.float32)
 
-E9_est = float(lme)    
-E9_se  = float(se) 
-
-```
-
-
-```{python E10, include = FALSE}
-#!/usr/bin/env python3
-# ================================================================
-#  Block-particle PAL experiment (40 cities) with on-disk caching
-# ================================================================
-
-from __future__ import annotations
-import os
-import numpy as np
-
-# ----------------------------- cache -----------------------------
-CACHE_DIR  = "wwr/E10"
-CACHE_FILE = os.path.join(CACHE_DIR, "PAL_lookahead_40.npz")
-CACHE_KEY  = "log_likelihood_shared"
-
-os.makedirs(CACHE_DIR, exist_ok=True)
-
-# -----------------------------------------------------------------
-# 1) Load cached results if available
-# -----------------------------------------------------------------
-if os.path.exists(CACHE_FILE):
-    print(f"[cache] Found existing results → {CACHE_FILE}")
-    log_likelihood_shared = np.load(CACHE_FILE)[CACHE_KEY]
-
-# -----------------------------------------------------------------
-# 2) If no cache, run the (heavy) original code unmodified
-# -----------------------------------------------------------------
-else:
-    print("[cache] No cache found – running the full simulation …")
-
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>>>>>>> ORIGINAL CODE — DO NOT EDIT <<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-    import numpy as np
-    import time
-    import random
-    import pandas as pd
-    import tensorflow as tf
-    import tensorflow_probability as tfp
-    import os
-    import matplotlib.pyplot as plt
-    from scipy.optimize import minimize
-    import matplotlib.pyplot as plt
-
-    plt.ioff()
-
-    import sys
-    sys.path.append('wwr/Scripts/')
-    from measles_simulator import *
-    from measles_PALSMC import *
-
-    if not os.path.exists("wwr/E10"):
-        os.makedirs("wwr/E10")
-
-    os.environ['PYTHONHASHSEED'] = '42'
-    random.seed(42)
-    np.random.seed(42)
-    tf.random.set_seed(42)
-
-    UKbirths_array = np.load("wwr/Data/UKbirths_array.npy")
-    UKpop_array = np.load("wwr/Data/UKpop_array.npy")
-    measles_distance_matrix_array = np.load("wwr/Data/measles_distance_matrix_array.npy")
-    UKmeasles_array = np.load("wwr/Data/UKmeasles_array.npy")
-
-    UKbirths = tf.convert_to_tensor(UKbirths_array, dtype=tf.float32)
-    UKpop = tf.convert_to_tensor(UKpop_array, dtype=tf.float32)
-    measles_distance_matrix = tf.convert_to_tensor(measles_distance_matrix_array, dtype=tf.float32)
-    UKmeasles = tf.convert_to_tensor(UKmeasles_array, dtype=tf.float32)
-
-    df = pd.read_csv("wwr/Data/M40.csv")
-    data_array = df.values
-    UKmeasles = tf.convert_to_tensor(data_array, dtype=tf.float32)
-
-    term   = tf.convert_to_tensor([6, 99, 115, 198, 252, 299, 308, 355, 366], dtype=tf.float32)
-    school = tf.convert_to_tensor([0, 1, 0, 1, 0, 1, 0, 1, 0], dtype=tf.float32)
-
-    n_cities = tf.constant(40, dtype=tf.int64)
-    initial_pop = UKpop[:, 0]
-
-    T = 416
-    print(T)
-
-    intermediate_steps = 4
-    h = tf.constant(14 / tf.cast(intermediate_steps, dtype=tf.float32), dtype=tf.float32)
-    is_school_term_array, is_start_school_year_array, times_total, times_obs = school_term_and_school_year(
-        T, intermediate_steps, term, school
-    )
-
-    is_school_term_array = tf.convert_to_tensor(is_school_term_array, dtype=tf.float32)
-    is_start_school_year_array = tf.convert_to_tensor(is_start_school_year_array, dtype=tf.float32)
-    p = tf.constant(0.759, dtype=tf.float32)
-    delta_year = tf.convert_to_tensor([[1 / 50]], dtype=tf.float32) * tf.ones((n_cities, 4), dtype=tf.float32)
-
-    n_experiments = 20
-
-    best_parameters = np.load(os.path.join("wwr/E10", "E10_param_exp.npz"))["E10_param_exp"]
-    best_parameters = np.ndarray.astype(best_parameters, dtype = np.float32)
-    q_mean = tf.constant(np.mean(np.load("wwr/Data/q_mean.npy")), dtype = tf.float32)
-
-    # --- parameter block (same format, new values) -----------------------
-    pi_0_1 = float(best_parameters[0])
-    pi_0_2 = float(best_parameters[1])
-    pi_0_3 = float(best_parameters[2])
-    pi_0   = (
-        tf.convert_to_tensor(
-            [[pi_0_1, pi_0_2, pi_0_3, 1.0 - pi_0_1 - pi_0_2 - pi_0_3]],
-            dtype=tf.float32
-        )
-        * tf.ones((n_cities, 4), dtype=tf.float32)
-    )
-
-    initial_pop = UKpop[:, 0]
-
-    beta_bar = tf.convert_to_tensor(best_parameters[3] * tf.ones((n_cities, 1)), dtype=tf.float32)
-    rho      = tf.convert_to_tensor([best_parameters[4]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-    gamma    = tf.convert_to_tensor([best_parameters[5]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-
-    g = 100 * tf.convert_to_tensor([[6]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-
-    a      = tf.constant(best_parameters[7], dtype=tf.float32)
-    c      = tf.constant(best_parameters[8] , dtype=tf.float32)
-    xi_var = 10*tf.convert_to_tensor(best_parameters[9] , dtype=tf.float32)
-    q_var  = tf.convert_to_tensor(best_parameters[10], dtype=tf.float32)
-
-    Xi = tfp.distributions.Gamma(concentration=xi_var, rate=xi_var)
-    Q  = tfp.distributions.TruncatedNormal(loc=0.7, scale=q_var, low=0.0, high=1.0)
-
-    n_particles = 5000
-    log_likelihood_shared = np.zeros(n_experiments)
-
-    def logmeanexp(x, se=False, ess=False):
-        x = np.asarray(x, dtype=float)
-        n = x.shape[0]
-        max_x = x.max()
-        est = max_x + np.log(np.mean(np.exp(x - max_x)))
-        if not se and not ess:
-            return est
-        results = {"est": est}
-        if se:
-            jk_vals = np.empty(n)
-            for k in range(n):
-                x_k = np.delete(x, k)
-                max_k = x_k.max()
-                jk_vals[k] = max_k + np.log(np.mean(np.exp(x_k - max_k)))
-            results["se"] = (n - 1) * jk_vals.std(ddof=1) / np.sqrt(n)
-        if ess:
-            w = np.exp(x - max_x)
-            results["ess"] = (w.sum() ** 2) / (w ** 2).sum()
-        return results
-
-    start_time = time.perf_counter()
-
-    for i in range(n_experiments):
-        seed_i = 123 + i
-        random.seed(seed_i)
-        np.random.seed(seed_i)
-        tf.random.set_seed(seed_i)
-
-        value = (
-            PAL_run_likelihood_lookahead(
-                T, intermediate_steps, UKmeasles, UKbirths, UKpop, g,
-                measles_distance_matrix, initial_pop, pi_0, beta_bar, p, a,
-                is_school_term_array, is_start_school_year_array, h,
-                rho, gamma, Xi, Q, c, n_cities, n_particles, delta_year
+            measles = tf.convert_to_tensor(
+                pd.read_csv(os.path.join(DATA, "londonsim.csv")).values,
+                tf.float32
             )
-        )[0].numpy()
+        else:                        # 40 cities
+            births = tf.convert_to_tensor(UKbirths_arr, tf.float32)
+            pop    = tf.convert_to_tensor(UKpop_arr,  tf.float32)
+            dist   = tf.convert_to_tensor(distance_arr, tf.float32)
 
-        log_likelihood_shared[i] = value
-        print(value)
-
-    elapsed_time = time.perf_counter() - start_time
-    print(f"Comp.time: {elapsed_time:.4f} seconds")
-
-    res = logmeanexp(log_likelihood_shared, se=True, ess=True)
-    print("Est =", res["est"])
-    print("SE  =", res["se"])
-    print("ESS =", res["ess"])
-
-    variance_log = np.var(log_likelihood_shared, ddof=1)
-    print("Variance of log likelihoods:", variance_log)
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>>>>>>>> ORIGINAL CODE END <<<<<<<<<<<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-
-    # -------------- cache the array for future runs -----------------
-    np.savez(CACHE_FILE, **{CACHE_KEY: log_likelihood_shared})
-    print(f"[cache] Results cached → {CACHE_FILE}")
-
-# -------------------------------------------------------------------
-# 3) Unified summary – always recomputed (includes jackknife SE)
-# -------------------------------------------------------------------
-def logmeanexp_and_se(x: np.ndarray) -> tuple[float, float]:
-    n = x.size
-    max_x = x.max()
-    lme   = max_x + np.log(np.mean(np.exp(x - max_x)))
-    jk = np.array([
-        (np.delete(x, k).max() +
-         np.log(np.mean(np.exp(np.delete(x, k) - np.delete(x, k).max()))))
-        for k in range(n)
-    ])
-    se = (n - 1) * jk.std(ddof=1) / np.sqrt(n)
-    return lme, se
-
-lme, se = logmeanexp_and_se(log_likelihood_shared)
-
-print("\n[summary]")
-print("  log-mean-exp :", lme)
-print("  SE           :", se)
-print("  mean         :", log_likelihood_shared.mean())
-print("  variance     :", log_likelihood_shared.var(ddof=1))
-
-E10_est = float(lme)    
-E10_se  = float(se) 
-
-```
-
-
-```{python E12, include = FALSE}
-#!/usr/bin/env python3
-# ================================================================
-#  Block-particle PAL experiment (40 cities) with on-disk caching
-# ================================================================
-
-from __future__ import annotations
-import os
-import numpy as np
-
-# ----------------------------- cache -----------------------------
-CACHE_DIR  = "wwr/E12"
-CACHE_FILE = os.path.join(CACHE_DIR, "PAL_res_40.npz")
-CACHE_KEY  = "log_likelihood_shared"
-
-os.makedirs(CACHE_DIR, exist_ok=True)
-
-# -----------------------------------------------------------------
-# 1) Load cached results if available
-# -----------------------------------------------------------------
-if os.path.exists(CACHE_FILE):
-    print(f"[cache] Found existing results → {CACHE_FILE}")
-    log_likelihood_shared = np.load(CACHE_FILE)[CACHE_KEY]
-
-# -----------------------------------------------------------------
-# 2) If no cache, run the (heavy) original code unmodified
-# -----------------------------------------------------------------
-else:
-    print("[cache] No cache found – running the full simulation …")
-
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>>>>>>> ORIGINAL CODE — DO NOT EDIT <<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-    import numpy as np
-    import time
-    import random
-    import pandas as pd
-    import tensorflow as tf
-    import tensorflow_probability as tfp
-    import os
-    import matplotlib.pyplot as plt
-    from scipy.optimize import minimize
-    import matplotlib.pyplot as plt
-
-    plt.ioff()
-
-    import sys
-    sys.path.append('wwr/Scripts/')
-    from measles_simulator import *
-    from measles_PALSMC import *
-
-    if not os.path.exists("wwr/E12"):
-        os.makedirs("wwr/E12")
-
-    os.environ['PYTHONHASHSEED'] = '42'
-    random.seed(42)
-    np.random.seed(42)
-    tf.random.set_seed(42)
-
-    UKbirths_array = np.load("wwr/Data/UKbirths_array.npy")
-    UKpop_array = np.load("wwr/Data/UKpop_array.npy")
-    measles_distance_matrix_array = np.load("wwr/Data/measles_distance_matrix_array.npy")
-    UKmeasles_array = np.load("wwr/Data/UKmeasles_array.npy")
-
-    UKbirths = tf.convert_to_tensor(UKbirths_array, dtype=tf.float32)
-    UKpop = tf.convert_to_tensor(UKpop_array, dtype=tf.float32)
-    measles_distance_matrix = tf.convert_to_tensor(measles_distance_matrix_array, dtype=tf.float32)
-    UKmeasles = tf.convert_to_tensor(UKmeasles_array, dtype=tf.float32)
-
-    term   = tf.convert_to_tensor([6, 99, 115, 198, 252, 299, 308, 355, 366], dtype=tf.float32)
-    school = tf.convert_to_tensor([0, 1, 0, 1, 0, 1, 0, 1, 0], dtype=tf.float32)
-
-    n_cities = tf.constant(40, dtype=tf.int64)
-    initial_pop = UKpop[:, 0]
-
-    T = 416
-    print(T)
-
-    intermediate_steps = 4
-    h = tf.constant(14 / tf.cast(intermediate_steps, dtype=tf.float32), dtype=tf.float32)
-    is_school_term_array, is_start_school_year_array, times_total, times_obs = school_term_and_school_year(
-        T, intermediate_steps, term, school
-    )
-
-    is_school_term_array = tf.convert_to_tensor(is_school_term_array, dtype=tf.float32)
-    is_start_school_year_array = tf.convert_to_tensor(is_start_school_year_array, dtype=tf.float32)
-    p = tf.constant(0.759, dtype=tf.float32)
-    delta_year = tf.convert_to_tensor([[1 / 50]], dtype=tf.float32) * tf.ones((n_cities, 4), dtype=tf.float32)
-
-    n_experiments = 20
-
-    best_parameters = np.load(os.path.join("wwr/E12", "E12_param_exp.npz"))["E12_param_exp"]
-    best_parameters = np.ndarray.astype(best_parameters, dtype = np.float32)
-    q_mean = tf.constant(np.mean(np.load("wwr/Data/q_mean.npy")), dtype = tf.float32)
-
-    # --- parameter block (same format, new values) -----------------------
-    pi_0_1 = float(best_parameters[0])
-    pi_0_2 = float(best_parameters[1])
-    pi_0_3 = float(best_parameters[2])
-    pi_0   = (
-        tf.convert_to_tensor(
-            [[pi_0_1, pi_0_2, pi_0_3, 1.0 - pi_0_1 - pi_0_2 - pi_0_3]],
-            dtype=tf.float32
-        )
-        * tf.ones((n_cities, 4), dtype=tf.float32)
-    )
-
-    initial_pop = UKpop[:, 0]
-
-    beta_bar = tf.convert_to_tensor(best_parameters[3] * tf.ones((n_cities, 1)), dtype=tf.float32)
-    rho      = tf.convert_to_tensor([best_parameters[4]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-    gamma    = tf.convert_to_tensor([best_parameters[5]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-
-    g = 100 * tf.convert_to_tensor([[6]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-
-    a      = tf.constant(best_parameters[7], dtype=tf.float32)
-    c      = tf.constant(best_parameters[8] , dtype=tf.float32)
-    xi_var = 10*tf.convert_to_tensor(best_parameters[9] , dtype=tf.float32)
-    q_var  = tf.convert_to_tensor(best_parameters[10], dtype=tf.float32)
-
-    Xi = tfp.distributions.Gamma(concentration=xi_var, rate=xi_var)
-    Q  = tfp.distributions.TruncatedNormal(loc=q_mean, scale=q_var, low=0.0, high=1.0)
-
-    n_particles = 5000
-    log_likelihood_shared = np.zeros(n_experiments)
-
-    def logmeanexp(x, se=False, ess=False):
-        x = np.asarray(x, dtype=float)
-        n = x.shape[0]
-        max_x = x.max()
-        est = max_x + np.log(np.mean(np.exp(x - max_x)))
-        if not se and not ess:
-            return est
-        results = {"est": est}
-        if se:
-            jk_vals = np.empty(n)
-            for k in range(n):
-                x_k = np.delete(x, k)
-                max_k = x_k.max()
-                jk_vals[k] = max_k + np.log(np.mean(np.exp(x_k - max_k)))
-            results["se"] = (n - 1) * jk_vals.std(ddof=1) / np.sqrt(n)
-        if ess:
-            w = np.exp(x - max_x)
-            results["ess"] = (w.sum() ** 2) / (w ** 2).sum()
-        return results
-
-    start_time = time.perf_counter()
-
-    for i in range(n_experiments):
-        seed_i = 123 + i
-        random.seed(seed_i)
-        np.random.seed(seed_i)
-        tf.random.set_seed(seed_i)
-
-        value = (
-            PAL_run_likelihood_res(
-                T, intermediate_steps, UKmeasles, UKbirths, UKpop, g,
-                measles_distance_matrix, initial_pop, pi_0, beta_bar, p, a,
-                is_school_term_array, is_start_school_year_array, h,
-                rho, gamma, Xi, Q, c, n_cities, n_particles, delta_year
+            # Compatible with both CSV and NPY formats
+            dfile = os.path.join(DATA, cfg["data_file"])
+            measles = (
+                tf.convert_to_tensor(pd.read_csv(dfile).values, tf.float32)
+                if dfile.endswith(".csv") else
+                tf.convert_to_tensor(np.load(dfile), tf.float32)
             )
-        )[0].numpy()
 
-        log_likelihood_shared[i] = value
-        print(value)
+        # Academic year calendar
+        term   = tf.constant([6, 99, 115, 198, 252, 299, 308, 355, 366], tf.float32)
+        school = tf.constant([0, 1, 0, 1, 0, 1, 0, 1, 0], tf.float32)
+        T_int  = int(measles.shape[1])
+        inter_steps = 4
+        h = tf.constant(14 / inter_steps, tf.float32)
+        is_term, is_year, *_ = school_term_and_school_year(T_int, inter_steps, term, school)
+        is_term = tf.convert_to_tensor(is_term, tf.float32)
+        is_year = tf.convert_to_tensor(is_year, tf.float32)
 
-    elapsed_time = time.perf_counter() - start_time
-    print(f"Comp.time: {elapsed_time:.4f} seconds")
-
-    res = logmeanexp(log_likelihood_shared, se=True, ess=True)
-    print("Est =", res["est"])
-    print("SE  =", res["se"])
-    print("ESS =", res["ess"])
-
-    variance_log = np.var(log_likelihood_shared, ddof=1)
-    print("Variance of log likelihoods:", variance_log)
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>>>>>>>> ORIGINAL CODE END <<<<<<<<<<<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-
-    # -------------- cache the array for future runs -----------------
-    np.savez(CACHE_FILE, **{CACHE_KEY: log_likelihood_shared})
-    print(f"[cache] Results cached → {CACHE_FILE}")
-
-# -------------------------------------------------------------------
-# 3) Unified summary – always recomputed (includes jackknife SE)
-# -------------------------------------------------------------------
-def logmeanexp_and_se(x: np.ndarray) -> tuple[float, float]:
-    n = x.size
-    max_x = x.max()
-    lme   = max_x + np.log(np.mean(np.exp(x - max_x)))
-    jk = np.array([
-        (np.delete(x, k).max() +
-         np.log(np.mean(np.exp(np.delete(x, k) - np.delete(x, k).max()))))
-        for k in range(n)
-    ])
-    se = (n - 1) * jk.std(ddof=1) / np.sqrt(n)
-    return lme, se
-
-lme, se = logmeanexp_and_se(log_likelihood_shared)
-
-print("\n[summary]")
-print("  log-mean-exp :", lme)
-print("  SE           :", se)
-print("  mean         :", log_likelihood_shared.mean())
-print("  variance     :", log_likelihood_shared.var(ddof=1))
-
-E12_est = float(lme)    
-E12_se  = float(se) 
-```
-
-```{python E13, include = FALSE}
-#!/usr/bin/env python3
-# ================================================================
-#  Block-particle PAL experiment (40 cities) with on-disk caching
-# ================================================================
-
-from __future__ import annotations
-import os
-import numpy as np
-
-# ----------------------------- cache -----------------------------
-CACHE_DIR  = "wwr/E13"
-CACHE_FILE = os.path.join(CACHE_DIR, "PAL_res_40.npz")
-CACHE_KEY  = "log_likelihood_shared"
-
-os.makedirs(CACHE_DIR, exist_ok=True)
-
-# -----------------------------------------------------------------
-# 1) Load cached results if available
-# -----------------------------------------------------------------
-if os.path.exists(CACHE_FILE):
-    print(f"[cache] Found existing results → {CACHE_FILE}")
-    log_likelihood_shared = np.load(CACHE_FILE)[CACHE_KEY]
-
-# -----------------------------------------------------------------
-# 2) If no cache, run the (heavy) original code unmodified
-# -----------------------------------------------------------------
-else:
-    print("[cache] No cache found – running the full simulation …")
-
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>>>>>>> ORIGINAL CODE — DO NOT EDIT <<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-    import numpy as np
-    import time
-    import random
-    import pandas as pd
-    import tensorflow as tf
-    import tensorflow_probability as tfp
-    import os
-    import matplotlib.pyplot as plt
-    from scipy.optimize import minimize
-    import matplotlib.pyplot as plt
-
-    plt.ioff()
-
-    import sys
-    sys.path.append('wwr/Scripts/')
-    from measles_simulator import *
-    from measles_PALSMC import *
-
-    if not os.path.exists("wwr/E13"):
-        os.makedirs("wwr/E13")
-
-    os.environ['PYTHONHASHSEED'] = '42'
-    random.seed(42)
-    np.random.seed(42)
-    tf.random.set_seed(42)
-
-    UKbirths_array = np.load("wwr/Data/UKbirths_array.npy")
-    UKpop_array = np.load("wwr/Data/UKpop_array.npy")
-    measles_distance_matrix_array = np.load("wwr/Data/measles_distance_matrix_array.npy")
-    UKmeasles_array = np.load("wwr/Data/UKmeasles_array.npy")
-
-    UKbirths = tf.convert_to_tensor(UKbirths_array, dtype=tf.float32)
-    UKpop = tf.convert_to_tensor(UKpop_array, dtype=tf.float32)
-    measles_distance_matrix = tf.convert_to_tensor(measles_distance_matrix_array, dtype=tf.float32)
-    UKmeasles = tf.convert_to_tensor(UKmeasles_array, dtype=tf.float32)
-
-    term   = tf.convert_to_tensor([6, 99, 115, 198, 252, 299, 308, 355, 366], dtype=tf.float32)
-    school = tf.convert_to_tensor([0, 1, 0, 1, 0, 1, 0, 1, 0], dtype=tf.float32)
-
-    n_cities = tf.constant(40, dtype=tf.int64)
-    initial_pop = UKpop[:, 0]
-
-    T = 416
-    print(T)
-
-    intermediate_steps = 4
-    h = tf.constant(14 / tf.cast(intermediate_steps, dtype=tf.float32), dtype=tf.float32)
-    is_school_term_array, is_start_school_year_array, times_total, times_obs = school_term_and_school_year(
-        T, intermediate_steps, term, school
-    )
-
-    is_school_term_array = tf.convert_to_tensor(is_school_term_array, dtype=tf.float32)
-    is_start_school_year_array = tf.convert_to_tensor(is_start_school_year_array, dtype=tf.float32)
-    p = tf.constant(0.759, dtype=tf.float32)
-    delta_year = tf.convert_to_tensor([[1 / 50]], dtype=tf.float32) * tf.ones((n_cities, 4), dtype=tf.float32)
-
-    n_experiments = 20
-
-    best_parameters = np.load(os.path.join("wwr/E12", "E12_param_exp.npz"))["E12_param_exp"]
-    best_parameters = np.ndarray.astype(best_parameters, dtype = np.float32)
-    q_mean = tf.constant(np.mean(np.load("wwr/Data/q_mean.npy")), dtype = tf.float32)
-
-    # --- parameter block (same format, new values) -----------------------
-    pi_0_1 = float(best_parameters[0])
-    pi_0_2 = float(best_parameters[1])
-    pi_0_3 = float(best_parameters[2])
-    pi_0   = (
-        tf.convert_to_tensor(
-            [[pi_0_1, pi_0_2, pi_0_3, 1.0 - pi_0_1 - pi_0_2 - pi_0_3]],
-            dtype=tf.float32
+        # ---------- 3. Load best parameters (.npz or .npy) ----------
+        pfile = os.path.join(cfg["param_dir"], cfg["param_file"])
+        raw   = np.load(pfile, allow_pickle=False)
+        best_par = (
+            raw[cfg["param_key"]].astype(np.float32) if cfg["param_key"] else
+            raw.astype(np.float32)
         )
-        * tf.ones((n_cities, 4), dtype=tf.float32)
-    )
 
-    initial_pop = UKpop[:, 0]
+        # ---------- 4. Assemble fixed tensors ----------
+        n_cities = cfg["n_cities"]
+        pi_0 = tf.constant(
+            [[best_par[0], best_par[1], best_par[2],
+              1.0 - best_par[0] - best_par[1] - best_par[2]]],
+            tf.float32
+        ) * tf.ones((n_cities, 4), tf.float32)
 
-    beta_bar = tf.convert_to_tensor(best_parameters[3] * tf.ones((n_cities, 1)), dtype=tf.float32)
-    rho      = tf.convert_to_tensor([best_parameters[4]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
-    gamma    = tf.convert_to_tensor([best_parameters[5]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
+        beta_bar = tf.ones((n_cities, 1), tf.float32) * best_par[3]
+        rho      = tf.ones((n_cities, 1), tf.float32) * best_par[4]
+        gamma    = tf.ones((n_cities, 1), tf.float32) * best_par[5]
+        g_scalar = cfg["g_factory"](best_par)
+        g        = tf.ones((n_cities, 1), tf.float32) * g_scalar
 
-    g = 100 * tf.convert_to_tensor([[6]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
+        a       = tf.constant(best_par[cfg["idx_a"]], tf.float32)
+        c       = tf.constant(best_par[cfg["idx_c"]], tf.float32)
+        xi_var  = 10.0 * tf.constant(best_par[cfg["idx_xi"]], tf.float32)
+        q_var   = tf.constant(best_par[cfg["idx_q"]], tf.float32)
 
-    a      = tf.constant(best_parameters[7], dtype=tf.float32)
-    c      = tf.constant(best_parameters[8] , dtype=tf.float32)
-    xi_var = 10*tf.convert_to_tensor(best_parameters[9] , dtype=tf.float32)
-    q_var  = tf.convert_to_tensor(best_parameters[10], dtype=tf.float32)
+        Xi = tfp.distributions.Gamma(concentration=xi_var, rate=xi_var)
+        Q  = tfp.distributions.TruncatedNormal(
+                 loc=cfg["q_loc_factory"](best_par),
+                 scale=q_var,
+                 low=0.0,
+                 high=1.0,
+             )
 
-    Xi = tfp.distributions.Gamma(concentration=xi_var, rate=xi_var)
-    Q  = tfp.distributions.TruncatedNormal(loc=q_mean, scale=q_var, low=0.0, high=1.0)
+        p_const       = tf.constant(0.759, tf.float32)
+        delta_year    = tf.constant([[1 / 50]], tf.float32) * tf.ones((n_cities, 4), tf.float32)
 
-    n_particles = 100000
-    log_likelihood_shared = np.zeros(n_experiments)
+        # ---------- 5. PAL_vanilla / PAL_lookahead ----------
+        log_like = np.empty(cfg["n_experiments"], dtype=np.float32)
+        fn_call  = PAL_run_likelihood_res if cfg["mode"] == "res" else PAL_run_likelihood_lookahead
 
-    def logmeanexp(x, se=False, ess=False):
-        x = np.asarray(x, dtype=float)
-        n = x.shape[0]
-        max_x = x.max()
-        est = max_x + np.log(np.mean(np.exp(x - max_x)))
-        if not se and not ess:
-            return est
-        results = {"est": est}
-        if se:
-            jk_vals = np.empty(n)
-            for k in range(n):
-                x_k = np.delete(x, k)
-                max_k = x_k.max()
-                jk_vals[k] = max_k + np.log(np.mean(np.exp(x_k - max_k)))
-            results["se"] = (n - 1) * jk_vals.std(ddof=1) / np.sqrt(n)
-        if ess:
-            w = np.exp(x - max_x)
-            results["ess"] = (w.sum() ** 2) / (w ** 2).sum()
-        return results
+        for i in range(cfg["n_experiments"]):
+            set_seeds(cfg["seed_offset"] + i)
+            log_like[i] = fn_call(
+                T_int, inter_steps, measles, births, pop, g, dist, pop[:, 0],
+                pi_0, beta_bar, p_const, a, is_term, is_year, h,
+                rho, gamma, Xi, Q, c, n_cities, cfg["n_particles"], delta_year
+            )[0].numpy()
 
-    start_time = time.perf_counter()
+        # Cache
+        np.savez(cache_path, **{cfg["cache_key"]: log_like})
 
-    for i in range(n_experiments):
-        seed_i = 123 + i
-        random.seed(seed_i)
-        np.random.seed(seed_i)
-        tf.random.set_seed(seed_i)
+    # ---------- 6. Summary ----------
+    lme, se = logmeanexp(log_like)
+    RESULTS[cfg["label"]] = (float(lme), float(se))
+    print(f"[{cfg['label']}]  LME={lme:.4f}  SE={se:.4f}")
+    return float(lme), float(se)
 
-        value = (
-            PAL_run_likelihood_res(
-                T, intermediate_steps, UKmeasles, UKbirths, UKpop, g,
-                measles_distance_matrix, initial_pop, pi_0, beta_bar, p, a,
-                is_school_term_array, is_start_school_year_array, h,
-                rho, gamma, Xi, Q, c, n_cities, n_particles, delta_year
-            )
-        )[0].numpy()
+q_mean_path = os.path.join(DATA, "q_mean.npy")      
+Q_MEAN: float = float(np.mean(np.load(q_mean_path)))    
 
-        log_likelihood_shared[i] = value
-        print(value)
+# ────────────────────────── Experiment configurations ────────────────────────────────
+EXPERIMENTS = [
+    # label  n_cities  mode   n_particles  seed_offset
+    # g_factory                    q_loc_factory
+    # cache dir / file / key
+    # param dir / file / key
+    # data_file
+    # a‑idx c‑idx xi‑idx q‑idx
+    dict(
+        label="E2",  n_cities=1,  mode="res",       n_particles=5_000,   seed_offset=113,
+        g_factory=lambda bp: 0.0,
+        q_loc_factory=lambda bp: 0.7,
+        cache_dir=os.path.join(BASE, "E2"),
+        cache_file="PAL_vanilla_new.npz",
+        cache_key="log_likelihood_shared",
+        param_dir=os.path.join(BASE, "E2"),
+        param_file="E2_param_exp.npz",
+        param_key="E2_param_exp",
+        data_file="londonsim.csv",
+        n_experiments=20,
+        idx_a=6, idx_c=7, idx_xi=8, idx_q=9,
+    ),
+    dict(
+        label="E3",  n_cities=1,  mode="res",       n_particles=100_000, seed_offset=123,
+        g_factory=lambda bp: 0.0,
+        q_loc_factory=lambda bp: 0.7,
+        cache_dir=os.path.join(BASE, "E3"),
+        cache_file="PAL_vanilla.npz",
+        cache_key="log_likelihood_shared",
+        param_dir=os.path.join(BASE, "E2"),
+        param_file="E2_param_exp.npz",
+        param_key="E2_param_exp",
+        data_file="londonsim.csv",
+        n_experiments=20,
+        idx_a=6, idx_c=7, idx_xi=8, idx_q=9,
+    ),
+    dict(
+        label="E4",  n_cities=1,  mode="lookahead", n_particles=5_000,   seed_offset=123,
+        g_factory=lambda bp: 0.0,
+        q_loc_factory=lambda bp: 0.7,
+        cache_dir=os.path.join(BASE, "E4"),
+        cache_file="PAL_lookahead.npz",
+        cache_key="log_likelihood_shared",
+        param_dir=os.path.join(BASE, "E4"),
+        param_file="E4_param_exp.npz",
+        param_key="E4_param_exp",
+        data_file="londonsim.csv",
+        n_experiments=20,
+        idx_a=6, idx_c=7, idx_xi=8, idx_q=9,
+    ),
+    dict(
+        label="E5",  n_cities=1,  mode="lookahead", n_particles=100_000, seed_offset=123,
+        g_factory=lambda bp: 0.0,
+        q_loc_factory=lambda bp: 0.7,
+        cache_dir=os.path.join(BASE, "E5"),
+        cache_file="PAL_lookahead.npz",
+        cache_key="log_likelihood_shared",
+        param_dir=os.path.join(BASE, "E4"),
+        param_file="E4_param_exp.npz",
+        param_key="E4_param_exp",
+        data_file="londonsim.csv",
+        n_experiments=20,
+        idx_a=6, idx_c=7, idx_xi=8, idx_q=9,
+    ),
+    dict(
+        label="E6",  n_cities=1,  mode="lookahead", n_particles=5_000,   seed_offset=123,
+        g_factory=lambda bp: 0.0,
+        q_loc_factory=lambda bp: float(bp[10]),
+        cache_dir=os.path.join(BASE, "E6"),
+        cache_file="PAL_lookahead.npz",
+        cache_key="log_likelihood_shared",
+        param_dir=os.path.join(BASE, "E6"),
+        param_file="E6_param_exp.npz",
+        param_key="E6_param_exp",
+        data_file="UKmeasles_array.npy",
+        n_experiments=20,
+        idx_a=6, idx_c=7, idx_xi=8, idx_q=9,
+    ),
+    # ─────────────── 40‑city series ───────────────────────────────────
+    dict(
+        label="E9",  n_cities=40, mode="res",       n_particles=5_000,   seed_offset=123,
+        g_factory=lambda bp: 100.0 * bp[6],         
+        q_loc_factory=lambda bp: 0.7,
+        cache_dir=os.path.join(BASE, "E9"),
+        cache_file="PAL_res_40.npz",
+        cache_key="log_likelihood_shared",
+        param_dir=os.path.join(BASE, "E9"),
+        param_file="E9_param_exp.npz",
+        param_key="E9_param_exp",
+        data_file="M40.csv",
+        n_experiments=20,
+        idx_a=7, idx_c=8, idx_xi=9, idx_q=10,   # ≈E9 shifted by 1
+    ),
+    dict(
+        label="E10", n_cities=40, mode="lookahead", n_particles=5_000,   seed_offset=100,
+        g_factory=lambda bp: 100.0 * bp[6],
+        q_loc_factory=lambda bp: 0.7,
+        cache_dir=os.path.join(BASE, "E10"),
+        cache_file="PAL_lookahead_40.npz",
+        cache_key="log_likelihood_shared",
+        param_dir=os.path.join(BASE, "E10"),
+        param_file="E10_param_exp.npz",
+        param_key="E10_param_exp",
+        data_file="M40.csv",
+        n_experiments=20,
+        idx_a=7, idx_c=8, idx_xi=9, idx_q=10,
+    ),
+    dict(
+        label="E12", n_cities=40, mode="res",       n_particles=5_000,   seed_offset=123,
+        g_factory=lambda bp: 100.0 * bp[6],
+        q_loc_factory=lambda bp: Q_MEAN,
+        cache_dir=os.path.join(BASE, "E12"),
+        cache_file="PAL_res_40.npz",
+        cache_key="log_likelihood_shared",
+        param_dir=os.path.join(BASE, "E12"),
+        param_file="E12_param_exp.npz",
+        param_key="E12_param_exp",
+        data_file="UKmeasles_array.npy",
+        n_experiments=20,
+        idx_a=7, idx_c=8, idx_xi=9, idx_q=10,
+    ),
+    dict(
+        label="E13", n_cities=40, mode="res",       n_particles=100_000, seed_offset=123,
+        g_factory=lambda bp: 100.0 * bp[6],
+        q_loc_factory=lambda bp: Q_MEAN,
+        cache_dir=os.path.join(BASE, "E13"),
+        cache_file="PAL_res_40.npz",
+        cache_key="log_likelihood_shared",
+        param_dir=os.path.join(BASE, "E12"),     # Same parameters as E12
+        param_file="E12_param_exp.npz",
+        param_key="E12_param_exp",
+        data_file="UKmeasles_array.npy",
+        n_experiments=20,
+        idx_a=7, idx_c=8, idx_xi=9, idx_q=10,
+    ),
+    dict(
+        label="E14", n_cities=40, mode="lookahead", n_particles=5_000,   seed_offset=123,
+        g_factory=lambda bp: 100.0 * bp[6],
+        q_loc_factory=lambda bp: Q_MEAN,
+        cache_dir=os.path.join(BASE, "E14"),
+        cache_file="PAL_lookahead_40.npz",
+        cache_key="log_likelihood_shared",
+        param_dir=PARAM,                          # final_parameters_lookahead_A.npy
+        param_file="final_parameters_lookahead_A.npy",
+        param_key=None,
+        data_file="UKmeasles_array.npy",
+        n_experiments=20,
+        idx_a=7, idx_c=8, idx_xi=9, idx_q=10,
+    ),
+    dict(
+        label="E15", n_cities=40, mode="lookahead", n_particles=100_000, seed_offset=123,
+        g_factory=lambda bp: 100.0 * bp[6],
+        q_loc_factory=lambda bp: Q_MEAN,
+        cache_dir=os.path.join(BASE, "E15"),
+        cache_file="PAL_lookahead_40.npz",
+        cache_key="log_likelihood_shared",
+        param_dir=PARAM,
+        param_file="final_parameters_lookahead_A.npy",
+        param_key=None,
+        data_file="UKmeasles_array.npy",
+        n_experiments=20,
+        idx_a=7, idx_c=8, idx_xi=9, idx_q=10,
+    ),
+]
 
-    elapsed_time = time.perf_counter() - start_time
-    print(f"Comp.time: {elapsed_time:.4f} seconds")
+RESULTS: dict[str, tuple[float, float]] = {}
 
-    res = logmeanexp(log_likelihood_shared, se=True, ess=True)
-    print("Est =", res["est"])
-    print("SE  =", res["se"])
-    print("ESS =", res["ess"])
+if __name__ == "__main__":
+    for cfg in EXPERIMENTS:
+        run_experiment(cfg)          
 
-    variance_log = np.var(log_likelihood_shared, ddof=1)
-    print("Variance of log likelihoods:", variance_log)
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>>>>>>>> ORIGINAL CODE END <<<<<<<<<<<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
+    print("\n────────── All experiments ──────────")
+    print(f"{'Experiment':<10} {'LME_est':>12} {'SE':>10}")
+    for lbl in sorted(RESULTS, key=lambda x: int(x[1:])):    
+        est, se = RESULTS[lbl]
+        print(f"{lbl:<10} {est:>12.4f} {se:>10.4f}")
 
-    # -------------- cache the array for future runs -----------------
-    np.savez(CACHE_FILE, **{CACHE_KEY: log_likelihood_shared})
-    print(f"[cache] Results cached → {CACHE_FILE}")
-
-# -------------------------------------------------------------------
-# 3) Unified summary – always recomputed (includes jackknife SE)
-# -------------------------------------------------------------------
-def logmeanexp_and_se(x: np.ndarray) -> tuple[float, float]:
-    n = x.size
-    max_x = x.max()
-    lme   = max_x + np.log(np.mean(np.exp(x - max_x)))
-    jk = np.array([
-        (np.delete(x, k).max() +
-         np.log(np.mean(np.exp(np.delete(x, k) - np.delete(x, k).max()))))
-        for k in range(n)
-    ])
-    se = (n - 1) * jk.std(ddof=1) / np.sqrt(n)
-    return lme, se
-
-lme, se = logmeanexp_and_se(log_likelihood_shared)
-
-print("\n[summary]")
-print("  log-mean-exp :", lme)
-print("  SE           :", se)
-print("  mean         :", log_likelihood_shared.mean())
-print("  variance     :", log_likelihood_shared.var(ddof=1))
-
-E13_est = float(lme)    
-E13_se  = float(se) 
-
-
+    globals().update({f"{lbl}_est": RESULTS[lbl][0] for lbl in RESULTS})
+    globals().update({f"{lbl}_se":  RESULTS[lbl][1] for lbl in RESULTS})
+ 
 ```
 
-```{python E14, include = FALSE}
-#!/usr/bin/env python3
-# ================================================================
-#  PAL-lookahead experiment (40 cities, E10) with on-disk caching
-# ================================================================
-from __future__ import annotations
-import os
-import numpy as np
 
-# ---------------------------- cache ------------------------------
-CACHE_DIR  = "wwr/E14"
-CACHE_FILE = os.path.join(CACHE_DIR, "PAL_lookahead_40.npz")
-CACHE_KEY  = "log_likelihood_shared"
-
-os.makedirs(CACHE_DIR, exist_ok=True)
-
-# -----------------------------------------------------------------
-# 1) Load cached results if available
-# -----------------------------------------------------------------
-if os.path.exists(CACHE_FILE):
-    print(f"[cache] Found existing results → {CACHE_FILE}")
-    log_likelihood_shared = np.load(CACHE_FILE)[CACHE_KEY]
-
-# -----------------------------------------------------------------
-# 2) Otherwise run the original heavy simulation (unmodified)
-# -----------------------------------------------------------------
-else:
-    print("[cache] No cache found – running the full simulation …")
-
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>>>>>>> ORIGINAL CODE — DO NOT EDIT <<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-    import numpy as np
-    import time
-    import random
-    import pandas as pd
-    import tensorflow as tf
-    import tensorflow_probability as tfp
-    import os
-    import matplotlib.pyplot as plt
-    from scipy.optimize import minimize
-    import matplotlib.pyplot as plt
-
-    plt.ioff()
-
-    import sys
-    sys.path.append('wwr/Scripts/')
-    from measles_simulator import *
-    from measles_PALSMC import *
-
-    if not os.path.exists("E14"):
-        os.makedirs("E14")
-
-    os.environ['PYTHONHASHSEED'] = '42'
-    random.seed(42)
-    np.random.seed(42)
-    tf.random.set_seed(42)
-
-    
-    
-    #############################################
-    # Load the data
-    #############################################
-    UKbirths_array = np.load("wwr/Data/UKbirths_array.npy")
-    UKpop_array = np.load("wwr/Data/UKpop_array.npy")
-    measles_distance_matrix_array = np.load("wwr/Data/measles_distance_matrix_array.npy")
-    UKmeasles_array = np.load("wwr/Data/UKmeasles_array.npy")
-
-    UKbirths = tf.convert_to_tensor(UKbirths_array, dtype = tf.float32)
-    UKpop = tf.convert_to_tensor(UKpop_array, dtype = tf.float32)
-    measles_distance_matrix = tf.convert_to_tensor(measles_distance_matrix_array, dtype = tf.float32)
-    UKmeasles = tf.convert_to_tensor(UKmeasles_array, dtype = tf.float32)
-
-    term   = tf.convert_to_tensor([6, 99, 115, 198, 252, 299, 308, 355, 366], dtype = tf.float32)
-    school = tf.convert_to_tensor([0, 1, 0, 1, 0, 1, 0, 1, 0], dtype = tf.float32)
-
-    n_cities = tf.constant(40, dtype = tf.int64)
-
-    initial_pop = UKpop[:,0]
-
-    T = UKmeasles.shape[1]
-    intermediate_steps = 4
-    is_school_term_array, is_start_school_year_array, times_total, times_obs = school_term_and_school_year(T, intermediate_steps, term, school)
-
-    is_school_term_array = tf.convert_to_tensor(is_school_term_array, dtype = tf.float32)
-    is_start_school_year_array = tf.convert_to_tensor(is_start_school_year_array, dtype = tf.float32)
-
-    intermediate_steps = tf.constant(4, dtype = tf.float32)
-    h = tf.constant(14/tf.cast(intermediate_steps, dtype = tf.float32), dtype = tf.float32)
-    T = tf.constant(T, dtype = tf.float32)
-
-    delta_year = tf.convert_to_tensor([[1/50]], dtype = tf.float32)*tf.ones((n_cities, 4), dtype = tf.float32)
-
-    p      = tf.constant(0.759, dtype = tf.float32)
-    q_mean = tf.constant(np.mean(np.load("wwr/Data/q_mean.npy")), dtype = tf.float32)
-
-    # increase the n_experiments for proper variance estimates, use n_experiments to just test the log-likelihood
-    n_experiments = 20
-
-    # lookahead
-    # shared
-
-    best_parameters = np.load("wwr/Data/Parameter/final_parameters_lookahead_A.npy")
-    best_parameters = np.ndarray.astype(best_parameters, dtype = np.float32)
-
-    n_cities = tf.constant(40, dtype = tf.int64)
-
-    pi_0_1 = best_parameters[0]
-    pi_0_2 = best_parameters[1] 
-    pi_0_3 = best_parameters[2] 
-    pi_0 = tf.convert_to_tensor([[pi_0_1, pi_0_2, pi_0_3, 1 - pi_0_1 - pi_0_2 - pi_0_3]], dtype = tf.float32)*tf.ones((n_cities, 4), dtype = tf.float32)
-
-    initial_pop = UKpop[:,0]
-
-    beta_bar  = tf.convert_to_tensor((best_parameters[3])*tf.ones((n_cities,1)), dtype = tf.float32)
-    rho   = tf.convert_to_tensor([[best_parameters[4]]], dtype = tf.float32)*tf.ones((n_cities, 1), dtype = tf.float32)
-    gamma = tf.convert_to_tensor([[best_parameters[5]]], dtype = tf.float32)*tf.ones((n_cities, 1), dtype = tf.float32)
-
-    g = tf.convert_to_tensor([[float(100)*best_parameters[6]]], dtype = tf.float32)*tf.ones((n_cities, 1), dtype = tf.float32) 
-    a = tf.constant(best_parameters[7],   dtype = tf.float32)
-    c = tf.constant(best_parameters[8],   dtype = tf.float32)
-    xi_var = 10*tf.convert_to_tensor(best_parameters[9], dtype = tf.float32)
-    q_var  = tf.convert_to_tensor(best_parameters[10], dtype = tf.float32)
-
-
-    Xi = tfp.distributions.Gamma(concentration = xi_var, rate = xi_var)
-    Q  = tfp.distributions.TruncatedNormal( q_mean, q_var, 0, 1)
-
-    n_particles = 5000
-    log_likelihood_shared = np.zeros(n_experiments)
-
-    def logmeanexp(x, se=False, ess=False):
-        x = np.asarray(x, dtype=float)
-        n = x.shape[0]
-        max_x = x.max()
-        est = max_x + np.log(np.mean(np.exp(x - max_x)))
-        if not se and not ess:
-            return est
-        results = {"est": est}
-        if se:
-            jk_vals = np.empty(n)
-            for k in range(n):
-                x_k = np.delete(x, k)
-                max_k = x_k.max()
-                jk_vals[k] = max_k + np.log(np.mean(np.exp(x_k - max_k)))
-            results["se"] = (n - 1) * jk_vals.std(ddof=1) / np.sqrt(n)
-        if ess:
-            w = np.exp(x - max_x)
-            results["ess"] = (w.sum() ** 2) / (w ** 2).sum()
-        return results
-
-    start_time = time.perf_counter()
-
-    for i in range(n_experiments):
-        seed_i = 123 + i
-        random.seed(seed_i)
-        np.random.seed(seed_i)
-        tf.random.set_seed(seed_i)
-
-        value = (PAL_run_likelihood_lookahead(T, intermediate_steps, UKmeasles, UKbirths, UKpop, g, measles_distance_matrix, initial_pop, pi_0, beta_bar, p, a, is_school_term_array, is_start_school_year_array, h, rho, gamma, Xi, Q, c, n_cities, n_particles, delta_year))[0].numpy()
-
-        log_likelihood_shared[i] = value
-        print(value)
-
-    print(f"Comp.time: {time.perf_counter() - start_time:.2f} s")
-
-    res = logmeanexp(log_likelihood_shared, se=True, ess=True)
-    print("Est =", res["est"])
-    print("SE  =", res["se"])
-    print("ESS =", res["ess"])
-    print("Variance:", np.var(log_likelihood_shared, ddof=1))
-
-    np.savetxt(os.path.join("wwr", "E14", "PAL_lookahead_40.csv"),
-               log_likelihood_shared, delimiter=",")
-
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>>>>>>>> ORIGINAL CODE END <<<<<<<<<<<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-
-    # -------------- cache the results for future runs ----------------
-    np.savez(CACHE_FILE, **{CACHE_KEY: log_likelihood_shared})
-    print(f"[cache] Results cached → {CACHE_FILE}")
-
-# -------------------------------------------------------------------
-# 3) Unified summary – recomputed every run
-# -------------------------------------------------------------------
-def logmeanexp_and_se(x: np.ndarray) -> tuple[float, float]:
-    n = x.size
-    max_x = x.max()
-    lme   = max_x + np.log(np.mean(np.exp(x - max_x)))
-    jk = np.array([
-        (np.delete(x, k).max() +
-         np.log(np.mean(np.exp(np.delete(x, k) - np.delete(x, k).max()))))
-        for k in range(n)
-    ])
-    se = (n - 1) * jk.std(ddof=1) / np.sqrt(n)
-    return lme, se
-
-lme, se = logmeanexp_and_se(log_likelihood_shared)
-
-print("\n[summary]")
-print("  log-mean-exp :", lme)
-print("  SE           :", se)
-print("  mean         :", log_likelihood_shared.mean())
-print("  variance     :", log_likelihood_shared.var(ddof=1))
-
-E14_est = float(lme)    
-E14_se  = float(se)
-```
-
-```{python E15, include = FALSE}
-#!/usr/bin/env python3
-# ================================================================
-#  PAL-lookahead experiment (40 cities, E10) with on-disk caching
-# ================================================================
-from __future__ import annotations
-import os
-import numpy as np
-
-# ---------------------------- cache ------------------------------
-CACHE_DIR  = "wwr/E15"
-CACHE_FILE = os.path.join(CACHE_DIR, "PAL_lookahead_40.npz")
-CACHE_KEY  = "log_likelihood_shared"
-
-os.makedirs(CACHE_DIR, exist_ok=True)
-
-# -----------------------------------------------------------------
-# 1) Load cached results if available
-# -----------------------------------------------------------------
-if os.path.exists(CACHE_FILE):
-    print(f"[cache] Found existing results → {CACHE_FILE}")
-    log_likelihood_shared = np.load(CACHE_FILE)[CACHE_KEY]
-
-# -----------------------------------------------------------------
-# 2) Otherwise run the original heavy simulation (unmodified)
-# -----------------------------------------------------------------
-else:
-    print("[cache] No cache found – running the full simulation …")
-
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>>>>>>> ORIGINAL CODE — DO NOT EDIT <<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-    import numpy as np
-    import time
-    import random
-    import pandas as pd
-    import tensorflow as tf
-    import tensorflow_probability as tfp
-    import os
-    import matplotlib.pyplot as plt
-    from scipy.optimize import minimize
-    import matplotlib.pyplot as plt
-
-    plt.ioff()
-
-    import sys
-    sys.path.append('wwr/Scripts/')
-    from measles_simulator import *
-    from measles_PALSMC import *
-
-    if not os.path.exists("E15"):
-        os.makedirs("E15")
-
-    os.environ['PYTHONHASHSEED'] = '42'
-    random.seed(42)
-    np.random.seed(42)
-    tf.random.set_seed(42)
-
-    
-    
-    #############################################
-    # Load the data
-    #############################################
-    UKbirths_array = np.load("wwr/Data/UKbirths_array.npy")
-    UKpop_array = np.load("wwr/Data/UKpop_array.npy")
-    measles_distance_matrix_array = np.load("wwr/Data/measles_distance_matrix_array.npy")
-    UKmeasles_array = np.load("wwr/Data/UKmeasles_array.npy")
-
-    UKbirths = tf.convert_to_tensor(UKbirths_array, dtype = tf.float32)
-    UKpop = tf.convert_to_tensor(UKpop_array, dtype = tf.float32)
-    measles_distance_matrix = tf.convert_to_tensor(measles_distance_matrix_array, dtype = tf.float32)
-    UKmeasles = tf.convert_to_tensor(UKmeasles_array, dtype = tf.float32)
-
-    term   = tf.convert_to_tensor([6, 99, 115, 198, 252, 299, 308, 355, 366], dtype = tf.float32)
-    school = tf.convert_to_tensor([0, 1, 0, 1, 0, 1, 0, 1, 0], dtype = tf.float32)
-
-    n_cities = tf.constant(40, dtype = tf.int64)
-
-    initial_pop = UKpop[:,0]
-
-    T = UKmeasles.shape[1]
-    intermediate_steps = 4
-    is_school_term_array, is_start_school_year_array, times_total, times_obs = school_term_and_school_year(T, intermediate_steps, term, school)
-
-    is_school_term_array = tf.convert_to_tensor(is_school_term_array, dtype = tf.float32)
-    is_start_school_year_array = tf.convert_to_tensor(is_start_school_year_array, dtype = tf.float32)
-
-    intermediate_steps = tf.constant(4, dtype = tf.float32)
-    h = tf.constant(14/tf.cast(intermediate_steps, dtype = tf.float32), dtype = tf.float32)
-    T = tf.constant(T, dtype = tf.float32)
-
-    delta_year = tf.convert_to_tensor([[1/50]], dtype = tf.float32)*tf.ones((n_cities, 4), dtype = tf.float32)
-
-    p      = tf.constant(0.759, dtype = tf.float32)
-    q_mean = tf.constant(np.mean(np.load("wwr/Data/q_mean.npy")), dtype = tf.float32)
-
-    # increase the n_experiments for proper variance estimates, use n_experiments to just test the log-likelihood
-    n_experiments = 20
-
-    # lookahead
-    # shared
-
-    best_parameters = np.load("wwr/Data/Parameter/final_parameters_lookahead_A.npy")
-    best_parameters = np.ndarray.astype(best_parameters, dtype = np.float32)
-
-    n_cities = tf.constant(40, dtype = tf.int64)
-
-    pi_0_1 = best_parameters[0]
-    pi_0_2 = best_parameters[1] 
-    pi_0_3 = best_parameters[2] 
-    pi_0 = tf.convert_to_tensor([[pi_0_1, pi_0_2, pi_0_3, 1 - pi_0_1 - pi_0_2 - pi_0_3]], dtype = tf.float32)*tf.ones((n_cities, 4), dtype = tf.float32)
-
-    initial_pop = UKpop[:,0]
-
-    beta_bar  = tf.convert_to_tensor((best_parameters[3])*tf.ones((n_cities,1)), dtype = tf.float32)
-    rho   = tf.convert_to_tensor([[best_parameters[4]]], dtype = tf.float32)*tf.ones((n_cities, 1), dtype = tf.float32)
-    gamma = tf.convert_to_tensor([[best_parameters[5]]], dtype = tf.float32)*tf.ones((n_cities, 1), dtype = tf.float32)
-
-    g = tf.convert_to_tensor([[float(100)*best_parameters[6]]], dtype = tf.float32)*tf.ones((n_cities, 1), dtype = tf.float32) 
-    a = tf.constant(best_parameters[7],   dtype = tf.float32)
-    c = tf.constant(best_parameters[8],   dtype = tf.float32)
-    xi_var = 10*tf.convert_to_tensor(best_parameters[9], dtype = tf.float32)
-    q_var  = tf.convert_to_tensor(best_parameters[10], dtype = tf.float32)
-
-
-    Xi = tfp.distributions.Gamma(concentration = xi_var, rate = xi_var)
-    Q  = tfp.distributions.TruncatedNormal( q_mean, q_var, 0, 1)
-
-    n_particles = 100000
-    log_likelihood_shared = np.zeros(n_experiments)
-
-    def logmeanexp(x, se=False, ess=False):
-        x = np.asarray(x, dtype=float)
-        n = x.shape[0]
-        max_x = x.max()
-        est = max_x + np.log(np.mean(np.exp(x - max_x)))
-        if not se and not ess:
-            return est
-        results = {"est": est}
-        if se:
-            jk_vals = np.empty(n)
-            for k in range(n):
-                x_k = np.delete(x, k)
-                max_k = x_k.max()
-                jk_vals[k] = max_k + np.log(np.mean(np.exp(x_k - max_k)))
-            results["se"] = (n - 1) * jk_vals.std(ddof=1) / np.sqrt(n)
-        if ess:
-            w = np.exp(x - max_x)
-            results["ess"] = (w.sum() ** 2) / (w ** 2).sum()
-        return results
-
-    start_time = time.perf_counter()
-
-    for i in range(n_experiments):
-        seed_i = 123 + i
-        random.seed(seed_i)
-        np.random.seed(seed_i)
-        tf.random.set_seed(seed_i)
-
-        value = (PAL_run_likelihood_lookahead(T, intermediate_steps, UKmeasles, UKbirths, UKpop, g, measles_distance_matrix, initial_pop, pi_0, beta_bar, p, a, is_school_term_array, is_start_school_year_array, h, rho, gamma, Xi, Q, c, n_cities, n_particles, delta_year))[0].numpy()
-
-        log_likelihood_shared[i] = value
-        print(value)
-
-    print(f"Comp.time: {time.perf_counter() - start_time:.2f} s")
-
-    res = logmeanexp(log_likelihood_shared, se=True, ess=True)
-    print("Est =", res["est"])
-    print("SE  =", res["se"])
-    print("ESS =", res["ess"])
-    print("Variance:", np.var(log_likelihood_shared, ddof=1))
-
-    np.savetxt(os.path.join("wwr", "E15", "PAL_lookahead_40.csv"),
-               log_likelihood_shared, delimiter=",")
-
-    # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>>>>>>>> ORIGINAL CODE END <<<<<<<<<<<<<<<<<<<<<<<<
-    # ----------------------------------------------------------------
-
-    # -------------- cache the results for future runs ----------------
-    np.savez(CACHE_FILE, **{CACHE_KEY: log_likelihood_shared})
-    print(f"[cache] Results cached → {CACHE_FILE}")
-
-# -------------------------------------------------------------------
-# 3) Unified summary – recomputed every run
-# -------------------------------------------------------------------
-def logmeanexp_and_se(x: np.ndarray) -> tuple[float, float]:
-    n = x.size
-    max_x = x.max()
-    lme   = max_x + np.log(np.mean(np.exp(x - max_x)))
-    jk = np.array([
-        (np.delete(x, k).max() +
-         np.log(np.mean(np.exp(np.delete(x, k) - np.delete(x, k).max()))))
-        for k in range(n)
-    ])
-    se = (n - 1) * jk.std(ddof=1) / np.sqrt(n)
-    return lme, se
-
-lme, se = logmeanexp_and_se(log_likelihood_shared)
-
-print("\n[summary]")
-print("  log-mean-exp :", lme)
-print("  SE           :", se)
-print("  mean         :", log_likelihood_shared.mean())
-print("  variance     :", log_likelihood_shared.var(ddof=1))
-
-E15_est = float(lme)    
-E15_se  = float(se)
-```
 
 ```{r bridge,include = FALSE}
 library(reticulate)

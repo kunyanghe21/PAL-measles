@@ -21,7 +21,7 @@ if os.path.exists(CACHE_FILE):
     log_likelihood_shared = np.load(CACHE_FILE)[CACHE_KEY]
 
 # -----------------------------------------------------------------
-# 2) Otherwise run the original heavy simulation (unmodified)
+# 2) Otherwise run the original heavy simulation 
 # -----------------------------------------------------------------
 else:
     print("[cache] No cache found – running the full simulation …")

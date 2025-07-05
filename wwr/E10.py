@@ -22,13 +22,13 @@ if os.path.exists(CACHE_FILE):
     log_likelihood_shared = np.load(CACHE_FILE)[CACHE_KEY]
 
 # -----------------------------------------------------------------
-# 2) If no cache, run the (heavy) original code unmodified
+# 2) If no cache, run the (heavy) original code 
 # -----------------------------------------------------------------
 else:
     print("[cache] No cache found – running the full simulation …")
 
     # ----------------------------------------------------------------
-    # >>>>>>>>>>>>>>>>>>>> ORIGINAL CODE — DO NOT EDIT <<<<<<<<<<<<<<<
+    #  The following code is essentially identical to the version provided by Whitehouse et al.\ (2023).
     # ----------------------------------------------------------------
     import numpy as np
     import time
@@ -51,10 +51,10 @@ else:
     if not os.path.exists("wwr/E10"):
         os.makedirs("wwr/E10")
 
-    os.environ['PYTHONHASHSEED'] = '42'
-    random.seed(42)
-    np.random.seed(42)
-    tf.random.set_seed(42)
+    os.environ['PYTHONHASHSEED'] = '43'
+    random.seed(43)
+    np.random.seed(43)
+    tf.random.set_seed(43)
 
     UKbirths_array = np.load("wwr/Data/UKbirths_array.npy")
     UKpop_array = np.load("wwr/Data/UKpop_array.npy")
@@ -114,7 +114,7 @@ else:
     rho      = tf.convert_to_tensor([best_parameters[4]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
     gamma    = tf.convert_to_tensor([best_parameters[5]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
 
-    g = 100 * tf.convert_to_tensor([[6]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
+    g = 100 * tf.convert_to_tensor([best_parameters[6]], dtype=tf.float32) * tf.ones((n_cities, 1), dtype=tf.float32)
 
     a      = tf.constant(best_parameters[7], dtype=tf.float32)
     c      = tf.constant(best_parameters[8] , dtype=tf.float32)
@@ -150,7 +150,7 @@ else:
     start_time = time.perf_counter()
 
     for i in range(n_experiments):
-        seed_i = 123 + i
+        seed_i = 100 + i
         random.seed(seed_i)
         np.random.seed(seed_i)
         tf.random.set_seed(seed_i)
