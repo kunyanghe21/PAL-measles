@@ -41,3 +41,8 @@ tmp*
 
 
 .DS_Store
+# ---- Python byte-code caches ----
+__pycache__/
+*.py[cod]
+# ---- Jupyter checkpoints ----
+.ipynb_checkpoints/
