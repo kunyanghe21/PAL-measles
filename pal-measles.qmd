@@ -1,10 +1,10 @@
 ---
 title: |
   | Poisson Approximate Likelihood versus the block particle filter for a spatiotemporal measles model
-  | __Preliminary version, not for circulation__
 author:
   - "Kunyang He, Yize Hao and Edward L. Ionides"
-date: "June 27, 2025"
+  - "University of Michigan, Ann Arbor"
+date: "July 5, 2025"
 abstract: |
   Filtering algorithms for high-dimensional nonlinear non-Gaussian partially observed stochastic processes provide access to the likelihood function and hence enable likelihood-based or Bayesian inference for this methodologically challenging class of models.
   A novel Poisson approximate likelihood (PAL) filter was introduced by Whitehouse et al.\ (2023).
@@ -22,7 +22,7 @@ format:
       - text: |
           \usepackage{graphicx} % Required for inserting images
           \usepackage{fullpage}
-
+          \usepackage{authblk}
           \newcommand\loglik{\lambda}
           \newcommand\fproc{f_{\mathrm{proc}}}
           \newcommand\fmeas{f_{\mathrm{meas}}}
@@ -2195,8 +2195,7 @@ The best estimates of this bias are $\lambda_4-\lambda_3$ and $\lambda_5-\lambda
 Comparison of $E_5$ and $E_3$ shows that, even with a large number of particles and a low-dimensional dynamic model, $\PALL$ provides an over-stated log-likelihood estimate.
 
 Comparing $E_4$ and $E_5$, we see that the smaller number of particles for $E_4$ leads to a higher log-likelihood estimate.
-This suggests a long left tail to the Monte Carlo likelihood estimate, leading to estimators that behave as though the variance is infinite.
-In better-behaved settings, a higher number of particles is expected to lead to a higher log-likelihood estimate due to reduced negative bias resulting from Jensen's inequality.
+This would not happen in a situation where the likelihood estimate is unbiased with finite variance: in that situation, a higher number of particles is expected to lead to a higher log-likelihood estimate due to reduced negative bias resulting from Jensen's inequality.
 
 Experiments $E_6$ and $E_7$ introduce the actual data, while still restricting to a single spatial unit.
 We see that $\PALL$ reports a higher log-likelihood than BPF.
@@ -2232,7 +2231,7 @@ The performance of $\PALV$ on the 40-unit real dataset fails to outperform the A
  This is a property of the lookahead part of the algorithm, developed by \citet{rimella23}, rather than the PAL approximation.
  Therefore, for the remainder of this section, we consider the simpler lookahead filter of \citet{rimella23}.
  
- Briefly, the vanilla particle filter is unbiased because the self-normalization denominator in the resampling step happens to coincide with the conditional likelihood estimate on the numerator, leading to a fortuitous cancellation.
+ Briefly, the vanilla particle filter is unbiased for the likelihood (and, therefore, negatively biased for the log-likelihood) because the self-normalization denominator in the resampling step happens to coincide with the conditional likelihood estimate on the numerator, leading to a fortuitous cancellation.
  Self-normalization does not always lead to unbiased likelihood estimates, as we can see from the following example.
 
 Let $X$ take values $\{0,1\}$ with equal probability, and let $Y=X$ with probability 1. 
